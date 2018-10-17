@@ -44,6 +44,7 @@ set DAYTRADER_QUOTES_SERVICE=https://localhost:4443
 echo set logging variables
 set DAYTRADER_LOG_FILENAME=/var/log/daytrader/%DAYTRADER_APP_ARTIFACTID%-%DAYTRADER_APP_VERSION%.log
 set DAYTRADER_LOG_LEVEL=TRACE
+set DAYTRADER_LOG_APPENDER=ConsoleAppender
 
 @echo off
 echo "end of setenv.bat"

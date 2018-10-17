@@ -29,11 +29,6 @@ import java.util.Random;
 
 public class TradeConfig {
 
-	//	Created by on 2018-06-14
-    //		- Each microservice has their own private database (datasource)
-    public static String ACCOUNTS_DATASOURCE = "java:comp/env/jdbc/AccountsDataSource";
-    public static String PORTFOLIOS_DATASOURCE = "java:comp/env/jdbc/PortfoliosDataSource";
-    public static String QUOTES_DATASOURCE = "java:comp/env/jdbc/QuotesDataSource";
     
     /* Trade Runtime Configuration Parameters */
     public static final int UNKNOWN = -1;
