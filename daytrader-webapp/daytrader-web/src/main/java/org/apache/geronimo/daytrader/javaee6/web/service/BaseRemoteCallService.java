@@ -17,8 +17,6 @@
 
 package org.apache.geronimo.daytrader.javaee6.web.service;
 
-import javassist.NotFoundException;
-
 import javax.transaction.NotSupportedException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
@@ -27,6 +25,7 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAcceptableException;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.RedirectionException;
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.client.Client;
@@ -45,30 +44,6 @@ import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 
 public class BaseRemoteCallService {
 
-	static 
-	{
-		//
-	    //this is a quick fix to bypass certificate validation for localhost testing only.
-		//the preferred solution is to add the self signed certificate to the trusted CAs
-		//on the client side then you won't see the javax.net.ssl.SSLHandshakeException.
-		//To that, update the CACERT file in the your JRE_HOME/lib directory.
-		//
-		//	- See http://www.java-samples.com/showtutorial.php?tutorialid=210
-		
-	    javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
-	    new javax.net.ssl.HostnameVerifier()
-	    {
-	        public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) 
-	        {
-	            if (hostname.equals("localhost")) 
-	            {
-	                return true;
-	            }
-	            return false;
-	        }
-	    });
-	}
-	
     public static String invokeEndpoint(String url, String method, String body) throws Exception
     {
     	return invokeEndpoint(url, method, body, -1);

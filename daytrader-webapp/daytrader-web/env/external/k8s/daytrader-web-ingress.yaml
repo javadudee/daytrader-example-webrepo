@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: daytrader-web
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  tls:
+  - hosts:
+    - web.daytrader.geronimo.apache.org
+    secretName: daytrader-web
+  backend:
+    serviceName: daytrader-web
+    servicePort: 443 

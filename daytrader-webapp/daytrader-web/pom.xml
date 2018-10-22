@@ -80,6 +80,14 @@
 		    <artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
 	    </dependency>
+	    
+	    <!-- 
+		spring-boot-starter-actuator: Enables spring boot actuator features in spring boot.
+		-->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 		
 		<!-- Third Party Dependencies -->
 	
@@ -175,6 +183,7 @@
               						<directory>${daytraderKeystoreFolder}</directory>
               						<includes>
               							<include>keystore.jks</include>
+             							<include>truststore.jks</include>
               						</includes>
             					</resource>
           					</resources>
@@ -266,13 +275,10 @@
 		
   		<profile>
   			<id>cd</id>
-  			<activation>
-  				<activeByDefault>true</activeByDefault>
-			</activation>
   			<properties>
   				<daytraderKeystoreFolder>${basedir}/src/main/resources/external/ssl</daytraderKeystoreFolder>
-				<docker.image.prefix>dhvines</docker.image.prefix>
-				<dockerfile-maven-version>1.3.6</dockerfile-maven-version>	
+				<docker.image.prefix>${user.name}</docker.image.prefix>
+				<dockerfile-maven-version>1.4.0</dockerfile-maven-version>	
   			</properties>
   			<build>
 				<plugins>
@@ -285,6 +291,29 @@
 							<mainClass>org.apache.geronimo.daytrader.javaee6.web.Application</mainClass>
 						</configuration>
 					</plugin>
+					<!--  Build the docker image and push it to docker hub -->
+			        <plugin>
+		       			<groupId>com.spotify</groupId>
+       					<artifactId>dockerfile-maven-plugin</artifactId>
+       					<version>${dockerfile-maven-version}</version>
+       					<executions>
+         					<execution>
+           						<phase>package</phase>
+			           			<goals>
+            						<goal>build</goal>
+             						<goal>push</goal>
+			           			</goals>
+			        		</execution>
+      					</executions>
+      					<configuration>
+        					<repository>${docker.image.prefix}/${project.artifactId}</repository>
+        					<tag>4.0.15</tag>
+				    		<buildArgs>
+          						<JAR_FILE>target/${project.artifactId}-${project.version}.war</JAR_FILE>
+				    		</buildArgs>
+						    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+			    		</configuration>
+    				</plugin>
 				</plugins>
 			</build>
 		</profile>
