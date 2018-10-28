@@ -126,13 +126,31 @@ public class TradeAppServlet extends HttpServlet {
 
         // Dyna - need status string - prepended to output
         action = req.getParameter("action");
-
+       
+        
+        
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
         ServletContext ctx = getServletConfig().getServletContext();
+        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
+        if (sessionCookieConfig != null) 
+        {
+			System.out.println("TradeAppServlet:performTask() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
+//        	sessionCookieConfig.setSecure(false);
+//        	sessionCookieConfig.setHttpOnly(true);
+//        	sessionCookieConfig.setPath("/");
+        }
+        else
+        {
+        	System.out.println("TradeAppServlet:performTask() -  the context has no session cookie" );
+        }
+	    
+	    
 
         if (action == null) {
             tsAction.doWelcome(ctx, req, resp, "");
             return;
-        } else if (action.equals("login")) {
+        } else if (action.equals("login")) {            
             userID = req.getParameter("uid");
             String passwd = req.getParameter("passwd");
             String inScenario = req.getParameter("inScenario");
@@ -156,17 +174,58 @@ public class TradeAppServlet extends HttpServlet {
             return;
         }
 
-        // The rest of the operations require the user to be logged in -
-        // Get the Session and validate the user.
-        HttpSession session = req.getSession();
-        userID = (String) session.getAttribute("uidBean");
+        
 
-        if (userID == null) {
-            System.out
-                    .println("TradeAppServlet service error: User Not Logged in");
+        HttpSession session = req.getSession(false);
+        if (session == null) // generate new session
+        {
+        	session = req.getSession();
+    		// Set the cookie properties to make sure the browser will send them over the
+            // insecuere connection (ie. http) between the browser and the kubectl proxy.
+        }
+        Cookie[] cookies = req.getCookies();
+ 		if (cookies != null)
+ 		{
+ 			for(Cookie cookie : cookies)
+ 			{		
+ 				cookie.setSecure(false);
+ 				cookie.setHttpOnly(true);
+ 				cookie.setPath("/");
+ 			}
+ 		}
+        //setting session expiry to 5 minutes
+        session.setMaxInactiveInterval(5*60);   
+
+        userID = (String) session.getAttribute("uidBean");
+       
+        
+        
+        // For debug purposes only
+        cookies = req.getCookies();
+ 		if (cookies != null)
+ 		{
+ 			for(Cookie cookie : cookies)
+ 			{		
+ 				System.out.println("TradeAppServlet:performTask() -  " + RequestUtils.encodeCookie(cookie) );
+ 			}
+ 		}
+ 		else
+ 		{
+				System.out.println("TradeAppServlet:performTask() -  the request has no cookies" );
+ 		}
+        
+       	
+ 		
+        // The rest of the operations require the user to be logged in -
+        // Get the Session and validate the user. It the user isn't in
+        // the then return to the login page; otherwise continue
+        if (userID == null) 
+        {
+            System.out.println("TradeAppServlet service error: User Not Logged in");
             tsAction.doWelcome(ctx, req, resp, "User Not Logged in");
             return;
-        }
+        }     
+        
         if (action.equals("quotes")) {
             String symbols = req.getParameter("symbols");
             tsAction.doQuotes(ctx, req, resp, userID, symbols);

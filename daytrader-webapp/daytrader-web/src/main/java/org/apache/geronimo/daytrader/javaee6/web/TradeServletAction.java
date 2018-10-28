@@ -20,6 +20,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.geronimo.daytrader.javaee6.core.api.TradeServices;
+import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
 import org.apache.geronimo.daytrader.javaee6.web.TradeAction;
 import org.apache.geronimo.daytrader.javaee6.entities.*;
 import org.apache.geronimo.daytrader.javaee6.utils.*;
@@ -386,16 +387,61 @@ public class TradeServletAction {
 
             AccountDataBean accountData = tAction.login(userID, passwd);
 
-            if (accountData != null) {
-                HttpSession session = req.getSession(true);
-                session.setAttribute("uidBean", userID);
-                session.setAttribute("sessionCreationDate",
-                        new java.util.Date());
-                results = "Ready to Trade";
+        	// get the old session 
+        	HttpSession oldSession = req.getSession(false);
+            
+            if (accountData != null) { 
+            	
+            	System.out.println("TradeServletAction#doLogin() - login was successful");
+
+            	System.out.println("TradeServletAction#doLogin() - invalidate the old session");
+            	if (oldSession != null) 
+            	{
+            		oldSession.invalidate();
+            	}
+                
+            	System.out.println("TradeServletAction#doLogin() - generate a new session");               
+            	HttpSession session = req.getSession();
+            
+            	// Set the cookie properties to make sure the browser will send them over the
+            	// in-secuere connection (ie. http) between the browser and the kubectl proxy.
+            	Cookie[] cookies = req.getCookies();
+         		if (cookies != null)
+         		{
+                	for(Cookie cookie : cookies)
+                	{		
+                		cookie.setSecure(false);
+                		cookie.setHttpOnly(true);
+            	    	cookie.setPath("/");
+            	    }
+         		}
+            	//setting session expiry to 5 minutes
+            	session.setMaxInactiveInterval(5*60);   
+            	session.setAttribute("uidBean", userID);
+               	
+            	
+                
+            	// For debug purposes only
+            	cookies = req.getCookies();
+         		if (cookies != null)
+         		{
+         			for(Cookie cookie : cookies)
+         			{		
+         				System.out.println("TradeServletAction:doLogin() -  " + RequestUtils.encodeCookie(cookie) );
+         			}
+         		}
+         		else
+         		{
+     				System.out.println("TradeServletAction:doLogin() -  the request has no cookies" );
+         		}
+         		
+     
+                
+                results = "Ready to Trade";            
                 doHome(ctx, req, resp, userID, results);
                 return;
-            } else {
-                req.setAttribute("results", results
+            } else {            	
+            	req.setAttribute("results", results
                         + "\nCould not find account for user=" + userID);
                 // log the exception with an error level of 3 which means,
                 // handled exception but would invalidate a automation run
@@ -403,7 +449,46 @@ public class TradeServletAction {
                                 "TradeServletAction.doLogin(...)",
                                 "Error finding account for user " + userID + "",
                                 "user entered a bad username or the database is not populated");
-                throw new NullPointerException("User does not exist or password is incorrect!");
+                
+                
+
+            	// set cookies context
+            	if (oldSession != null) 
+            	{
+            		// Set the cookie properties to make sure the browser will send them over the
+            		// in-secuere connection (ie. http) between the browser and the kubectl proxy.
+            		Cookie[] cookies = req.getCookies();
+             		if (cookies != null)
+             		{
+             			for(Cookie cookie : cookies)
+             			{		
+             				cookie.setSecure(false);
+             				cookie.setHttpOnly(true);
+             				cookie.setPath("/");
+             			}
+             		}
+            		//setting session expiry to 5 minutes
+            		oldSession.setMaxInactiveInterval(5*60);   
+               	
+            	
+                
+            		// For debug purposes only
+            		cookies = req.getCookies();
+             		if (cookies != null)
+             		{
+             			for(Cookie cookie : cookies)
+             			{		
+             				System.out.println("TradeServletAction#doLogin() -  " + RequestUtils.encodeCookie(cookie) );
+             			}
+             		}
+             		else
+             		{
+         				System.out.println("TradeServletAction#doLogin() -  the request has no cookies" );
+             		}
+            	
+             		
+             		
+            	}
             }
         } catch (java.lang.IllegalArgumentException e) { // this is a user
                                                             // error so I will
@@ -482,20 +567,59 @@ public class TradeServletAction {
             throw new ServletException("TradeServletAction.doLogout(...)"
                     + "exception logging out user " + userID, e);
         }
-        HttpSession session = req.getSession();
-        if (session != null) {
+        //invalidate the session if exists
+        HttpSession session = req.getSession(false);
+        if (session != null) 
+        {
             session.invalidate();
         }
 
         Object o = req.getAttribute("TSS-RecreateSessionInLogout");
-        if (o != null && ((Boolean) o).equals(Boolean.TRUE)) {
+        if (o != null && ((Boolean) o).equals(Boolean.TRUE)) 
+        {
             // Recreate Session object before writing output to the response
             // Once the response headers are written back to the client the
             // opportunity
             // to create a new session in this request may be lost
             // This is to handle only the TradeScenarioServlet case
-            session = req.getSession(true);
-        }
+        	
+        	
+        	
+           	session = req.getSession();
+       		// Set the cookie properties to make sure the browser will send them over the
+            // insecuere connection (ie. http) between the browser and the kubectl proxy.
+            Cookie[] cookies = req.getCookies();
+     		if (cookies != null)
+     		{
+     			for(Cookie cookie : cookies)
+     			{		
+     				cookie.setSecure(false);
+     				cookie.setHttpOnly(true);
+     				cookie.setPath("/");
+     			}
+     		}
+            //setting session expiry to 5 minutes
+            session.setMaxInactiveInterval(5*60);   
+
+            
+            
+            // For debug purposes only
+            cookies = req.getCookies();
+     		if (cookies != null)
+     		{
+     			for(Cookie cookie : cookies)
+     			{		
+     				System.out.println("TradeServletAction:doLogout() -  " + RequestUtils.encodeCookie(cookie) );
+     			}
+     		}
+     		else
+     		{
+ 				System.out.println("TradeServletAction:doLogout() -  the request has no cookies" );
+     		}
+     		
+        
+        
+        }      
         requestDispatch(ctx, req, resp, userID, TradeConfig
                 .getPage(TradeConfig.WELCOME_PAGE));
     }

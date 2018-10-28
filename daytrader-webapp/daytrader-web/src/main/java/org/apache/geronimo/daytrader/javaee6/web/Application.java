@@ -24,11 +24,13 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.servlet.SessionCookieConfig;
 import javax.sql.DataSource;
 
 import org.apache.catalina.Context;
@@ -38,6 +40,7 @@ import org.apache.tomcat.util.descriptor.web.ContextResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -61,20 +64,42 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public TomcatEmbeddedServletContainerFactory tomcatFactory() {
-		return new TomcatEmbeddedServletContainerFactory() {
-
+	public TomcatEmbeddedServletContainerFactory tomcatFactory() 
+	{	
+		TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory() 
+		{
 			@Override
-			protected TomcatEmbeddedServletContainer getTomcatEmbeddedServletContainer(Tomcat tomcat) {
+			protected TomcatEmbeddedServletContainer getTomcatEmbeddedServletContainer(Tomcat tomcat) 
+			{
 				tomcat.enableNaming();
 				return super.getTomcatEmbeddedServletContainer(tomcat);
 			}
 
 			@Override
-			protected void postProcessContext(Context context) {
-			}
-			
+			protected void postProcessContext(Context context) {}
 		};
+		
+		TomcatContextCustomizer contextCustomizer = new TomcatContextCustomizer() 
+		{
+		    @Override
+		    public void customize(Context context) 
+		    {
+            	// Set the cookie properties to make sure the browser will send them over the
+                // in-secure connection (ie. http) between the browser and the kubectl proxy.
+		        context.setUseHttpOnly(true);
+		        context.setSessionCookiePath("/");
+
+//		        SessionCookieConfig cookie = context.getServletContext().getSessionCookieConfig();
+//		        cookie.setSecure(false);
+//		  		cookie.setHttpOnly(false);
+//		   		cookie.setPath("/");
+		    }
+		};
+		
+		factory.setTomcatContextCustomizers(Arrays.asList(contextCustomizer));
+
+	    return factory;
 	}
+	
 }
 

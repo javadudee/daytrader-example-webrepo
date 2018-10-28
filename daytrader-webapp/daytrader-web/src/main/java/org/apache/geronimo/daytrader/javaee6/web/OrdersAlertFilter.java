@@ -24,7 +24,7 @@ import javax.servlet.annotation.WebFilter;
 
 import org.apache.geronimo.daytrader.javaee6.web.TradeAction;
 import org.apache.geronimo.daytrader.javaee6.core.api.TradeServices;
-
+import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
 import org.apache.geronimo.daytrader.javaee6.utils.Log;
 import org.apache.geronimo.daytrader.javaee6.utils.TradeConfig;
 
@@ -74,22 +74,54 @@ public class OrdersAlertFilter implements Filter {
                     if ( action.equals("login") )
                         userID = req.getParameter("uid");
                     else
-                        userID = (String) ((HttpServletRequest) req).getSession().getAttribute("uidBean");
+                    {
+                    	
+                    	
+                    	
+                        HttpSession session = ((HttpServletRequest)req).getSession(false);
+                        if (session == null) // generate new session
+                        {
+                        	session = ((HttpServletRequest)req).getSession();
+                        }
+                    	// Set the cookie properties to make sure the browser will send them over the
+                        // insecuere connection (ie. http) between the browser and the kubectl proxy.
+                        Cookie[] cookies = ((HttpServletRequest)req).getCookies();
+                        if (cookies != null)
+                        {
+                        	for(Cookie cookie : cookies)
+                        	{	 		
+                        		cookie.setSecure(false);
+                        		cookie.setHttpOnly(true);
+                        		cookie.setPath("/");
+                        	}
+                        }
+                        //setting session expiry to 5 minutes
+                        session.setMaxInactiveInterval(5*60);   
+                        userID = (String) session.getAttribute("uidBean");
+                    
+                    
+                        
+                        // For debug purposes only
+                        cookies = ((HttpServletRequest)req).getCookies();
+                        if (cookies != null)
+                        {
+                        	for(Cookie cookie : cookies)
+                        	{		
+                         		System.out.println("OrdersAlertFilter:doFilter() -  " + RequestUtils.encodeCookie(cookie) );   
+                        	}
+                        }
+                        else
+                        {
+                        	System.out.println("OrdersAlertFilter:doFilter() -  the request has no cookies" );
+                        }
+                        
+                    
+                       	
+                    }
                     if ( (userID != null) && (userID.trim().length()>0) )
                     {    
                         TradeServices tAction=null;
-                        if(TradeConfig.getAccessMode() == TradeConfig.STANDARD) {
-                            tAction = new TradeAction();
-                        } else if(TradeConfig.getAccessMode() == TradeConfig.WEBSERVICES) {
-                            try {
-                                Class c = Class.forName("org.apache.geronimo.samples.daytrader.soap.TradeWebSoapProxy");                                
-                                tAction = (TradeServices) c.newInstance();
-                            }
-                            catch (Exception e) {
-                                Log.error("OrdersAlertFilter:doFilter() Creation of TradeWebSoapProxy failed\n" + e);
-                                throw new IllegalArgumentException(e);
-                            }
-                        }
+                        tAction = new TradeAction();
                         java.util.Collection closedOrders = tAction.getClosedOrders(userID);
                         if ( (closedOrders!=null) && (closedOrders.size() > 0) ) {
                             req.setAttribute("closedOrders", closedOrders);
@@ -107,6 +139,25 @@ public class OrdersAlertFilter implements Filter {
         }
 
         ServletContext sc = filterConfig.getServletContext();
+        
+        
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secuere connection (ie. http) between the browser and the kubectl proxy.
+        SessionCookieConfig sessionCookieConfig = sc.getSessionCookieConfig();
+        if (sessionCookieConfig != null) 
+        {
+			System.out.println("TradeAppServlet:doFilter() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
+//        	sessionCookieConfig.setSecure(false);
+//        	sessionCookieConfig.setHttpOnly(true);
+//        	sessionCookieConfig.setPath("/");
+        }
+        else
+        {
+        	System.out.println("TradeAppServlet:doFilter() -  the context has no session cookie" );
+        }
+        
+        
+        
         //String xyz = (String) sc.getAttribute("hitCounter");
         chain.doFilter(req, resp/*wrapper*/);        
 

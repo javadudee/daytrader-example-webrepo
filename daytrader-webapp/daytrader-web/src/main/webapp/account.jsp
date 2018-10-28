@@ -24,7 +24,7 @@
 <BODY bgcolor="#ffffff" link="#000099" vlink="#000099">
 <%@ page
     import="java.util.Collection,java.util.Iterator,java.math.BigDecimal,org.apache.geronimo.daytrader.javaee6.core.direct.*,org.apache.geronimo.daytrader.javaee6.entities.*,org.apache.geronimo.daytrader.javaee6.utils.*"
-    session="true" isThreadSafe="true" isErrorPage="false"%>
+    session="false" isThreadSafe="true" isErrorPage="false"%>
 <jsp:useBean id="results" scope="request" type="java.lang.String" />
 <jsp:useBean id="accountData"
     type="org.apache.geronimo.daytrader.javaee6.entities.AccountDataBean"

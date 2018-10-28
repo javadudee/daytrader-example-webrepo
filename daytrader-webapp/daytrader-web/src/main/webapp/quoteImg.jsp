@@ -25,7 +25,7 @@
 <BODY bgcolor="#ffffff" link="#000099" vlink="#000099">
 <%@ page
     import="java.util.Collection, java.util.Iterator, org.apache.geronimo.daytrader.javaee6.core.direct.*, org.apache.geronimo.daytrader.javaee6.entities.*, org.apache.geronimo.daytrader.javaee6.utils.*"
-    session="true" isThreadSafe="true" isErrorPage="false"%>
+    session="false" isThreadSafe="true" isErrorPage="false"%>
 
 <TABLE height="54">
     <TBODY>

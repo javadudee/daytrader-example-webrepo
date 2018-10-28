@@ -26,6 +26,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.WebInitParam;
 
+import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
 import org.apache.geronimo.daytrader.javaee6.entities.HoldingDataBean;
 import org.apache.geronimo.daytrader.javaee6.utils.*;
 
@@ -111,6 +112,23 @@ public class TradeScenarioServlet extends HttpServlet {
     */    
     public void performTask(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
+    	
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secuere connection (ie. http) between the browser and the kubectl proxy.
+        ServletContext ctx = getServletConfig().getServletContext();
+        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
+        if (sessionCookieConfig != null) 
+        {
+			System.out.println("TradeAppServlet:performTask() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
+//        	sessionCookieConfig.setSecure(false);
+//        	sessionCookieConfig.setHttpOnly(true);
+//        	sessionCookieConfig.setPath("/");
+        }
+        else
+        {
+        	System.out.println("TradeAppServlet:performTask() -  the context has no session cookie" );
+        }
+	    
 
         // Scenario generator for Trade2
         char action = ' ';
@@ -119,6 +137,8 @@ public class TradeScenarioServlet extends HttpServlet {
         // String to create full dispatch path to TradeAppServlet w/ request Parameters
         String dispPath = null; // Dispatch Path to TradeAppServlet
 
+        resp.setContentType("text/html");
+        
         String scenarioAction = (String) req.getParameter("action");
         if ((scenarioAction != null) && (scenarioAction.length() >= 1))
         {
@@ -127,7 +147,6 @@ public class TradeScenarioServlet extends HttpServlet {
             { //null;
                 try
                 {
-                    resp.setContentType("text/html");
                     PrintWriter out = new PrintWriter(resp.getOutputStream());
                     out.println("<HTML><HEAD>TradeScenarioServlet</HEAD><BODY>Hello</BODY></HTML>"); 
                     out.close();
@@ -148,16 +167,53 @@ public class TradeScenarioServlet extends HttpServlet {
             } //end of action=='n'
         }
 
+        
 
-        ServletContext ctx = null;
         HttpSession session = null;
         try
-        {
-            ctx = getServletConfig().getServletContext();
-            // These operations require the user to be logged in. Verify the user and if not logged in
-            // change the operation to a login
-            session = req.getSession(true);
+        {    	             
+            session = req.getSession(false);
+            if (session == null) // generate new session
+            {
+            	session = req.getSession();
+            }
+            
+        	// Set the cookie properties to make sure the browser will send them over the
+            // insecuere connection (ie. http) between the browser and the kubectl proxy.
+            Cookie[] cookies = req.getCookies();
+            if (cookies != null)
+            {
+            	for(Cookie cookie : cookies)
+            	{		
+            		cookie.setSecure(false);
+            		cookie.setHttpOnly(true);
+           			cookie.setPath("/");
+            	}
+            }
+            //setting session expiry to 5 minutes
+            session.setMaxInactiveInterval(5*60);   
+            
+            
+            
+            // For debug purposes only
+            cookies = req.getCookies();
+     		if (cookies != null)
+     		{
+     			for(Cookie cookie : cookies)
+     			{		
+     				System.out.println("TradeScenarioServlet#performTask() -  " + RequestUtils.encodeCookie(cookie) );
+     			}
+     		}
+     		else
+     		{
+ 				System.out.println("TradeScenarioServlet#performTask() -  the request has no cookies" );
+     		}
+            
+            
             userID = (String) session.getAttribute("uidBean");
+
+            
+
         }
         catch (Exception e)
         {
@@ -216,11 +272,54 @@ public class TradeScenarioServlet extends HttpServlet {
                     String password2 = "xxx";
                     dispPath = tasPathPrefix + "login&inScenario=true&uid=" + userID + "&passwd=" + password2;
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
-                        
+                    
+                    
+                    
+                    session = req.getSession(false);
+                    if (session == null) // generate new session
+                    {
+                    	session = req.getSession();
+                    }
+                    
+                	// Set the cookie properties to make sure the browser will send them over the
+                    // insecuere connection (ie. http) between the browser and the kubectl proxy.
+                    Cookie[] cookies = req.getCookies();
+             		if (cookies != null)
+             		{
+             			for(Cookie cookie : cookies)
+             			{		
+             				cookie.setSecure(false);
+             				cookie.setHttpOnly(true);
+             				cookie.setPath("/");
+             			}
+             		}
+                    //setting session expiry to 5 minutes
+                    session.setMaxInactiveInterval(5*60);
+                    session.setAttribute("uidBean",userID);                
+                    
+                   
+               		
+                    // For debug purposes only
+                    cookies = req.getCookies();
+             		if (cookies != null)
+             		{
+             			for(Cookie cookie : cookies)
+             			{		
+             				System.out.println("TradeScenarioServlet:performTask() +  " + RequestUtils.encodeCookie(cookie) );
+             			}
+             		}
+             		else
+             		{
+         				System.out.println("TradeScenarioServlet:performTask() -  the request has no cookies" );
+             		}
+             		
+                   	
+                    
                     // login is successful if the userID is written to the HTTP session
-                    if (session.getAttribute("uidBean") == null) {
+                    if (req.getSession().getAttribute("uidBean") == null) {                    	
                         System.out.println("TradeScenario login failed. Reset DB between runs");
                     } 
+                    
                     break;
                 case 'o' : //logout
                     dispPath = tasPathPrefix + "logout";

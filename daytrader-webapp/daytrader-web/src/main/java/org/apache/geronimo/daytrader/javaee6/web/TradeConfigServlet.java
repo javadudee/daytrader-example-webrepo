@@ -357,10 +357,31 @@ public class TradeConfigServlet extends HttpServlet {
     public void service(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
 
+    	
+    	
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        ServletContext ctx = getServletConfig().getServletContext();
+        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
+        if (sessionCookieConfig != null) 
+        {
+			System.out.println("TradeConfigServlet:service() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
+//        	sessionCookieConfig.setSecure(false);
+//        	sessionCookieConfig.setHttpOnly(true);
+//        	sessionCookieConfig.setPath("/");
+        }
+        else
+        {
+        	System.out.println("TradeConfigServlet:service() -  the context has no session cookie" );
+        }
+        
+        
+    	
         String action = null;
         String result = "";
         
         resp.setContentType("text/html");
+        
         try
         {
             action = req.getParameter("action");
@@ -381,13 +402,13 @@ public class TradeConfigServlet extends HttpServlet {
             }
             else if (action.equals("buildDB"))
             {
-                resp.setContentType("text/html");
+//                resp.setContentType("text/html");
                 new TradeBuildDB(resp.getWriter(), null);
                 result = "DayTrader Database Built - " + TradeConfig.getMAX_USERS() + "users created";
             }
             else if (action.equals("buildDBTables"))
             {
-                resp.setContentType("text/html");
+//                resp.setContentType("text/html");
 //  on 2018-05-24 
 //	- Fixed getRealPath returns null from SpringBoot executable jar
                 // new TradeBuildDB(resp.getWriter(), getServletConfig().getServletContext().getRealPath("/"));
