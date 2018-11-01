@@ -28,10 +28,6 @@ import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
 import org.apache.geronimo.daytrader.javaee6.utils.Log;
 import org.apache.geronimo.daytrader.javaee6.utils.TradeConfig;
 
-// on 08-02-18 -- TODO (Stateless Processes) 
-//	- Refactor setAttribute to write to DynamoDB
-//	- Refactor getAttribute to read from DynamoDB
-// 	- Make these same changes to the JSPs.
 
 @WebFilter("/app")
 public class OrdersAlertFilter implements Filter {
@@ -70,7 +66,7 @@ public class OrdersAlertFilter implements Filter {
                 action = action.trim();
                 if ( (action.length() > 0) && (!action.equals("logout")) )
                 {
-                    String userID;
+                    String userID = null;
                     if ( action.equals("login") )
                         userID = req.getParameter("uid");
                     else
@@ -81,42 +77,45 @@ public class OrdersAlertFilter implements Filter {
                         HttpSession session = ((HttpServletRequest)req).getSession(false);
                         if (session == null) // generate new session
                         {
-                        	session = ((HttpServletRequest)req).getSession();
+                        	session = ((HttpServletRequest)req).getSession(true);
+                            //set session expiry to 5 minutes
+                            session.setMaxInactiveInterval(5*60); 
                         }
-                    	// Set the cookie properties to make sure the browser will send them over the
-                        // insecuere connection (ie. http) between the browser and the kubectl proxy.
+
+                        // use cookies; instead of session attributes
+//                        userID = (String) session.getAttribute("uidBean");
+//                        boolean userIdCookieFound = false;
                         Cookie[] cookies = ((HttpServletRequest)req).getCookies();
                         if (cookies != null)
                         {
                         	for(Cookie cookie : cookies)
-                        	{	 		
-                        		cookie.setSecure(false);
-                        		cookie.setHttpOnly(true);
-                        		cookie.setPath("/");
-                        	}
-                        }
-                        //setting session expiry to 5 minutes
-                        session.setMaxInactiveInterval(5*60);   
-                        userID = (String) session.getAttribute("uidBean");
-                    
-                    
-                        
-                        // For debug purposes only
-                        cookies = ((HttpServletRequest)req).getCookies();
-                        if (cookies != null)
-                        {
-                        	for(Cookie cookie : cookies)
                         	{		
-                         		System.out.println("OrdersAlertFilter:doFilter() -  " + RequestUtils.encodeCookie(cookie) );   
+                                if (cookie.getName().equals("uidBean"))
+                                {   
+                                	System.out.println("OrdersAlertFilter:doFilter() - userID cookie found: " + RequestUtils.encodeCookie(cookie) );   
+                                	if ( (cookie.getValue() != null) && (cookie.getValue().trim().length()>0) )
+                                	{
+                                    	userID = cookie.getValue();	
+                                	}
+                                	else
+                                	{
+                                		userID = null;
+                                	}
+//                                	userIdCookieFound = true;                                 	
+                                	break;
+                                }
                         	}
+//                        	if (!userIdCookieFound)
+//                        	{
+//                               	System.out.println("OrdersAlertFilter:doFilter() - userID cookie not found" );
+//                        	}
                         }
-                        else
-                        {
-                        	System.out.println("OrdersAlertFilter:doFilter() -  the request has no cookies" );
-                        }
+//                        else
+//                        {
+//                        	System.out.println("OrdersAlertFilter:doFilter() -  the request has no cookies" );
+//                        }
                         
-                    
-                       	
+                        
                     }
                     if ( (userID != null) && (userID.trim().length()>0) )
                     {    
@@ -139,24 +138,6 @@ public class OrdersAlertFilter implements Filter {
         }
 
         ServletContext sc = filterConfig.getServletContext();
-        
-        
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secuere connection (ie. http) between the browser and the kubectl proxy.
-        SessionCookieConfig sessionCookieConfig = sc.getSessionCookieConfig();
-        if (sessionCookieConfig != null) 
-        {
-			System.out.println("TradeAppServlet:doFilter() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
-//        	sessionCookieConfig.setSecure(false);
-//        	sessionCookieConfig.setHttpOnly(true);
-//        	sessionCookieConfig.setPath("/");
-        }
-        else
-        {
-        	System.out.println("TradeAppServlet:doFilter() -  the context has no session cookie" );
-        }
-        
-        
         
         //String xyz = (String) sc.getAttribute("hitCounter");
         chain.doFilter(req, resp/*wrapper*/);        

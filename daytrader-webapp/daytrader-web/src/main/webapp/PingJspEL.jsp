@@ -20,7 +20,7 @@
     <title>PingJspEL</title>
 </head>
 <body>
-<%@ page import="org.apache.geronimo.daytrader.javaee6.utils.*,org.apache.geronimo.daytrader.javaee6.entities.*" session="false" %>
+<%@ page import="org.apache.geronimo.daytrader.javaee6.utils.*,org.apache.geronimo.daytrader.javaee6.entities.*" session="true" %>
 
 <%!
 int hitCount = 0;

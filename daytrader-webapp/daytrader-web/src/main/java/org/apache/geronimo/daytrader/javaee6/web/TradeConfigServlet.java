@@ -16,10 +16,6 @@
  */
 package org.apache.geronimo.daytrader.javaee6.web;
 
-// on 08-02-18 -- TODO (Stateless Processes)  
-//	- Refactor setAttribute to write to DynamoDB
-// 	- Refactor getAttribute to read from DynamoDB
-//	- Make these same changes to the JSPs.
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -358,22 +354,22 @@ public class TradeConfigServlet extends HttpServlet {
         throws ServletException, IOException {
 
     	
-    	
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        ServletContext ctx = getServletConfig().getServletContext();
-        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
-        if (sessionCookieConfig != null) 
-        {
-			System.out.println("TradeConfigServlet:service() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
-//        	sessionCookieConfig.setSecure(false);
-//        	sessionCookieConfig.setHttpOnly(true);
-//        	sessionCookieConfig.setPath("/");
-        }
-        else
-        {
-        	System.out.println("TradeConfigServlet:service() -  the context has no session cookie" );
-        }
+//      ServletContext ctx = getServletConfig().getServletContext();
+//    	
+//		// Set the cookie properties to make sure the browser will send them over the
+//      // in-secure connection (ie. http) between the browser and the kubectl proxy.
+//        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
+//        if (sessionCookieConfig != null) 
+//        {
+//			System.out.println("TradeConfigServlet:service() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
+////        	sessionCookieConfig.setSecure(false);
+////        	sessionCookieConfig.setHttpOnly(true);
+////        	sessionCookieConfig.setPath("/");
+//        }
+//        else
+//        {
+//        	System.out.println("TradeConfigServlet:service() -  the context has no session cookie" );
+//        }
         
         
     	

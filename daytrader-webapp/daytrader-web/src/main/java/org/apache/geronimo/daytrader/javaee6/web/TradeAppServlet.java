@@ -34,10 +34,6 @@ import java.io.IOException;
  * forms and posting dynamic data.
  */
 
-// on 08-02-18 -- TODO (Stateless Processes) 
-//	- Refactor setAttribute to write to DynamoDB
-//	- Refactor getAttribute to read from DynamoDB
-//	- Make these same changes to the JSPs.
 
 @WebServlet("/app")
 public class TradeAppServlet extends HttpServlet {
@@ -117,9 +113,7 @@ public class TradeAppServlet extends HttpServlet {
 
         String action = null;
         String userID = null;
-        // String to create full dispatch path to TradeAppServlet w/ request
-        // Parameters
-        String dispPath = null; // Dispatch Path to TradeAppServlet
+        // String to create full dispatch path to TradeAppServlet w/ request Parameters
 
         resp.setContentType("text/html");
         TradeServletAction tsAction = new TradeServletAction();
@@ -127,26 +121,8 @@ public class TradeAppServlet extends HttpServlet {
         // Dyna - need status string - prepended to output
         action = req.getParameter("action");
        
-        
-        
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
         ServletContext ctx = getServletConfig().getServletContext();
-        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
-        if (sessionCookieConfig != null) 
-        {
-			System.out.println("TradeAppServlet:performTask() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
-//        	sessionCookieConfig.setSecure(false);
-//        	sessionCookieConfig.setHttpOnly(true);
-//        	sessionCookieConfig.setPath("/");
-        }
-        else
-        {
-        	System.out.println("TradeAppServlet:performTask() -  the context has no session cookie" );
-        }
-	    
-	    
-
+       
         if (action == null) {
             tsAction.doWelcome(ctx, req, resp, "");
             return;
@@ -175,47 +151,51 @@ public class TradeAppServlet extends HttpServlet {
         }
 
         
-
+        
         HttpSession session = req.getSession(false);
-        if (session == null) // generate new session
+        if (session == null)
         {
-        	session = req.getSession();
-    		// Set the cookie properties to make sure the browser will send them over the
-            // insecuere connection (ie. http) between the browser and the kubectl proxy.
+        	// generate a new session
+        	session = req.getSession(true);
+            //setting session expiry to 5 minutes
+            session.setMaxInactiveInterval(5*60); 
         }
-        Cookie[] cookies = req.getCookies();
- 		if (cookies != null)
- 		{
- 			for(Cookie cookie : cookies)
- 			{		
- 				cookie.setSecure(false);
- 				cookie.setHttpOnly(true);
- 				cookie.setPath("/");
- 			}
- 		}
-        //setting session expiry to 5 minutes
-        session.setMaxInactiveInterval(5*60);   
 
-        userID = (String) session.getAttribute("uidBean");
-       
         
         
-        // For debug purposes only
-        cookies = req.getCookies();
- 		if (cookies != null)
- 		{
- 			for(Cookie cookie : cookies)
- 			{		
- 				System.out.println("TradeAppServlet:performTask() -  " + RequestUtils.encodeCookie(cookie) );
- 			}
- 		}
- 		else
- 		{
-				System.out.println("TradeAppServlet:performTask() -  the request has no cookies" );
- 		}
-        
-       	
- 		
+// Use cookies; instead of session attributes
+//        userID = (String) session.getAttribute("uidBean");
+//        boolean userIdCookieFound = false;
+        Cookie[] cookies = ((HttpServletRequest)req).getCookies();
+        if (cookies != null)
+        {
+        	for(Cookie cookie : cookies)
+        	{		
+                if (cookie.getName().equals("uidBean"))
+                {   
+                	System.out.println("TradeAppSerfvlet:performTask() - userID cookie found: " + RequestUtils.encodeCookie(cookie) );   
+                	if ( (cookie.getValue() != null) && (cookie.getValue().trim().length()>0) )
+                	{
+                    	userID = cookie.getValue();	
+                	}
+                	else
+                	{
+                		userID = null;
+                	}
+//                	userIdCookieFound = true;                                 	
+                	break;
+                }
+        	}
+//        	if (!userIdCookieFound)
+//        	{
+//               	System.out.println("TradeAppServlet:performTask() - userID cookie not found" );
+//        	}
+        }
+//        else
+//        {
+//        	System.out.println("TradeAppServlet:performTask() -  the request has no cookies" );
+//        }
+      	 		
         // The rest of the operations require the user to be logged in -
         // Get the Session and validate the user. It the user isn't in
         // the then return to the login page; otherwise continue
@@ -226,27 +206,42 @@ public class TradeAppServlet extends HttpServlet {
             return;
         }     
         
-        if (action.equals("quotes")) {
+        
+        if (action.equals("quotes")) 
+        {
             String symbols = req.getParameter("symbols");
             tsAction.doQuotes(ctx, req, resp, userID, symbols);
-        } else if (action.equals("buy")) {
+        } 
+        else if (action.equals("buy")) 
+        {           	
             String symbol = req.getParameter("symbol");
             String quantity = req.getParameter("quantity");
             tsAction.doBuy(ctx, req, resp, userID, symbol, quantity);
-        } else if (action.equals("sell")) {
+        } 
+        else if (action.equals("sell")) 
+        {   	
             int holdingID = Integer.parseInt(req.getParameter("holdingID"));
             tsAction.doSell(ctx, req, resp, userID, new Integer(holdingID));
-        } else if (action.equals("portfolio")
-                || action.equals("portfolioNoEdge")) {
+        } 
+        else if (action.equals("portfolio") || action.equals("portfolioNoEdge")) 
+        {           	
             tsAction.doPortfolio(ctx, req, resp, userID, "Portfolio as of "
                     + new java.util.Date());
-        } else if (action.equals("logout")) {
+        } 
+        else if (action.equals("logout")) 
+        {
             tsAction.doLogout(ctx, req, resp, userID);
-        } else if (action.equals("home")) {
+        } 
+        else if (action.equals("home")) 
+        {	
             tsAction.doHome(ctx, req, resp, userID, "Ready to Trade");
-        } else if (action.equals("account")) {
+        } 
+        else if (action.equals("account")) 
+        { 	
             tsAction.doAccount(ctx, req, resp, userID, "");
-        } else if (action.equals("update_profile")) {
+        } 
+        else if (action.equals("update_profile")) 
+        {           	
             String password = req.getParameter("password");
             String cpassword = req.getParameter("cpassword");
             String fullName = req.getParameter("fullname");
@@ -260,19 +255,23 @@ public class TradeAppServlet extends HttpServlet {
                     address == null ? "" : address.trim(),
                     creditcard == null ? "" : creditcard.trim(),
                     email == null ? "" : email.trim());
-        } else {
+        } 
+        else 
+        {  	
+            // Set the cookie properties to make sure the browser will send them over the
+            // in-secure connection (ie. http) between the browser and the kubectl proxy.
+            Cookie cookie = new Cookie("uidBean",userID);
+            cookie.setHttpOnly(true);
+            resp.addCookie(cookie);
+            cookie.setPath("/");
+            cookie.setSecure(false);
+            System.out.println("TradeAppServlet:performTask() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+              	
+               	
             System.out.println("TradeAppServlet: Invalid Action=" + action);
             tsAction.doWelcome(ctx, req, resp,
                     "TradeAppServlet: Invalid Action" + action);
         }
     }
-
-    private void sendRedirect(HttpServletResponse resp, String page)
-            throws ServletException, IOException {
-        resp.sendRedirect(resp.encodeRedirectURL(page));
-    }
-
-    // URL Path Prefix for dispatching to TradeAppServlet
-    private final static String tasPathPrefix = "/app?action=";
 
 }

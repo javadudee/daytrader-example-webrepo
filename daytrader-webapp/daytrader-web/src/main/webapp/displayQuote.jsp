@@ -16,7 +16,7 @@
 -->
 <%@ page
     import="java.math.BigDecimal, org.apache.geronimo.daytrader.javaee6.core.direct.*, org.apache.geronimo.daytrader.javaee6.entities.*, org.apache.geronimo.daytrader.javaee6.utils.*,org.apache.geronimo.daytrader.javaee6.core.api.*, org.apache.geronimo.daytrader.javaee6.web.TradeAction"
-    session="false" isThreadSafe="true" isErrorPage="false"%>
+    session="true" isThreadSafe="true" isErrorPage="false"%>
 <% 
     String symbol = request.getParameter("symbol");
     TradeServices tAction=null;

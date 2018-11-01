@@ -17,7 +17,6 @@
 
 package org.apache.geronimo.daytrader.javaee6.core.direct;
 
-import javax.servlet.SessionCookieConfig;
 import javax.servlet.http.Cookie;
 
 public class RequestUtils {
@@ -68,49 +67,6 @@ public class RequestUtils {
 	    if (cookie.getVersion() > 0) {
 	        buf.append("; Version=\"");
 	        buf.append(cookie.getVersion());
-	        buf.append("\"");
-	    }
-
-	    return (buf.toString());
-	}
-	
-	/**
-	 * Encode a session cookie config 
-	 */
-	public static String encodeSessionCookieConfig(SessionCookieConfig cookie) {
-
-	    StringBuffer buf = new StringBuffer( "Name" );
-	    buf.append("=");
-	    buf.append(cookie.getName());
-
-	    if (cookie.getComment() != null) {
-	        buf.append("; Comment=\"");
-	        buf.append(cookie.getComment());
-	        buf.append("\"");
-	    }
-
-	    if (cookie.getDomain() != null) {
-	        buf.append("; Domain=\"");
-	        buf.append(cookie.getDomain());
-	        buf.append("\"");
-	    }
-
-	    long age = cookie.getMaxAge();
-	    if (cookie.getMaxAge() >= 0) {
-	        buf.append("; Max-Age=\"");
-	        buf.append(cookie.getMaxAge());
-	        buf.append("\"");
-	    }
-
-	    if (cookie.getPath() != null) {
-	        buf.append("; Path=\"");
-	        buf.append(cookie.getPath());
-	        buf.append("\"");
-	    }
-
-	    if (cookie.isSecure()) {
-	        buf.append("; Secure=\"");
-	        buf.append(cookie.isSecure());
 	        buf.append("\"");
 	    }
 

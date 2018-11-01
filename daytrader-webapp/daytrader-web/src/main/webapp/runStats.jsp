@@ -22,7 +22,7 @@
 </HEAD>
 <BODY bgcolor="#ffffff" link="#000099">
 <%@ page import="org.apache.geronimo.daytrader.javaee6.utils.*"
-    session="false" isThreadSafe="true" isErrorPage="false"%>
+    session="true" isThreadSafe="true" isErrorPage="false"%>
 
 <jsp:useBean
     class="org.apache.geronimo.daytrader.javaee6.core.beans.RunStatsDataBean"

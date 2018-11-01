@@ -34,10 +34,6 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 
 
-// on 08-02-18 -- TODO (Stateless Processes)  
-//	- Refactor setAttribute to write to DynamoDB
-//	- Refactor getAttribute to read from DynamoDB
-//	- Make these same changes to the JSPs.
 
 /**
  * TradeServletAction provides servlet specific client side access to each of
@@ -91,6 +87,20 @@ public class TradeServletAction {
     void doAccount(ServletContext ctx, HttpServletRequest req,
             HttpServletResponse resp, String userID, String results)
             throws javax.servlet.ServletException, java.io.IOException {
+    	
+    	
+    	
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        Cookie cookie = new Cookie("uidBean",userID);
+        cookie.setHttpOnly(true);
+        resp.addCookie(cookie);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+       	System.out.println("TradeServletAction:doAccount() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+       	
+       	
+      
         try {
 
             AccountDataBean accountData = tAction.getAccountData(userID);
@@ -162,44 +172,50 @@ public class TradeServletAction {
             String cpassword, String fullName, String address,
             String creditcard, String email)
             throws javax.servlet.ServletException, java.io.IOException {
-        String results = "";
-
+        
+    	String results = "";
+     	
         // First verify input data
         boolean doUpdate = true;
-        if (password.equals(cpassword) == false) {
+        if (password.equals(cpassword) == false) 
+        {
             results = "Update profile error: passwords do not match";
             doUpdate = false;
-        } else if (password.length() <= 0 || fullName.length() <= 0
-                || address.length() <= 0 || creditcard.length() <= 0
-                || email.length() <= 0) {
+        } 
+        else if (password.length() <= 0 || fullName.length() <= 0 
+        		|| address.length() <= 0 || creditcard.length() <= 0
+                || email.length() <= 0) 
+        {
             results = "Update profile error: please fill in all profile information fields";
             doUpdate = false;
         }
         AccountProfileDataBean accountProfileData = new AccountProfileDataBean(
                 userID, password, fullName, address, email, creditcard);
-        try {
-            if (doUpdate) {
-                accountProfileData = tAction
-                        .updateAccountProfile(accountProfileData);
+        try 
+        {
+            if (doUpdate) 
+            {
+                accountProfileData = tAction.updateAccountProfile(accountProfileData);
                 results = "Account profile update successful";
             }
 
-        } catch (java.lang.IllegalArgumentException e) { // this is a user
-                                                            // error so I will
-            // forward them to another page rather than throw a 500
-            req
-                    .setAttribute(
+        } 
+        catch (java.lang.IllegalArgumentException e) 
+        { 
+        	// this is a user error so I will forward them to another page rather than throw a 500
+            req.setAttribute(
                             "results",
                             results
                                     + "invalid argument, check userID is correct, and the database is populated"
                                     + userID);
-            Log
-                    .error(
+            Log.error(
                             e,
                             "TradeServletAction.doAccount(...)",
                             "illegal argument, information should be in exception string",
                             "treating this as a user error and forwarding on to a new page");
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             // log the exception with error page
             throw new ServletException(
                     "TradeServletAction.doAccountUpdate(...)"
@@ -237,6 +253,17 @@ public class TradeServletAction {
 
         String results = "";
 
+    	
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        Cookie cookie = new Cookie("uidBean",userID);
+        cookie.setHttpOnly(true);
+        resp.addCookie(cookie);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+       	System.out.println("TradeServletAction:doSell() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+        
+       	
         try {
             OrderDataBean orderData = tAction.buy(userID, symbol, new Double(
                     quantity).doubleValue(), TradeConfig.orderProcessingMode);
@@ -260,8 +287,7 @@ public class TradeServletAction {
                     + " exception buying stock " + symbol + " for user "
                     + userID, e);
         }
-        requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.ORDER_PAGE));
+        requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.ORDER_PAGE));
     }
 
     /**
@@ -291,6 +317,16 @@ public class TradeServletAction {
         BigDecimal balance;
         String result = "";
         
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        Cookie cookie = new Cookie("uidBean",userID);
+        cookie.setHttpOnly(true);
+        resp.addCookie(cookie);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+       	System.out.println("TradeServletAction:doHome() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+       	
+       	      
         try {
             AccountDataBean accountData = tAction.getAccountData(userID);
             Collection<HoldingDataBean> holdingDataBeans = tAction.getHoldings(userID);
@@ -350,8 +386,7 @@ public class TradeServletAction {
             }
         }
 
-        requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.HOME_PAGE));
+        requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.HOME_PAGE));
     }
 
     /**
@@ -394,49 +429,44 @@ public class TradeServletAction {
             	
             	System.out.println("TradeServletAction#doLogin() - login was successful");
 
-            	System.out.println("TradeServletAction#doLogin() - invalidate the old session");
+            	// First step, invalidate the old session and its cookies
             	if (oldSession != null) 
             	{
             		oldSession.invalidate();
+            		
+            		/*
+            		 * Invalidate all cookies by, for each cookie received,
+            		 * overwriting value and instructing browser to delete it
+            		 */
+            		Cookie[] cookies = req.getCookies();
+            		if (cookies != null && cookies.length > 0) 
+            		{
+            			for (Cookie cookie : cookies) 
+            			{
+            				cookie.setValue("-");
+            				cookie.setMaxAge(0);
+            				resp.addCookie(cookie);
+            			}
+            		}
             	}
-                
-            	System.out.println("TradeServletAction#doLogin() - generate a new session");               
-            	HttpSession session = req.getSession();
-            
-            	// Set the cookie properties to make sure the browser will send them over the
-            	// in-secuere connection (ie. http) between the browser and the kubectl proxy.
-            	Cookie[] cookies = req.getCookies();
-         		if (cookies != null)
-         		{
-                	for(Cookie cookie : cookies)
-                	{		
-                		cookie.setSecure(false);
-                		cookie.setHttpOnly(true);
-            	    	cookie.setPath("/");
-            	    }
-         		}
+            	
+            	// Second step: generate the new session               
+            	HttpSession session = req.getSession(true);
+            	
             	//setting session expiry to 5 minutes
             	session.setMaxInactiveInterval(5*60);   
             	session.setAttribute("uidBean", userID);
-               	
             	
-                
-            	// For debug purposes only
-            	cookies = req.getCookies();
-         		if (cookies != null)
-         		{
-         			for(Cookie cookie : cookies)
-         			{		
-         				System.out.println("TradeServletAction:doLogin() -  " + RequestUtils.encodeCookie(cookie) );
-         			}
-         		}
-         		else
-         		{
-     				System.out.println("TradeServletAction:doLogin() -  the request has no cookies" );
-         		}
-         		
-     
-                
+        		// Set the cookie properties to make sure the browser will send them over the
+                // in-secure connection (ie. http) between the browser and the kubectl proxy.
+                Cookie cookie = new Cookie("uidBean",userID);
+                cookie.setHttpOnly(true);
+                resp.addCookie(cookie);
+                cookie.setPath("/");
+                cookie.setSecure(false);
+               	System.out.println("TradeServletAction#doLogin() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+            	
+               	
                 results = "Ready to Trade";            
                 doHome(ctx, req, resp, userID, results);
                 return;
@@ -449,46 +479,6 @@ public class TradeServletAction {
                                 "TradeServletAction.doLogin(...)",
                                 "Error finding account for user " + userID + "",
                                 "user entered a bad username or the database is not populated");
-                
-                
-
-            	// set cookies context
-            	if (oldSession != null) 
-            	{
-            		// Set the cookie properties to make sure the browser will send them over the
-            		// in-secuere connection (ie. http) between the browser and the kubectl proxy.
-            		Cookie[] cookies = req.getCookies();
-             		if (cookies != null)
-             		{
-             			for(Cookie cookie : cookies)
-             			{		
-             				cookie.setSecure(false);
-             				cookie.setHttpOnly(true);
-             				cookie.setPath("/");
-             			}
-             		}
-            		//setting session expiry to 5 minutes
-            		oldSession.setMaxInactiveInterval(5*60);   
-               	
-            	
-                
-            		// For debug purposes only
-            		cookies = req.getCookies();
-             		if (cookies != null)
-             		{
-             			for(Cookie cookie : cookies)
-             			{		
-             				System.out.println("TradeServletAction#doLogin() -  " + RequestUtils.encodeCookie(cookie) );
-             			}
-             		}
-             		else
-             		{
-         				System.out.println("TradeServletAction#doLogin() -  the request has no cookies" );
-             		}
-            	
-             		
-             		
-            	}
             }
         } catch (java.lang.IllegalArgumentException e) { // this is a user
                                                             // error so I will
@@ -567,59 +557,27 @@ public class TradeServletAction {
             throw new ServletException("TradeServletAction.doLogout(...)"
                     + "exception logging out user " + userID, e);
         }
-        //invalidate the session if exists
+        
+        //Invalidate the session if exists
         HttpSession session = req.getSession(false);
         if (session != null) 
         {
             session.invalidate();
+            
+    		/*
+    		 * Invalidate all cookies by, for each cookie received,
+    		 * overwriting value and instructing browser to deletes 
+    		 * it
+    		 */
+    		Cookie[] cookies = req.getCookies();
+    		if (cookies != null && cookies.length > 0) {
+    			for (Cookie cookie : cookies) {
+    				cookie.setValue("-");
+    				cookie.setMaxAge(0);
+    				resp.addCookie(cookie);
+    			}
+    		}	
         }
-
-        Object o = req.getAttribute("TSS-RecreateSessionInLogout");
-        if (o != null && ((Boolean) o).equals(Boolean.TRUE)) 
-        {
-            // Recreate Session object before writing output to the response
-            // Once the response headers are written back to the client the
-            // opportunity
-            // to create a new session in this request may be lost
-            // This is to handle only the TradeScenarioServlet case
-        	
-        	
-        	
-           	session = req.getSession();
-       		// Set the cookie properties to make sure the browser will send them over the
-            // insecuere connection (ie. http) between the browser and the kubectl proxy.
-            Cookie[] cookies = req.getCookies();
-     		if (cookies != null)
-     		{
-     			for(Cookie cookie : cookies)
-     			{		
-     				cookie.setSecure(false);
-     				cookie.setHttpOnly(true);
-     				cookie.setPath("/");
-     			}
-     		}
-            //setting session expiry to 5 minutes
-            session.setMaxInactiveInterval(5*60);   
-
-            
-            
-            // For debug purposes only
-            cookies = req.getCookies();
-     		if (cookies != null)
-     		{
-     			for(Cookie cookie : cookies)
-     			{		
-     				System.out.println("TradeServletAction:doLogout() -  " + RequestUtils.encodeCookie(cookie) );
-     			}
-     		}
-     		else
-     		{
- 				System.out.println("TradeServletAction:doLogout() -  the request has no cookies" );
-     		}
-     		
-        
-        
-        }      
         requestDispatch(ctx, req, resp, userID, TradeConfig
                 .getPage(TradeConfig.WELCOME_PAGE));
     }
@@ -649,9 +607,20 @@ public class TradeServletAction {
     void doPortfolio(ServletContext ctx, HttpServletRequest req,
             HttpServletResponse resp, String userID, String results)
             throws ServletException, IOException {
+    	
+    	
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        Cookie cookie = new Cookie("uidBean",userID);
+        cookie.setHttpOnly(true);
+        resp.addCookie(cookie);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+       	System.out.println("TradeServletAction:doPortfolio() - set cookie: " + RequestUtils.encodeCookie(cookie) );
 
+       	
         try {
-            // Get the holdiings for this user
+            // Get the holdings for this user
 
             Collection quoteDataBeans = new ArrayList();
             Collection holdingDataBeans = tAction.getHoldings(userID);
@@ -728,6 +697,17 @@ public class TradeServletAction {
         // Edge caching.
         //            
 
+    	
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        Cookie cookie = new Cookie("uidBean",userID);
+        cookie.setHttpOnly(true);
+        resp.addCookie(cookie);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+       	System.out.println("TradeAppServletAction:doQuotes() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+       	
+        
         requestDispatch(ctx, req, resp, userID, TradeConfig
                 .getPage(TradeConfig.QUOTE_PAGE));
     }
@@ -834,6 +814,16 @@ public class TradeServletAction {
             HttpServletResponse resp, String userID, Integer holdingID)
             throws ServletException, IOException {
         String results = "";
+        
+		// Set the cookie properties to make sure the browser will send them over the
+        // in-secure connection (ie. http) between the browser and the kubectl proxy.
+        Cookie cookie = new Cookie("uidBean",userID);
+        cookie.setHttpOnly(true);
+        resp.addCookie(cookie);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+       	System.out.println("TradeServletAction:doSell() - set cookie: " + RequestUtils.encodeCookie(cookie) );
+       	
         try {
             OrderDataBean orderData = tAction.sell(userID, holdingID,
                     TradeConfig.orderProcessingMode);
@@ -877,8 +867,4 @@ public class TradeServletAction {
         ctx.getRequestDispatcher(page).include(req, resp);
     }
 
-    private void sendRedirect(HttpServletResponse resp, String page)
-            throws ServletException, IOException {
-        resp.sendRedirect(resp.encodeRedirectURL(page));
-    }
 }
