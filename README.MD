@@ -389,6 +389,7 @@ it still contains the business functions, their implementations have been change
 
     The functional test is done in three phases: pre-functional-test functional-test, and post-functional-test
 
+
 #### Phase #1: Pre-Functional Test
     
         Deploy microservies per their Continuous Delivery instructions. See the README.MD files in the following repos
@@ -398,8 +399,9 @@ it still contains the business functions, their implementations have been change
             3.  daytrader-example-portfoliosrepo
             4.  daytrader-example-quotesrepo
             5.  daytrader-example-webrepo
+               
                 
-#### Functional Test
+#### Phase #2: Functional Test
 
         For Minikube,  
         
@@ -465,7 +467,7 @@ it still contains the business functions, their implementations have been change
 			That's it! You have now tested the daytrader
         
         
-#### Post-Functional Test
+#### Phase #3: Post-Functional Test
 
         (Optional)
                           
