@@ -302,7 +302,7 @@ it still contains the business functions, their implementations have been change
         
             2.  $ kubectl get services
         
-                NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
+                NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
                 daytrader-web     ClusterIP   10.100.17.24     <none>        443/TCP         3d
        
                 ## Notes
@@ -311,46 +311,37 @@ it still contains the business functions, their implementations have been change
                     to one or more pods. When the service proxy receives an HTTPS request, it selects one of the endpoints (pods) and forwards 
                     it to the pod. The application running in the pod handles the request and returns an HTTPS response
             
-                b.  There is no EXTERNAL-IP to the service. This means that you can't access this service from outside the cluster. You can only 
-                    access it from inside the cluster or from another component that resides inside the cluster. These options will be described 
-                    below
+                b.  There is no EXTERNAL-IP to the service. This means that you can't access the service from outside the cluster. That said,
+                    you can assess it driectly from an application (or from a shell) that is running inside the pod, and indirectly by way of
+                    the API Server. Both options are discussed below.
         
-        To access the service from inside the cluster,
+        Access the service directly,
             
             1.  $ kubectl get pods
         
                 # Note the NAME of the web pod; you'll need it to execute the next command
         
             2.  $ kubectl exec <POD_NAME> -it - curl -k https://<CLUSTER-IP>/health
-        
-            -- OR --
             
-                $ kubectl exec <POD_NAME> -it - curl -k https://<SERVICE_NAME>/health
-            
-            ## Notes
-        
-                a.  These 'curl' commands don't work if you run them in the web pod on Minikube. If you run them on another POD, they do work.
-        
-                b.  These commands instruct Kubernetes to execute the "curl" command inside the container of one of the pods. Curl then sends an HTTPS 
-                    request to the service IP; which is backed by one of more pods. The service proxy selected a random pod and forwarded the request 
-                    to it. The application running inside the pod handled the request, and an HTTPS response indicating that it is "UP".  
-            
-        To access the service from outside the cluster, using the API server
+                {"status":"UP"}
+  
+        Access the service indirectly (via  the API Server)
                         
             1.  $ kubectl proxy
         
                 Starting to serve on 127.0.0.1:8001
                 
-                ## Takes care of locating and authenticating to the API server.
+                ## Locates and authenticates to the API Server.
 
             2.  $ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health
         
-                ## The above command accesses the web service through the API Server.
-
+                ## Accesses the web service through the API Server.       
+        
         See also https://kubernetes.io/docs/concepts/services-networking/service/
+            
 
-      
-### Troubleshooting
+        
+#### Troubleshooting
         
     Review the standard output from your application using your pod names
     
@@ -358,11 +349,40 @@ it still contains the business functions, their implementations have been change
         
         ## The -f option tails the logs
                 
-    Open a bash terminal using your pod names
+    Open a bash terminal into your pods
 
         $ kubectl exec -ti {POD_NAME} bash
         # echo $SERVER_PORT    ## you should see 1443
         # exit
+        
+    Use the kubernetes dashboard to manage and troubleshoot your cluster
+    
+        1.  Minikube
+        
+                a.  $ minikube dashboard
+        
+        2.  EKS (https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
+        
+                a.  $ kubectl proxy
+                
+                b.  $ kubectl -n kube-system get secrets | grep admin
+                
+                    ## Copy the NAME of the admin-user-token
+                
+                c.  $ kubectl -n kube-system describe secrets <ADMIN_USER_TOKEN>
+                
+                    ## Copy the value of the authentication token
+                                    
+                d.  Open the following link in a browser to access the dashboard
+                
+                    http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+                    
+                e.  You will see a login screen; choose Token and then enter the <AUTHENTICATION_TOKEN> from step c. 
+   
+        See also https://github.com/AcalephStorage/kubernetes-dashboard/blob/master/docs/user-guide/troubleshooting.md
+                
+                
+
 
 
 ### Functional Test (Kubernetes)
