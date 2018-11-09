@@ -20,12 +20,10 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.geronimo.daytrader.javaee6.core.api.TradeServices;
-import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
-import org.apache.geronimo.daytrader.javaee6.web.TradeAction;
+import org.apache.geronimo.daytrader.javaee6.core.direct.CookieUtils;
 import org.apache.geronimo.daytrader.javaee6.entities.*;
 import org.apache.geronimo.daytrader.javaee6.utils.*;
-
-
+import org.apache.geronimo.daytrader.javaee6.web.TradeAction;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -86,51 +84,38 @@ public class TradeServletAction {
      */
     void doAccount(ServletContext ctx, HttpServletRequest req,
             HttpServletResponse resp, String userID, String results)
-            throws javax.servlet.ServletException, java.io.IOException {
-    	
-    	
-    	
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        Cookie cookie = new Cookie("uidBean",userID);
-        cookie.setHttpOnly(true);
-        resp.addCookie(cookie);
-        cookie.setPath("/");
-        cookie.setSecure(false);
-       	System.out.println("TradeServletAction:doAccount() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-       	
-       	
-      
-        try {
-
+            throws javax.servlet.ServletException, java.io.IOException 
+    {  
+        try 
+        {
             AccountDataBean accountData = tAction.getAccountData(userID);
-            AccountProfileDataBean accountProfileData = tAction
-                    .getAccountProfileData(userID);
+            AccountProfileDataBean accountProfileData = tAction.getAccountProfileData(userID);
             ArrayList orderDataBeans = (TradeConfig.getLongRun() ? new ArrayList() : (ArrayList) tAction.getOrders(userID));
+            
+        	Log.trace("TradeServletAction#doAccount() - account was successful");
             
             req.setAttribute("accountData", accountData);
             req.setAttribute("accountProfileData", accountProfileData);
             req.setAttribute("orderDataBeans", orderDataBeans);
             req.setAttribute("results", results);
-            requestDispatch(ctx, req, resp, userID, TradeConfig
-                    .getPage(TradeConfig.ACCOUNT_PAGE));
-        } catch (java.lang.IllegalArgumentException e) { // this is a user
-                                                            // error so I will
-            // forward them to another page rather than throw a 500
-            req.setAttribute("results", results
-                    + "could not find account for userID = " + userID);
-            requestDispatch(ctx, req, resp, userID, TradeConfig
-                    .getPage(TradeConfig.HOME_PAGE));
+            
+            requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.ACCOUNT_PAGE));
+        } 
+        catch (java.lang.IllegalArgumentException e) 
+        { 
+        	// this is a user error so will forward to another page rather than throw a 500
+            req.setAttribute("results", results + "could not find account for userID = " + userID);
+            requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.HOME_PAGE));
             // log the exception with an error level of 3 which means, handled
             // exception but would invalidate a automation run
-            Log.error(
-                            "TradeServletAction.doAccount(...)",
-                            "illegal argument, information should be in exception string",
-                            e);
-        } catch (Exception e) {
+            Log.error("TradeServletAction.doAccount(...)",
+                      "illegal argument, information should be in exception string",
+                      e);
+        } 
+        catch (Exception e) 
+        {
             // log the exception with error page
-            throw new ServletException("TradeServletAction.doAccount(...)"
-                    + " exception user =" + userID, e);
+            throw new ServletException("TradeServletAction.doAccount(...)" + " exception user =" + userID, e);
         }
 
     }
@@ -197,6 +182,7 @@ public class TradeServletAction {
             {
                 accountProfileData = tAction.updateAccountProfile(accountProfileData);
                 results = "Account profile update successful";
+            	Log.trace("TradeServletAction#doAccountUpdate() - account update was successful");
             }
 
         } 
@@ -209,10 +195,10 @@ public class TradeServletAction {
                                     + "invalid argument, check userID is correct, and the database is populated"
                                     + userID);
             Log.error(
-                            e,
-                            "TradeServletAction.doAccount(...)",
-                            "illegal argument, information should be in exception string",
-                            "treating this as a user error and forwarding on to a new page");
+            		e,
+                    "TradeServletAction.doAccount(...)",
+                    "illegal argument, information should be in exception string",
+                    "treating this as a user error and forwarding on to a new page");
         } 
         catch (Exception e) 
         {
@@ -253,26 +239,20 @@ public class TradeServletAction {
 
         String results = "";
 
-    	
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        Cookie cookie = new Cookie("uidBean",userID);
-        cookie.setHttpOnly(true);
-        resp.addCookie(cookie);
-        cookie.setPath("/");
-        cookie.setSecure(false);
-       	System.out.println("TradeServletAction:doSell() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-        
-       	
-        try {
+        try 
+        {
             OrderDataBean orderData = tAction.buy(userID, symbol, new Double(
                     quantity).doubleValue(), TradeConfig.orderProcessingMode);
 
+        	Log.trace("TradeServletAction#doBuy() - buy was successful");
+        	
             req.setAttribute("orderData", orderData);
             req.setAttribute("results", results);
-        } catch (java.lang.IllegalArgumentException e) { // this is a user
-                                                            // error so I will
-            // forward them to another page rather than throw a 500
+           	
+        } 
+        catch (java.lang.IllegalArgumentException e) 
+        { 
+        	// this is a user error so forward them to another page rather than throw a 500
             req.setAttribute("results", results + "illegal argument:");
             requestDispatch(ctx, req, resp, userID, TradeConfig
                     .getPage(TradeConfig.HOME_PAGE));
@@ -281,7 +261,9 @@ public class TradeServletAction {
             Log.error(e, "TradeServletAction.doBuy(...)",
                     "illegal argument. userID = " + userID, "symbol = "
                             + symbol);
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             // log the exception with error page
             throw new ServletException("TradeServletAction.buy(...)"
                     + " exception buying stock " + symbol + " for user "
@@ -313,23 +295,12 @@ public class TradeServletAction {
     void doHome(ServletContext ctx, HttpServletRequest req,
             HttpServletResponse resp, String userID, String results)
             throws javax.servlet.ServletException, java.io.IOException {
-        
-        BigDecimal balance;
-        String result = "";
-        
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        Cookie cookie = new Cookie("uidBean",userID);
-        cookie.setHttpOnly(true);
-        resp.addCookie(cookie);
-        cookie.setPath("/");
-        cookie.setSecure(false);
-       	System.out.println("TradeServletAction:doHome() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-       	
-       	      
+                      	      
         try {
             AccountDataBean accountData = tAction.getAccountData(userID);
             Collection<HoldingDataBean> holdingDataBeans = tAction.getHoldings(userID);
+            
+        	Log.trace("TradeServletAction#doHome() - home was successful");
 
             // Edge Caching:
             // Getting the MarketSummary has been moved to the JSP
@@ -343,21 +314,19 @@ public class TradeServletAction {
             // See Edge Caching above
             // req.setAttribute("marketSummaryData", marketSummaryData);
             req.setAttribute("results", results);
+           	
         } catch (java.lang.IllegalArgumentException e) { 
             // this is a user error so I will
             // forward them to another page rather than throw a 500
             req.setAttribute("results", results + "check userID = " + userID
                 + " and that the database is populated");
-            requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.HOME_PAGE));
+            requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.HOME_PAGE));
             // log the exception with an error level of 3 which means, handled
             // exception but would invalidate a automation run
             Log.error("TradeServletAction.doHome(...)"
                 + "illegal argument, information should be in exception string"
                 + "treating this as a user error and forwarding on to a new page",
                 e);
-        // } catch (javax.ejb.FinderException e) {
-            // moved to below
         } catch (Exception e) {
             boolean javaee = false;
             // since we will not have the EJB Spec for non-JavaEE containers,
@@ -419,90 +388,83 @@ public class TradeServletAction {
         String results = "";
         try {
             // Got a valid userID and passwd, attempt login
-
             AccountDataBean accountData = tAction.login(userID, passwd);
-
-        	// get the old session 
-        	HttpSession oldSession = req.getSession(false);
             
-            if (accountData != null) { 
-            	
-            	System.out.println("TradeServletAction#doLogin() - login was successful");
+            if (accountData != null) 
+            { 	
+            	// Login was successful
+            	Log.trace("TradeServletAction#doLogin() - login was successful");
 
-            	// First step, invalidate the old session and its cookies
-            	if (oldSession != null) 
-            	{
-            		oldSession.invalidate();
-            		
-            		/*
-            		 * Invalidate all cookies by, for each cookie received,
-            		 * overwriting value and instructing browser to delete it
-            		 */
-            		Cookie[] cookies = req.getCookies();
-            		if (cookies != null && cookies.length > 0) 
-            		{
-            			for (Cookie cookie : cookies) 
-            			{
-            				cookie.setValue("-");
-            				cookie.setMaxAge(0);
-            				resp.addCookie(cookie);
-            			}
-            		}
-            	}
-            	
-            	// Second step: generate the new session               
+            	// Invalidate the old session; if there is one
+       			HttpSession oldSession = req.getSession(false);
+       			if (oldSession != null) 
+       			{
+       				oldSession.invalidate();
+       			}
+       		            
+   				/*
+   				 * Invalidate all cookies by, for each cookie received,
+   				 * overwriting value and instructing browser to delete 
+   				 * it; except for the userId cookie; which we will set
+   				 * to the newly logged in user. 
+   				 */
+   				Cookie[] cookies = req.getCookies();
+   				if (cookies != null && cookies.length > 0) 
+   				{
+   					for (Cookie cookie : cookies) 
+   					{
+						cookie.setValue("-");
+						cookie.setMaxAge(0);
+						resp.addCookie(cookie);
+   					}
+  				}
+            
+            	// Now you can generate the new session               
             	HttpSession session = req.getSession(true);
+            	session.setMaxInactiveInterval(5*60);
             	
-            	//setting session expiry to 5 minutes
-            	session.setMaxInactiveInterval(5*60);   
-            	session.setAttribute("uidBean", userID);
-            	
-        		// Set the cookie properties to make sure the browser will send them over the
-                // in-secure connection (ie. http) between the browser and the kubectl proxy.
-                Cookie cookie = new Cookie("uidBean",userID);
-                cookie.setHttpOnly(true);
-                resp.addCookie(cookie);
-                cookie.setPath("/");
-                cookie.setSecure(false);
-               	System.out.println("TradeServletAction#doLogin() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-            	
+            	// And add the new UserID cookie
+				resp.addCookie(CookieUtils.newCookie("uidBean",userID));
+				Log.debug("TradeServletAction#login() - addCookie(uidBean," + userID + ")" );   
                	
                 results = "Ready to Trade";            
                 doHome(ctx, req, resp, userID, results);
                 return;
-            } else {            	
-            	req.setAttribute("results", results
-                        + "\nCould not find account for user=" + userID);
+            }
+            else
+            {
+            	// this is a user error wo will forward them to another page rather than throw a 500
+               	req.setAttribute("results", results + "\nCould not find account for user=" + userID);
                 // log the exception with an error level of 3 which means,
                 // handled exception but would invalidate a automation run
-                Log.log(
-                                "TradeServletAction.doLogin(...)",
-                                "Error finding account for user " + userID + "",
-                                "user entered a bad username or the database is not populated");
+                Log.debug(
+                       "TradeServletAction.doLogin(...)" +
+                       "Error finding account for user " + userID + 
+                       "user entered a bad username or the database is not populated");
             }
-        } catch (java.lang.IllegalArgumentException e) { // this is a user
-                                                            // error so I will
-            // forward them to another page rather than throw a 500
-            req.setAttribute("results", results + "illegal argument:"
-                    + e.getMessage());
+        } 
+        catch (java.lang.IllegalArgumentException e) 
+        { 
+        	// this is a user error so forward them to another page rather than throw a 500
+            req.setAttribute("results", results + "illegal argument:" + e.getMessage());
             // log the exception with an error level of 3 which means, handled
             // exception but would invalidate a automation run
-            Log
-                    .error(
-                            e,
-                            "TradeServletAction.doLogin(...)",
-                            "illegal argument, information should be in exception string",
-                            "treating this as a user error and forwarding on to a new page");
-
-        } catch (Exception e) {
+            Log.error(
+            		e,
+                    "TradeServletAction.doLogin(...)",
+                    "illegal argument, information should be in exception string",
+                    "treating this as a user error and forwarding on to a new page");
+        } 
+        catch (Exception e) 
+        {
             // log the exception with error page
             throw new ServletException("TradeServletAction.doLogin(...)"
                     + "Exception logging in user=" + userID + " with password="
                     + passwd + "; " + e.getMessage(), e);
         }
-
-        requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.WELCOME_PAGE));
+        
+        // If you get here then login failed due to user error so forward them to another page
+        requestDispatch(ctx, req, resp, null, TradeConfig.getPage(TradeConfig.WELCOME_PAGE));
 
     }
 
@@ -532,24 +494,51 @@ public class TradeServletAction {
             IOException {
         String results = "";
 
-        try {
-            tAction.logout(userID);
+        try 
+        {
+            tAction.logout(userID);   
+        	// If no exception then logout was successful
+        	Log.trace("TradeServletAction#doLogout() - logout was successful");
+        	           
+        	// Invalidate the old session if there is one
+   			HttpSession oldSession = req.getSession(false);
+   			if (oldSession != null) 
+   			{
+   				oldSession.invalidate();
+   			}
+   		            
+			/*
+			 * Invalidate all cookies by, for each cookie received,
+			 * overwriting value and instructing browser to deletes 
+			 * it
+			 */
+			Cookie[] cookies = req.getCookies();
+			if (cookies != null && cookies.length > 0) 
+			{
+				for (Cookie cookie : cookies) 
+				{
+					cookie.setValue("-");
+					cookie.setMaxAge(0);
+					resp.addCookie(cookie);
+   				}
+        	}
 
-        } catch (java.lang.IllegalArgumentException e) { // this is a user
-                                                            // error so I will
-            // forward them to another page, at the end of the page.
-            req.setAttribute("results", results + "illegal argument:"
-                    + e.getMessage());
+        } 
+        catch (java.lang.IllegalArgumentException e) 
+        { 
+        	// this is a user error so forward them to another page, at the end of the page.
+            req.setAttribute("results", results + "illegal argument:" + e.getMessage());
 
             // log the exception with an error level of 3 which means, handled
             // exception but would invalidate a automation run
-            Log
-                    .error(
-                            e,
-                            "TradeServletAction.doLogout(...)",
-                            "illegal argument, information should be in exception string",
-                            "treating this as a user error and forwarding on to a new page");
-        } catch (Exception e) {
+            Log.error(
+                e,
+                "TradeServletAction.doLogout(...)",
+                "illegal argument, information should be in exception string",
+                "treating this as a user error and forwarding on to a new page");
+        } 
+        catch (Exception e) 
+        {
             // log the exception and foward to a error page
             Log.error(e, "TradeServletAction.doLogout(...):",
                     "Error logging out" + userID, "fowarding to an error page");
@@ -558,28 +547,7 @@ public class TradeServletAction {
                     + "exception logging out user " + userID, e);
         }
         
-        //Invalidate the session if exists
-        HttpSession session = req.getSession(false);
-        if (session != null) 
-        {
-            session.invalidate();
-            
-    		/*
-    		 * Invalidate all cookies by, for each cookie received,
-    		 * overwriting value and instructing browser to deletes 
-    		 * it
-    		 */
-    		Cookie[] cookies = req.getCookies();
-    		if (cookies != null && cookies.length > 0) {
-    			for (Cookie cookie : cookies) {
-    				cookie.setValue("-");
-    				cookie.setMaxAge(0);
-    				resp.addCookie(cookie);
-    			}
-    		}	
-        }
-        requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.WELCOME_PAGE));
+        requestDispatch(ctx, req, resp, null, TradeConfig.getPage(TradeConfig.WELCOME_PAGE));
     }
 
     /**
@@ -607,17 +575,6 @@ public class TradeServletAction {
     void doPortfolio(ServletContext ctx, HttpServletRequest req,
             HttpServletResponse resp, String userID, String results)
             throws ServletException, IOException {
-    	
-    	
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        Cookie cookie = new Cookie("uidBean",userID);
-        cookie.setHttpOnly(true);
-        resp.addCookie(cookie);
-        cookie.setPath("/");
-        cookie.setSecure(false);
-       	System.out.println("TradeServletAction:doPortfolio() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-
        	
         try {
             // Get the holdings for this user
@@ -639,18 +596,20 @@ public class TradeServletAction {
             } else {
                 results = results + ".  Your portfolio is empty.";
             }
+            
+        	Log.trace("TradeServletAction#doPortfolio() - portfolio was successful");
+            
             req.setAttribute("results", results);
             req.setAttribute("holdingDataBeans", holdingDataBeans);
             req.setAttribute("quoteDataBeans", quoteDataBeans);
-            requestDispatch(ctx, req, resp, userID, TradeConfig
-                    .getPage(TradeConfig.PORTFOLIO_PAGE));
-        } catch (java.lang.IllegalArgumentException e) { // this is a user
-                                                            // error so I will
-            // forward them to another page rather than throw a 500
-            req.setAttribute("results", results + "illegal argument:"
-                    + e.getMessage());
-            requestDispatch(ctx, req, resp, userID, TradeConfig
-                    .getPage(TradeConfig.PORTFOLIO_PAGE));
+            
+            requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.PORTFOLIO_PAGE));
+        } 
+        catch (java.lang.IllegalArgumentException e) 
+        { 
+        	// this is a user error so forward them to another page rather than throw a 500
+            req.setAttribute("results", results + "illegal argument:" + e.getMessage());
+            requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.PORTFOLIO_PAGE));
             // log the exception with an error level of 3 which means, handled
             // exception but would invalidate a automation run
             Log
@@ -659,10 +618,11 @@ public class TradeServletAction {
                             "TradeServletAction.doPortfolio(...)",
                             "illegal argument, information should be in exception string",
                             "user error");
-        } catch (Exception e) {
+        } 
+        catch (Exception e) 
+        {
             // log the exception with error page
-            throw new ServletException("TradeServletAction.doPortfolio(...)"
-                    + " exception user =" + userID, e);
+            throw new ServletException("TradeServletAction.doPortfolio(...)" + " exception user =" + userID, e);
         }
     }
 
@@ -696,20 +656,8 @@ public class TradeServletAction {
         // standalone "fragment", and thus is a candidate for
         // Edge caching.
         //            
-
-    	
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        Cookie cookie = new Cookie("uidBean",userID);
-        cookie.setHttpOnly(true);
-        resp.addCookie(cookie);
-        cookie.setPath("/");
-        cookie.setSecure(false);
-       	System.out.println("TradeAppServletAction:doQuotes() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-       	
         
-        requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.QUOTE_PAGE));
+        requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.QUOTE_PAGE));
     }
 
     /**
@@ -748,36 +696,37 @@ public class TradeServletAction {
             HttpServletResponse resp, String userID, String passwd,
             String cpasswd, String fullname, String ccn,
             String openBalanceString, String email, String address)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
         String results = "";
 
         try {
-            // Validate user passwords match and are atleast 1 char in length
-            if ((passwd.equals(cpasswd)) && (passwd.length() >= 1)) {
-
+            // Validate user passwords match and are at least 1 char in length
+            if ((passwd.equals(cpasswd)) && (passwd.length() >= 1)) 
+            {
                 AccountDataBean accountData = tAction.register(userID, passwd,
-                        fullname, address, email, ccn, new BigDecimal(
-                                openBalanceString));
-                if (accountData == null) {
+                        fullname, address, email, ccn, new BigDecimal(openBalanceString));
+                if (accountData == null) 
+                {
                     results = "Registration operation failed;";
-                    System.out.println(results);
+                    Log.trace(results);
                     req.setAttribute("results", results);
-                    requestDispatch(ctx, req, resp, userID, TradeConfig
-                            .getPage(TradeConfig.REGISTER_PAGE));
-                } else {
+                    requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.REGISTER_PAGE));
+                } 
+                else 
+                {	
+                	Log.trace("TradeServletAction#doRegister() - register was successful");
+                	
                     doLogin(ctx, req, resp, userID, passwd);
-                    results = "Registration operation succeeded;  Account "
-                            + accountData.getAccountID() + " has been created.";
+                    results = "Registration operation succeeded;  Account " + accountData.getAccountID() + " has been created.";
                     req.setAttribute("results", results);
-
                 }
             } else {
                 // Password validation failed
                 results = "Registration operation failed, your passwords did not match";
-                System.out.println(results);
+                Log.trace(results);
                 req.setAttribute("results", results);
-                requestDispatch(ctx, req, resp, userID, TradeConfig
-                        .getPage(TradeConfig.REGISTER_PAGE));
+                requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.REGISTER_PAGE));
             }
 
         } catch (Exception e) {
@@ -814,20 +763,12 @@ public class TradeServletAction {
             HttpServletResponse resp, String userID, Integer holdingID)
             throws ServletException, IOException {
         String results = "";
-        
-		// Set the cookie properties to make sure the browser will send them over the
-        // in-secure connection (ie. http) between the browser and the kubectl proxy.
-        Cookie cookie = new Cookie("uidBean",userID);
-        cookie.setHttpOnly(true);
-        resp.addCookie(cookie);
-        cookie.setPath("/");
-        cookie.setSecure(false);
-       	System.out.println("TradeServletAction:doSell() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-       	
+     	
         try {
-            OrderDataBean orderData = tAction.sell(userID, holdingID,
-                    TradeConfig.orderProcessingMode);
+            OrderDataBean orderData = tAction.sell(userID, holdingID, TradeConfig.orderProcessingMode);
 
+        	Log.trace("TradeServletAction#doSell() - sell was successful");
+            
             req.setAttribute("orderData", orderData);
             req.setAttribute("results", results);
         } catch (java.lang.IllegalArgumentException e) { // this is a user
@@ -847,8 +788,7 @@ public class TradeServletAction {
                     + " exception selling holding " + holdingID + " for user ="
                     + userID, e);
         }
-        requestDispatch(ctx, req, resp, userID, TradeConfig
-                .getPage(TradeConfig.ORDER_PAGE));
+        requestDispatch(ctx, req, resp, userID, TradeConfig.getPage(TradeConfig.ORDER_PAGE));
     }
 
     void doWelcome(ServletContext ctx, HttpServletRequest req,
@@ -856,14 +796,13 @@ public class TradeServletAction {
             IOException {
 
         req.setAttribute("results", status);
-        requestDispatch(ctx, req, resp, null, TradeConfig
-                .getPage(TradeConfig.WELCOME_PAGE));
+        requestDispatch(ctx, req, resp, null, TradeConfig.getPage(TradeConfig.WELCOME_PAGE));
     }
 
     private void requestDispatch(ServletContext ctx, HttpServletRequest req,
             HttpServletResponse resp, String userID, String page)
-            throws ServletException, IOException {
-
+            throws ServletException, IOException 
+    {       
         ctx.getRequestDispatcher(page).include(req, resp);
     }
 

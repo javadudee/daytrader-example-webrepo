@@ -17,10 +17,11 @@
 
 package org.apache.geronimo.daytrader.javaee6.core.direct;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-public class RequestUtils {
-	
+public class CookieUtils {
+		  
 	/**
 	 * Encode a cookie as per RFC 2109.  The resulting string 
 	 * can be used as the value for a <code>Set-Cookie</code> 
@@ -29,8 +30,8 @@ public class RequestUtils {
 	 * @param cookie The cookie to encode.
 	 * @return A string following RFC 2109.
 	 */
-	public static String encodeCookie(Cookie cookie) {
-
+	public static String encodeCookie(Cookie cookie) 
+	{
 	    StringBuffer buf = new StringBuffer( cookie.getName() );
 	    buf.append("=");
 	    buf.append(cookie.getValue());
@@ -71,6 +72,42 @@ public class RequestUtils {
 	    }
 
 	    return (buf.toString());
+	}
+	
+	/*
+	 * @param cookies The cookies
+	 * @param name The cookie's name.
+	 * @return The cookie's value.
+	 */
+	public static String getCookieValue( Cookie[] cookies, String name ) 
+	{
+		String value = null;
+		if (cookies != null)
+		{
+			for(Cookie cookie : cookies)
+			{	
+				if (name.equals(cookie.getName()))
+				{   
+					value = cookie.getValue();
+					break;
+				}
+    		}
+    	}
+		return value;
+    }
+	
+	/*
+	 * Set the cookie properties to make sure the browser will send them over the
+     * in-secure connection (ie. http) between the browser and the kubectl proxy. 
+	 */
+	public static Cookie newCookie( String name, String value ) 
+	{
+    	Cookie cookie = new Cookie(name,value);
+    	cookie.setHttpOnly(true);
+    	cookie.setPath("/");
+    	cookie.setSecure(false);
+    	cookie.setMaxAge(5*60); // set expiry to 5 mins    	
+    	return cookie;
 	}
 
 }

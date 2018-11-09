@@ -22,11 +22,11 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.WebFilter;
 
 
-import org.apache.geronimo.daytrader.javaee6.web.TradeAction;
 import org.apache.geronimo.daytrader.javaee6.core.api.TradeServices;
-import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
+import org.apache.geronimo.daytrader.javaee6.core.direct.CookieUtils;
 import org.apache.geronimo.daytrader.javaee6.utils.Log;
 import org.apache.geronimo.daytrader.javaee6.utils.TradeConfig;
+import org.apache.geronimo.daytrader.javaee6.web.TradeAction;
 
 
 @WebFilter("/app")
@@ -68,53 +68,14 @@ public class OrdersAlertFilter implements Filter {
                 {
                     String userID = null;
                     if ( action.equals("login") )
-                        userID = req.getParameter("uid");
-                    else
                     {
-                    	
-                    	
-                    	
-                        HttpSession session = ((HttpServletRequest)req).getSession(false);
-                        if (session == null) // generate new session
-                        {
-                        	session = ((HttpServletRequest)req).getSession(true);
-                            //set session expiry to 5 minutes
-                            session.setMaxInactiveInterval(5*60); 
-                        }
-
-                        // use cookies; instead of session attributes
-//                        userID = (String) session.getAttribute("uidBean");
-//                        boolean userIdCookieFound = false;
-                        Cookie[] cookies = ((HttpServletRequest)req).getCookies();
-                        if (cookies != null)
-                        {
-                        	for(Cookie cookie : cookies)
-                        	{		
-                                if (cookie.getName().equals("uidBean"))
-                                {   
-                                	System.out.println("OrdersAlertFilter:doFilter() - userID cookie found: " + RequestUtils.encodeCookie(cookie) );   
-                                	if ( (cookie.getValue() != null) && (cookie.getValue().trim().length()>0) )
-                                	{
-                                    	userID = cookie.getValue();	
-                                	}
-                                	else
-                                	{
-                                		userID = null;
-                                	}
-//                                	userIdCookieFound = true;                                 	
-                                	break;
-                                }
-                        	}
-//                        	if (!userIdCookieFound)
-//                        	{
-//                               	System.out.println("OrdersAlertFilter:doFilter() - userID cookie not found" );
-//                        	}
-                        }
-//                        else
-//                        {
-//                        	System.out.println("OrdersAlertFilter:doFilter() -  the request has no cookies" );
-//                        }
-                        
+                        userID = req.getParameter("uid");
+                    }
+                    else
+                    {	                    	
+                        // Use cookies instead of session attributes
+                        userID = CookieUtils.getCookieValue(((HttpServletRequest)req).getCookies(),"uidBean");
+                		Log.debug("OrderAlertFilter#doFilter(" + action + ") - getCookieValue(uidBean): " + userID );   
                         
                     }
                     if ( (userID != null) && (userID.trim().length()>0) )
@@ -122,11 +83,9 @@ public class OrdersAlertFilter implements Filter {
                         TradeServices tAction=null;
                         tAction = new TradeAction();
                         java.util.Collection closedOrders = tAction.getClosedOrders(userID);
-                        if ( (closedOrders!=null) && (closedOrders.size() > 0) ) {
+                        if ( (closedOrders!=null) && (closedOrders.size() > 0) ) 
+                        {
                             req.setAttribute("closedOrders", closedOrders);
-                        }
-                        if (Log.doTrace()) {
-                            Log.printCollection("OrderAlertFilter: userID="+userID+" closedOrders=", closedOrders);
                         }
                     }
                 }    

@@ -109,34 +109,40 @@ public class TradeAppServlet extends HttpServlet {
      *            Object that encapsulates the response from the servlet
      */
     public void performTask(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        String action = null;
-        String userID = null;
-        // String to create full dispatch path to TradeAppServlet w/ request Parameters
+            throws ServletException, IOException 
+    {
 
         resp.setContentType("text/html");
         TradeServletAction tsAction = new TradeServletAction();
 
-        // Dyna - need status string - prepended to output
-        action = req.getParameter("action");
+        String action = req.getParameter("action");
+        
+        String userID = null;
        
         ServletContext ctx = getServletConfig().getServletContext();
        
-        if (action == null) {
+        if (action == null) 
+        {
             tsAction.doWelcome(ctx, req, resp, "");
             return;
-        } else if (action.equals("login")) {            
+        } 
+        else if (action.equals("login")) 
+        {            
             userID = req.getParameter("uid");
             String passwd = req.getParameter("passwd");
-            String inScenario = req.getParameter("inScenario");
-            try {
+            try 
+            {
                 tsAction.doLogin(ctx, req, resp, userID, passwd);
-            } catch (ServletException se) {
+            } 
+            catch (ServletException se) 
+            {
+            	Log.error("TradeAppServlet#performTask(" + action + ") - " + userID, se ); 
                 tsAction.doWelcome(ctx, req, resp, se.getMessage());
             }
             return;
-        } else if (action.equals("register")) {
+        } 
+        else if (action.equals("register")) 
+        {
             userID = req.getParameter("user id");
             String passwd = req.getParameter("passwd");
             String cpasswd = req.getParameter("confirm passwd");
@@ -145,67 +151,23 @@ public class TradeAppServlet extends HttpServlet {
             String money = req.getParameter("money");
             String email = req.getParameter("email");
             String smail = req.getParameter("snail mail");
-            tsAction.doRegister(ctx, req, resp, userID, passwd, cpasswd,
-                    fullname, ccn, money, email, smail);
+            tsAction.doRegister(ctx, req, resp, userID, passwd, cpasswd, fullname, ccn, money, email, smail);    
             return;
         }
-
         
-        
-        HttpSession session = req.getSession(false);
-        if (session == null)
-        {
-        	// generate a new session
-        	session = req.getSession(true);
-            //setting session expiry to 5 minutes
-            session.setMaxInactiveInterval(5*60); 
-        }
-
-        
-        
-// Use cookies; instead of session attributes
-//        userID = (String) session.getAttribute("uidBean");
-//        boolean userIdCookieFound = false;
-        Cookie[] cookies = ((HttpServletRequest)req).getCookies();
-        if (cookies != null)
-        {
-        	for(Cookie cookie : cookies)
-        	{		
-                if (cookie.getName().equals("uidBean"))
-                {   
-                	System.out.println("TradeAppSerfvlet:performTask() - userID cookie found: " + RequestUtils.encodeCookie(cookie) );   
-                	if ( (cookie.getValue() != null) && (cookie.getValue().trim().length()>0) )
-                	{
-                    	userID = cookie.getValue();	
-                	}
-                	else
-                	{
-                		userID = null;
-                	}
-//                	userIdCookieFound = true;                                 	
-                	break;
-                }
-        	}
-//        	if (!userIdCookieFound)
-//        	{
-//               	System.out.println("TradeAppServlet:performTask() - userID cookie not found" );
-//        	}
-        }
-//        else
-//        {
-//        	System.out.println("TradeAppServlet:performTask() -  the request has no cookies" );
-//        }
+        // Use cookies instead of session attributes
+        userID = CookieUtils.getCookieValue(req.getCookies(),"uidBean");
+		Log.debug("TradeAppServlet#performTask(" + action + ") - getCookie(uidBean): " + userID ); 
       	 		
         // The rest of the operations require the user to be logged in -
         // Get the Session and validate the user. It the user isn't in
         // the then return to the login page; otherwise continue
         if (userID == null) 
         {
-            System.out.println("TradeAppServlet service error: User Not Logged in");
+            Log.error("TradeAppServlet#performTask() - User Not Logged in");
             tsAction.doWelcome(ctx, req, resp, "User Not Logged in");
             return;
         }     
-        
         
         if (action.equals("quotes")) 
         {
@@ -225,8 +187,7 @@ public class TradeAppServlet extends HttpServlet {
         } 
         else if (action.equals("portfolio") || action.equals("portfolioNoEdge")) 
         {           	
-            tsAction.doPortfolio(ctx, req, resp, userID, "Portfolio as of "
-                    + new java.util.Date());
+            tsAction.doPortfolio(ctx, req, resp, userID, "Portfolio as of " + new java.util.Date());
         } 
         else if (action.equals("logout")) 
         {
@@ -257,21 +218,11 @@ public class TradeAppServlet extends HttpServlet {
                     email == null ? "" : email.trim());
         } 
         else 
-        {  	
-            // Set the cookie properties to make sure the browser will send them over the
-            // in-secure connection (ie. http) between the browser and the kubectl proxy.
-            Cookie cookie = new Cookie("uidBean",userID);
-            cookie.setHttpOnly(true);
-            resp.addCookie(cookie);
-            cookie.setPath("/");
-            cookie.setSecure(false);
-            System.out.println("TradeAppServlet:performTask() - set cookie: " + RequestUtils.encodeCookie(cookie) );
-              	
-               	
-            System.out.println("TradeAppServlet: Invalid Action=" + action);
-            tsAction.doWelcome(ctx, req, resp,
-                    "TradeAppServlet: Invalid Action" + action);
-        }
+        {  	            	
+            Log.error("TradeAppServlet: Invalid Action=" + action);
+            tsAction.doWelcome(ctx, req, resp, "TradeAppServlet: Invalid Action" + action);
+        }         	
+
     }
 
 }

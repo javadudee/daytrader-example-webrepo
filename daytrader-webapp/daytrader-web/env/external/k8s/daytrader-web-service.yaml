@@ -12,4 +12,5 @@ spec:
     targetPort: 5443
   selector:
     app: daytrader-web
+  sessionAffinity: None
   type: NodePort

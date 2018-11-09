@@ -22,14 +22,13 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.WebInitParam;
 
-import org.apache.geronimo.daytrader.javaee6.core.direct.RequestUtils;
+import org.apache.geronimo.daytrader.javaee6.core.direct.CookieUtils;
 import org.apache.geronimo.daytrader.javaee6.entities.HoldingDataBean;
 import org.apache.geronimo.daytrader.javaee6.utils.*;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * TradeScenarioServlet emulates a population of web users by generating a specific Trade operation 
@@ -106,11 +105,9 @@ public class TradeScenarioServlet extends HttpServlet {
     * @param request Object that encapsulates the request to the servlet
     * @param response Object that encapsulates the response from the servlet
     */    
-    public void performTask(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+    public void performTask(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException 
+    {
     	
-        ServletContext ctx = getServletConfig().getServletContext();    
-
         // Scenario generator for Trade2
         char action = ' ';
         String userID = null;
@@ -120,121 +117,60 @@ public class TradeScenarioServlet extends HttpServlet {
 
         resp.setContentType("text/html");
         
-        String scenarioAction = (String) req.getParameter("action");
-        if ((scenarioAction != null) && (scenarioAction.length() >= 1))
-        {
-            action = scenarioAction.charAt(0);
-            if (action == 'n')
-            { //null;
-                try
-                {
-                    PrintWriter out = new PrintWriter(resp.getOutputStream());
-                    out.println("<HTML><HEAD>TradeScenarioServlet</HEAD><BODY>Hello</BODY></HTML>"); 
-                    out.close();
-                    return;
-    
-                }
-                catch (Exception e)
-                {
-                    Log.error(
-                        "trade_client.TradeScenarioServlet.service(...)" + 
-                        "error creating printwriter from responce.getOutputStream", e);
-                        
-                    resp.sendError(
-                            500, 
-                        "trade_client.TradeScenarioServlet.service(...): erorr creating and writing to PrintStream created from response.getOutputStream()"); 
-                } //end of catch
-    
-            } //end of action=='n'
-        }
+    	String scenarioAction = (String) req.getParameter("action");
 
-        
+		ServletContext ctx = null;
+		HttpSession session = null;
+		try
+		{
+			ctx = getServletConfig().getServletContext();
+			// These operations require the user to be logged in. Verify that  
+			// the user is logged in, and if not then change the operation to 
+			// a login
+	        userID = CookieUtils.getCookieValue(req.getCookies(),"uidBean");	        
+			Log.debug("TradeScenarioServlet#performTask(" + action + ") - getCookie(uidBean): " + userID ); 
+		}
+		catch (Exception e)
+		{
+			Log.error(
+				"trade_client.TradeScenarioServlet.service(...): performing " + scenarioAction +
+				"error getting ServletContext,HttpSession, or UserID from session" +
+				"will make scenarioAction a login and try to recover from there", e);
+			userID = null;
+			action = 'l';
+		}
 
-        HttpSession session = null;
-        try
-        {    	             
-            session = req.getSession(false);
-            if (session == null)
-            {
-            	session = req.getSession(true);
-                //set session expiry to 5 minutes
-                session.setMaxInactiveInterval(5*60); 
-            }
-            
-
-//            // use cookies; instead of session attributes
-//            userID = (String) session.getAttribute("uidBean");
-//            boolean userIdCookieFound = false;
-            Cookie[] cookies = ((HttpServletRequest)req).getCookies();
-            if (cookies != null)
-            {
-            	for(Cookie cookie : cookies)
-            	{		
-                    if (cookie.getName().equals("uidBean"))
-                    {   
-                    	System.out.println("TradeScenarioServlet#perofrmTask() - userID cookie found: " + RequestUtils.encodeCookie(cookie) );   
-                    	if ( (cookie.getValue() != null) && (cookie.getValue().trim().length()>0) )
-                    	{
-                        	userID = cookie.getValue();	
-                    	}
-                    	else
-                    	{
-                    		userID = null;
-                    	}
-//                    	userIdCookieFound = true;                                 	
-                    	break;
-                    }
-            	}
-//            	if (!userIdCookieFound)
-//            	{
-//                   	System.out.println("TradeScenarioServlet#performTask() - userID cookie not found" );
-//            	}
-            }
-//            else
-//            {
-//            	System.out.println("TradeScenarioServlet#performTask() - the request has no cookies" );
-//            }
-//
-        }
-        catch (Exception e)
-        {
-            Log.error(
-                "trade_client.TradeScenarioServlet.service(...): performing " + scenarioAction +
-                "error getting ServletContext,HttpSession, or UserID from session" +
-                "will make scenarioAction a login and try to recover from there", e);
-            userID = null;
-            action = 'l';
-        }
-
-        if (userID == null)
-        {
-            action = 'l'; // change to login
-            TradeConfig.incrementScenarioCount();
-        }
-        else if (action == ' ') {
-            //action is not specified perform a random operation according to current mix
-            // Tell getScenarioAction if we are an original user or a registered user 
-            // -- sellDeficits should only be compensated for with original users.
-            action = TradeConfig.getScenarioAction(
-                userID.startsWith(TradeConfig.newUserPrefix));
-        }    
-          	
-       	
-       	
-        
+		if (userID == null)
+		{
+			action = 'l'; // change to login
+			TradeConfig.incrementScenarioCount();
+		}
+		else if (action == ' ') 
+		{	
+			//action is not specified perform a random operation according to current mix
+			// Tell getScenarioAction if we are an original user or a registered user 
+			// -- sellDeficits should only be compensated for with original users.
+			action = TradeConfig.getScenarioAction(userID.startsWith(TradeConfig.newUserPrefix));
+		}	
+		
+		Log.debug("TradeScenarioServlet#performTask(" + action + ")"); 
+		Log.debug("TradeScenarioServlet#performTask(" + action + ")"); 
+		Log.debug("TradeScenarioServlet#performTask(" + action + ")"); 
+		Log.debug("TradeScenarioServlet#performTask(" + action + ")"); 
+		Log.debug("TradeScenarioServlet#performTask(" + action + ")"); 
+		
         switch (action)
             {
-
                 case 'q' : //quote 
-                    dispPath = tasPathPrefix + "quotes&symbols=" + TradeConfig.rndSymbols();
+                    dispPath = tasPathPrefix + "quotes&inScenario=true&symbols=" + TradeConfig.rndSymbols();
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
                     break;
                 case 'a' : //account
-                    dispPath = tasPathPrefix + "account";
+                    dispPath = tasPathPrefix + "account&inScenario=true";
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
                     break;
                 case 'u' : //update account profile
-                    dispPath = tasPathPrefix + "account";
+                    dispPath = tasPathPrefix + "account&inScenario=true";
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
 
                     String fullName = "rnd" + System.currentTimeMillis();
@@ -242,37 +178,95 @@ public class TradeScenarioServlet extends HttpServlet {
                     String   password = "xxx";
                     String email = "rndEmail";
                     String creditcard = "rndCC";
-                    dispPath = tasPathPrefix + "update_profile&fullname=" + fullName + 
+                    dispPath = tasPathPrefix + "update_profile&inScenario=true&fullname=" + fullName + 
                         "&password=" + password + "&cpassword=" + password +                     
                         "&address=" + address +    "&email=" + email + 
                         "&creditcard=" +  creditcard;
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
                     break;
                 case 'h' : //home
-                    dispPath = tasPathPrefix + "home";
+                    dispPath = tasPathPrefix + "home&inScenario=true";
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
                     break;
                 case 'l' : //login
+                	
                     userID = TradeConfig.getUserID();
                     String password2 = "xxx";
-                    dispPath = tasPathPrefix + "login&inScenario=true&uid=" + userID + "&passwd=" + password2;
+                    dispPath = tasPathPrefix + "login&inScenario=true&uid=" + userID + "&passwd=" + password2;                   
                     ctx.getRequestDispatcher(dispPath).include(req, resp);                 
+            		
+                    // Although you are forwarding the login to another page it has a different url. The 
+                    // request/response that it uses to login are not the same as those in this method. 
+                    // So you still need to invalidate the session and cookies in this servlet.
+                    
+                	// First step is invalidate old session; if it exists
+           			HttpSession oldSession = req.getSession(false);
+           			if (oldSession != null) 
+           			{
+           				oldSession.invalidate();
+           			}   
+       				/*
+       				 * Invalidate all cookies by, for each cookie received,
+       				 * overwriting value and instructing browser to delete 
+       				 * it; except for the userId cookie; which we will set
+       				 * to the newly logged in user. 
+       				 */
+       				Cookie[] cookies = req.getCookies();
+       				if (cookies != null && cookies.length > 0) 
+       				{
+       					for (Cookie cookie : cookies) 
+       					{
+   							cookie.setValue("-");
+   							cookie.setMaxAge(0);
+   							resp.addCookie(cookie);
+       					}
+       				}
+                
+                	// Now you can generate the new session               
+                	session = req.getSession(true);
+                	session.setMaxInactiveInterval(5*60);
+                	
+   	            	// And add the new UserID cookie
+   					resp.addCookie(CookieUtils.newCookie("uidBean",userID));
+   					Log.debug("TradeScenarioServlet#login() - addCookie(uidBean," + userID + ")" ); 	
+            		
                     break;
                 case 'o' : //logout
-                    dispPath = tasPathPrefix + "logout";
+                    dispPath = tasPathPrefix + "logout&inScenario=true";
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
+             
+                    // Although you are forwarding the logout to another page it has a different url. The
+                    // request/response that it uses are not the same as these. So you need to invalidate 
+                    // these session and cookies.
+                    
+                	// Now invalidate old session; if it exists
+           			oldSession = req.getSession(false);
+           			if (oldSession != null) 
+           			{
+           				oldSession.invalidate();
+           			}
+           			
+       				/*
+       				 * Invalidate all cookies by, for each cookie received,
+       				 * overwriting value and instructing browser to deletes 
+       				 * it
+       				 */
+       				cookies = req.getCookies();
+       				if (cookies != null && cookies.length > 0) 
+       				{
+       					for (Cookie cookie : cookies) 
+       					{
+     						cookie.setValue("-");
+       						cookie.setMaxAge(0);
+       						resp.addCookie(cookie);
+       					}
+       				}
                     break;
                 case 'p' : //portfolio
-                    dispPath = tasPathPrefix + "portfolio";
+                    dispPath = tasPathPrefix + "portfolio&inScenario=true";
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
                     break;
                 case 'r' : //register
-                    //Logout the current user to become a new user
-                    // see note in TradeServletAction
-                    req.setAttribute("TSS-RecreateSessionInLogout", Boolean.TRUE);
-                    dispPath = tasPathPrefix + "logout";
-                    ctx.getRequestDispatcher(dispPath).include(req, resp);
-
                     userID = TradeConfig.rndNewUserID();
                     String passwd = "yyy";
                     fullName = TradeConfig.rndFullName();
@@ -280,14 +274,51 @@ public class TradeScenarioServlet extends HttpServlet {
                     String money = TradeConfig.rndBalance();
                     email = TradeConfig.rndEmail(userID);
                     String smail = TradeConfig.rndAddress();
-                    dispPath = tasPathPrefix + "register&Full Name=" + fullName + "&snail mail=" + smail +
+                    dispPath = tasPathPrefix + "register&inScenario=true&Full Name=" + fullName + "&snail mail=" + smail +
                         "&email=" + email + "&user id=" + userID + "&passwd=" + passwd + 
                         "&confirm passwd=" + passwd + "&money=" + money + 
                         "&Credit Card Number=" + creditcard;
                     ctx.getRequestDispatcher(dispPath).include(req, resp);                    
+                    
+                    // Although you are forwarding the register to another page it has a different url. Thus,
+                    // the request/response that it uses are not the same as this one. So you still need to
+                    // invalidate the oldSession, cookies, and then you can generate the new session.
+                    
+                	// First step is invalidate old session; if it exists
+           			oldSession = req.getSession(false);
+           			if (oldSession != null) 
+           			{
+           				oldSession.invalidate();
+           			}
+           		            
+       				/*
+       				 * Invalidate all cookies by, for each cookie received,
+       				 * overwriting value and instructing browser to delete 
+       				 * it; except for the userId cookie; which we will set
+       				 * to the newly logged in user. 
+       				 */
+       				cookies = req.getCookies();
+       				if (cookies != null && cookies.length > 0) 
+       				{
+       					for (Cookie cookie : cookies) 
+       					{
+   							cookie.setValue("-");
+   							cookie.setMaxAge(0);
+   							resp.addCookie(cookie);
+       					}
+       				}
+                
+                	// Now you can generate the new session               
+                	session = req.getSession(true);
+                	session.setMaxInactiveInterval(5*60);
+                	
+   	            	// And add the new UserID cookie
+   					resp.addCookie(CookieUtils.newCookie("uidBean",userID));
+   					Log.debug("TradeScenarioServlet#register() - addCookie(uidBean," + userID + ")" ); 	
+       				
                     break;
                 case 's' : //sell
-                    dispPath = tasPathPrefix + "portfolioNoEdge";
+                    dispPath = tasPathPrefix + "portfolioNoEdge&inScenario=true";
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
 
                     Collection holdings = (Collection) req.getAttribute("holdingDataBeans");
@@ -305,7 +336,7 @@ public class TradeScenarioServlet extends HttpServlet {
                             {
                                 Integer holdingID = holdingData.getHoldingID();
 
-                                dispPath = tasPathPrefix + "sell&holdingID="+holdingID;
+                                dispPath = tasPathPrefix + "sell&inScenario=true&holdingID="+holdingID;
                                 ctx.getRequestDispatcher(dispPath).include(req, resp);
                                 foundHoldingToSell = true;
                                 break;    
@@ -335,13 +366,14 @@ public class TradeScenarioServlet extends HttpServlet {
                     String symbol = TradeConfig.rndSymbol();
                     String amount = TradeConfig.rndQuantity() + "";
 
-                    dispPath = tasPathPrefix + "quotes&symbols=" + symbol;
+                    dispPath = tasPathPrefix + "quotes&inScenario=true&symbols=" + symbol;
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
 
-                    dispPath = tasPathPrefix + "buy&quantity=" + amount + "&symbol=" + symbol;
+                    dispPath = tasPathPrefix + "buy&inScenario=true&quantity=" + amount + "&symbol=" + symbol;
                     ctx.getRequestDispatcher(dispPath).include(req, resp);
                     break;
             } //end of switch statement 
+        
     }
 
     // URL Path Prefix for dispatching to TradeAppServlet

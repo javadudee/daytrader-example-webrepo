@@ -4,11 +4,17 @@ metadata:
   name: daytrader-web
   annotations:
     kubernetes.io/ingress.allow-http: "false"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
   tls:
   - hosts:
     - web.daytrader.geronimo.apache.org
     secretName: daytrader-web
-  backend:
-    serviceName: daytrader-web
-    servicePort: 443 
+  rules:
+    - host: web.daytrader.geronimo.apache.org
+      http: 
+        paths:
+        - path: /
+          backend:
+            serviceName: daytrader-web
+            servicePort: 443 

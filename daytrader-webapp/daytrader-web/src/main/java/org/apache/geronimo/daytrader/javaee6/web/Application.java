@@ -84,15 +84,10 @@ public class Application extends SpringBootServletInitializer {
 		    @Override
 		    public void customize(Context context) 
 		    {
-            	// Set the cookie properties to make sure the browser will send them over the
+                // Set the cookie properties to make sure the browser will send them over the
                 // in-secure connection (ie. http) between the browser and the kubectl proxy.
 		        context.setUseHttpOnly(true);
 		        context.setSessionCookiePath("/");
-
-//		        SessionCookieConfig cookie = context.getServletContext().getSessionCookieConfig();
-//		        cookie.setSecure(false);
-//		  		cookie.setHttpOnly(false);
-//		   		cookie.setPath("/");
 		    }
 		};
 		

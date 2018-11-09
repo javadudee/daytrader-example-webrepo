@@ -19,8 +19,6 @@ package org.apache.geronimo.daytrader.javaee6.web;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-import javax.naming.InitialContext;
-
 import org.apache.geronimo.daytrader.javaee6.entities.AccountDataBean;
 import org.apache.geronimo.daytrader.javaee6.entities.AccountProfileDataBean;
 import org.apache.geronimo.daytrader.javaee6.entities.HoldingDataBean;

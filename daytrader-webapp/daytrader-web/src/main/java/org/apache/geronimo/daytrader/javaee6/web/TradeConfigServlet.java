@@ -86,7 +86,7 @@ public class TradeConfigServlet extends HttpServlet {
         catch (Exception e)
         {
             results += "Trade Reset Error  - see log for details";
-            Log.error(e,     results);
+            Log.error(e, results);
             throw e;
         }
         getServletConfig()
@@ -119,7 +119,7 @@ public class TradeConfigServlet extends HttpServlet {
             {
                 //>>rjm
                 Log.error(
-                    e, 
+                	e, 
                     "TradeConfigServlet.doConfigUpdate(..): minor exception caught", 
                     "trying to set runtimemode to " + runTimeModeStr, 
                     "reverting to current value");
@@ -351,27 +351,7 @@ public class TradeConfigServlet extends HttpServlet {
     }
 
     public void service(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
-
-    	
-//      ServletContext ctx = getServletConfig().getServletContext();
-//    	
-//		// Set the cookie properties to make sure the browser will send them over the
-//      // in-secure connection (ie. http) between the browser and the kubectl proxy.
-//        SessionCookieConfig sessionCookieConfig = ctx.getSessionCookieConfig();
-//        if (sessionCookieConfig != null) 
-//        {
-//			System.out.println("TradeConfigServlet:service() -  " + RequestUtils.encodeSessionCookieConfig(sessionCookieConfig) );
-////        	sessionCookieConfig.setSecure(false);
-////        	sessionCookieConfig.setHttpOnly(true);
-////        	sessionCookieConfig.setPath("/");
-//        }
-//        else
-//        {
-//        	System.out.println("TradeConfigServlet:service() -  the context has no session cookie" );
-//        }
-        
-        
+        throws ServletException, IOException {        
     	
         String action = null;
         String result = "";
