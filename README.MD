@@ -273,101 +273,243 @@ it still contains the business functions, their implementations have been change
             $ kubectl config use-context eks
             
             
-#### Create the deployment, replica set, and pod(s) to run the application
+            
+#### Create the deployment to run the application
 
-	    1.  $ cd daytrader-webapp\daytrader-web\env\external\k8s
+	    1.  $ cd daytrader-quotesapp\daytrader-web\env\external\k8s
     
-		2.	$ kubectl apply -f daytrader-web-deployment.yaml 
+		2.	$ kubectl apply -f deployment.yaml 
 		
 		3.  $ kubectl get pods -o wide
 		
-		    ## Take note of the POD_NAME, and wait until the STATUS is Running.
+		    ## Take note of the POD_NAME, and wait until the STATUS is Running. 
               
-        4.  $ kubectl logs {POD_NAME}
+        4.  $ kubectl logs <POD_NAME>
         
-            ##  You should see : Tomcat started on port(s): 1443 (https)
+            ##  You should see : Tomcat started on port(s): 5443 (https). If not see Troubleshooting
+            
         
-        
-        
-#### Create the service so clients can communicate with pods via a constant IP
+#### Expose the application to clients through a Service resource
 
-        Before creating the service it is important to understand that rationale for creating them. Remember that pods are ephemeral. If 
-        a pod dies, then Kubernetes may create an identical pod but the pod will have a different IP. This means that clients should not 
-        communicate with pods via the pod IP. Instead you should frontend all pods by a service, and clients should communicate with pods 
-        through the service IP. 
+	Before creating the service it is important to understand the rationale for creating them. Remember that pods are ephemeral. If 
+	a pod stops, then Kubernetes will create an identical one, but it will have a different IP. For that reason, clients should not 
+	communicate with application's directly. Instead they should talk to applications via service. To create the service,
         
-        To create the service,
-
-            1.  $ kubectl apply -f daytrader-web-service.yaml
+        1.  $ kubectl apply -f service.yaml
+           
+        2.  $ kubectl get services
         
-            2.  $ kubectl get services
-        
-                NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
-                daytrader-web     ClusterIP   10.100.17.24     <none>        443/TCP         3d
+            NAME           	TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
+            daytrader-web	ClusterIP   10.100.17.24     <none>        443/TCP         3d
        
-                ## Notes
+            ## Notes
         
-                a.  The above command creates a service proxy. The service proxy listens on the CLUSTER IP and PORT. It is backed by endpoints 
-                    to one or more pods. When the service proxy receives an HTTPS request, it selects one of the endpoints (pods) and forwards 
-                    it to the pod. The application running in the pod handles the request and returns an HTTPS response
-            
-                b.  There is no EXTERNAL-IP to the service. This means that you can't access the service from outside the cluster. That said,
-                    you can assess it driectly from an application (or from a shell) that is running inside the pod, and indirectly by way of
-                    the API Server. Both options are discussed below.
+            	a.	The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
+               	    to one or more pods. You can see the dnpoints buy doing kubectl get endpoints. When the service receives an HTTPS request, 
+               	    it selects one of the endpoints (pods) and forwards the HTTPS request to the pod. The application running inside the pod 
+               	    handles the request and returns an HTTPS response.
+            	
+              	b.	See also https://kubernetes.io/docs/concepts/services-networking/service/   
         
-        Access the service directly,
-            
-            1.  $ kubectl get pods
+
+#### Expose the service to browsers through an Ingress resource
+
         
-                # Note the NAME of the web pod; you'll need it to execute the next command
+        1.  Create certificates and private keys
         
-            2.  $ kubectl exec <POD_NAME> -it -- curl -k https://<CLUSTER-IP>/health
-            
-                {"status":"UP"}
-  
-        Access the service indirectly (via  the API Server)
+            Notes: you can skip (a) and (b). We already did them for you. They are included so others can expose their own services throug Ingress.
+          
+            To encrypt the connection between the browser and the ingress controller, you need to attach a certificate and a private key to 
+            the Ingress resource. To do that, the certificate and private key need to be stored in a Kubernetes resource called a secret; which is then 
+            referenced by the Ingress resource. 
+
+                a.  (Skip) $ openssl genrsa -out tls.key 2048
+                
+                b.  (Skip) $ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org
+
+        2. Create secret resource 
+    
+            Notes: You can skip (a) ad (b). We already did them for you. They are included so others can expose their own services through Ingress
+
+                a.  (Skip) $ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key
+           
+                b.  (Skip) $ kubectl get secrets daytrader-web -o yaml --export > secret.yaml        
+
+                c.  $ kubectl apply -f secret.yaml
+    
+        3.  Create the Ingress resource
+
+                a.  $ kubectl apply -f ingress.yaml
+                
+              	b.	$ kubectl get ingress  
+    
+                    NAME            HOSTS                               ADDRESS       PORTS     AGE
+                    daytrader-web   web.daytrader.geronimo.apache.org   xx.xx.xx.xx   80, 443   23h
+                    
+                    ## Wait for the Ingress service to run; then record the HOSTS and ADDRESS
+
+                Notes 
+                
+                    - The HOSTS is the host you specified in your Ingress resource; which match the CN in your certificate
+                
+                    - For Minikube
+                            
+                        - The ADDRESS is the private IP Address of the Ingress resource.
+                        - Use the "minikube ip" command to get the public IP Address 
+              
+                    -   EKS Notes 
                         
-            1.  $ kubectl proxy
-        
-                Starting to serve on 127.0.0.1:8001
-                
-                ## Locates and authenticates to the API Server.
+                            - The ADDRESS is the DNS Name (A Record) to the Load Balancer (ELB)
 
-            2.  $ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health
-        
-                ## Accesses the web service through the API Server.       
-        
-        See also https://kubernetes.io/docs/concepts/services-networking/service/
-            
 
-        
-#### Troubleshooting
-        
-    Review the standard output from your application using your pod names
+        4.  (For Developer Testing) Add the public IP Address and HOSTS to /etc/hosts
+
+                a.  Get the ADDRESS and HOST of the Ingress resource
+                                                           
+                    $ kubectl get ingress  
     
-        $ kubectl logs {POD_NAME} -f
-        
-        ## The -f option tails the logs
-                
-    Open a bash terminal into your pods
+                    NAME            HOSTS                               ADDRESS     PORTS     AGE
+                    daytrader-web   web.daytrader.geronimo.apache.org   xx.xx.xx.xx 80, 443   4
 
-        $ kubectl exec -ti {POD_NAME} bash
-        # echo $SERVER_PORT    ## you should see 1443
-        # exit
+                    ## Wait for the Ingress service to run then record the HOSTS and ADDRESS
+                        
+                    Notes
+                        
+                        - For Minikube, the ADDRESS is the *private* IP address of ingress resource
+                        - For EKS, the ADDRESS is the DNS Name (A Record) to the Load Balancer (ELB) 
+                        - HOSTS is the host in the ingress.yaml; it must match the CN in the tls.crt
+                                                                  
+                b.  Get the public IP Address of the Ingress resource
+                
+                    For Minikube
+                                            
+                        $ minikube ip
+                        
+                        192.168.99.100
+                        
+                        ## Record the IP Address. That is the public IP Address for the Ingress service in Minikube
+                            
+                    For EKS,
+                        
+                        $ ping <ADDRESS>
+                        
+                        PING <ADDRESS> (52.206.153.148) 56(84) bytes of data.
+                        
+                        ## Record the Public IP Address. That is the public IP Address for the Ingress service in EKS
+                        
+                        Notes:                            
+                              
+                            - The public IP address associated with the Ingress service (Load Balancer) in EKS can change over time. So you should 
+                              only use the IP address for developer testing. Instead, you shold create a CNAME record for the LoadBalancer DNS name, 
+                              or use Amazon Route 53 to create a hosted zone. 
+                              
+                            - See also https://stackoverflow.com/questions/24631714/dynamic-ip-changing-in-amazon-elastic-load-balancer-creating-issue
         
-    Use the kubernetes dashboard to manage and troubleshoot your cluster
+                d.  Add a line in your etc/hosts that maps the *public* IP Address to the HOSTS. 
+        
+                        <Public IP Address>  web.daytrader.geronimo.apache.org         
+
+                e.  Test the connection
     
-        1.  Minikube
+                    $ curl -k -v https://web.daytrader.geronimo.apache.org/health
+
+                    ## You should see {"status":"UP"}; if not see Troubleshooting
+
+        
+                            
+## Troubleshooting
+
+
+### Pods
+        
+        1.	Retrieve the pods (application) logs
+    
+	           	a.	$ kubectl logs {POD_NAME} -f      ## The -f option tails the logs
+               
+
+        2.  Access the pod (application) through the port forwarder
+        
+	            a.	$ kubectl port-forward <POD_NAME> 8888:5443  ## This command forwards local port 8888 to port 5443 of your pod
+       
+        	    	Forwarding from 127.0.0.1:8888 -> 5443
+       
+	            b.	$ curl -k https://127.0.0.1:8888/health
+
+        	    	{"status":"UP"}      
+
+        	    	
+### Services
+        
+        1.	Access the service (application) through the API Server
+                        
+	    		a.	$ kubectl proxy
+        
+	    			Starting to serve on 127.0.0.1:8001
+                
+	    			## Locates and authenticates to the API Server.
+
+    			b.	$ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health      
+		
+	    			{"status":"UP"}      		
+				
+	    		    ## The curl command sent the HTTP request (without any authentication headers) to the proxy that is running on your local machine.
+	    		    ## The proxy, then, sent an HTTPS request to the API server's identity by validating its certificate. Encryption, authentication,
+	    		    ## and server verification is handled by the proxy. This is the easiest way to connect to the API server. 
+			    
+	    		c. See also
+						  
+	    		   - https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/ 
+
+	    		   
+### Secrets
+			                 
+	    1.	Check and verify your certificate and key. This can be useful before applying them to your server. 
+
+		        a.	$ openssl x509 -in tls.crt -text  ## Check the certificate and its information (signing authority, expiration date, etc.)
+
+        		b.	$ openssl rsa -in tls.key -check  ## Check the SSL key and verify the consistency
+    
+    	2. 	Verify the certificate and key match by comparing their checksums for equality
+
+	        	a.	$ openssl x509 -noout -modulus -in tls.crt | openssl md5
+        
+        		b.	$ openssl rsa -noout -modulus -in tls.key | openssl md5      
+        
+        
+### Ingress
+                                    
+        1.	Access the ingress (application) using the curl command
+        
+    			a.	$ curl -k https://web.daytrader.geronimo.apache.org/health      
+		
+	    			{"status":"UP"}      	
+	    			
+	    2.  Access the ingress (application) using the browser
+	    
+    	        a.  Point you browser to https://web.daytrader.geronimo.apache.org/health
+ 	
+	    			{"status":"UP"}  
+	    			
+	    3.  See also
+                
+                a.  https://stackoverflow.com/questions/51363674/kubernetes-eks-ingress-and-tls
+
+
+### Dashboard
+
+        1.  Use kubernetes dashboard to manage and troubleshoot your cluster
+        
+            For Minikube
         
                 a.  $ minikube dashboard
         
-        2.  EKS (https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
+            For EKS
         
                 a.  $ kubectl proxy
                 
                 b.  $ kubectl -n kube-system get secrets | grep admin
-                
-                    ## Copy the NAME of the admin-user-token
+               
+                      ## Copy the NAME of the admin-user-token
                 
                 c.  $ kubectl -n kube-system describe secrets <ADMIN_USER_TOKEN>
                 
@@ -379,10 +521,11 @@ it still contains the business functions, their implementations have been change
                     
                 e.  You will see a login screen; choose Token and then enter the <AUTHENTICATION_TOKEN> from step c. 
    
-        See also https://github.com/AcalephStorage/kubernetes-dashboard/blob/master/docs/user-guide/troubleshooting.md
-                
-                
-
+            See also 
+    
+                a.  https://github.com/AcalephStorage/kubernetes-dashboard/blob/master/docs/user-guide/troubleshooting.md
+                b.  https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html
+       
 
 
 ### Functional Test (Kubernetes)
@@ -476,22 +619,45 @@ it still contains the business functions, their implementations have been change
     
 
 
-## API Endpoints 
 
-### Swagger UI Documentation
+## Swagger UI Documentation
 
-	To see the API documentation, 
 
-		1. Start the application
 
-			a.	cd daytrader-webapp
-			b. 	daytrader-web\env\external\bin\start_server
+### Access Swagger UI via Spring Boot
 
-		2. 	Point you browser to https://localhost:2443/swagger-ui.html
+   		1. Start the application
 
-		3.	Stop the application after reviewing the API documentation
+     			$ cd daytrader-webapp
+       			$ daytrader-web\env\external\bin\start_server
 
-			a.	cd daytrader-webapp	
-			b.	daytrader-web\env\external\bin\stop_server
+   		2. 	Point you browser to https://localhost:5443/swagger-ui.html
 
-	
+	    3.	Stop the application after reviewing the APIs
+
+      			$ cd daytrader-webapp	
+            	$ daytrader-web\env\external\bin\stop_server
+
+
+
+### Access Swagger UI via Kubernetes
+
+
+#### Pod
+        
+        1.  Make sure the application is accessible via the Pod resource
+                
+   		2. 	Point you browser to https://localhost:8888/swagger-ui.html
+
+#### Service
+        
+        1.  Make sure the application is accessible via the Service resource
+
+		2. 	Point you browser to http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html        		
+        		
+#### Ingress
+        
+        1.  Make sure the application is accessible via the Ingress resource
+
+        2. 	Point you browser to https://web.daytrader.geronimo.apache.org/swagger-ui.html
+         
