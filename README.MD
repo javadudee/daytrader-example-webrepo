@@ -260,7 +260,7 @@ it still contains the business functions, their implementations have been change
 	    2.	$ mvn -Pcd clean install
 		
 	
-#### Configure kubectl to access the right cluster
+#### Configure kubectl to access the cluster
     
         1.  For Minikube,  
         
@@ -274,22 +274,27 @@ it still contains the business functions, their implementations have been change
             
             
             
-#### Create the deployment to run the application
+#### Create a Deployment to run the application in one or more pods
+
+    Notes: A Deployment also creates the specified number of PODs and a ReplicaSet to manage the lifecycle of the pods
 
 	    1.  $ cd daytrader-quotesapp\daytrader-web\env\external\k8s
     
 		2.	$ kubectl apply -f deployment.yaml 
 		
-		3.  $ kubectl get pods -o wide
+		3.  $ kubectl get pods
 		
-		    ## Take note of the POD_NAME, and wait until the STATUS is Running. 
+    		NAME                                READY   STATUS    RESTARTS   AGE   
+            daytrader-web-87b5658f4-889gp       1/1     Running   0          6m    
+		
+		    ## Record the NAME of the pod, and wait until the STATUS is Running and all pods are READY (e.g. 1/1, 2/2, or 3/3)
               
         4.  $ kubectl logs <POD_NAME>
         
             ##  You should see : Tomcat started on port(s): 5443 (https). If not see Troubleshooting
             
         
-#### Expose the application to clients through a Service resource
+#### Create a Service to load balance requests across the Pods
 
 	Before creating the service it is important to understand the rationale for creating them. Remember that pods are ephemeral. If 
 	a pod stops, then Kubernetes will create an identical one, but it will have a different IP. For that reason, clients should not 
@@ -312,30 +317,33 @@ it still contains the business functions, their implementations have been change
               	b.	See also https://kubernetes.io/docs/concepts/services-networking/service/   
         
 
-#### Expose the service to browsers through an Ingress resource
+#### Create an Ingress to direct external requests to the Service
 
         
-        1.  Create certificates and private keys
+        1.  (Optional) Create certificates and private keys
         
-            Notes: you can skip (a) and (b). We already did them for you. They are included so others can expose their own services throug Ingress.
+            Notes: you can skip this step. We already did it for you. It is incuded so others can expose their own services throug Ingress.
           
             To encrypt the connection between the browser and the ingress controller, you need to attach a certificate and a private key to 
             the Ingress resource. To do that, the certificate and private key need to be stored in a Kubernetes resource called a secret; which is then 
             referenced by the Ingress resource. 
 
-                a.  (Skip) $ openssl genrsa -out tls.key 2048
+                a.  $ openssl genrsa -out tls.key 2048
                 
-                b.  (Skip) $ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org
-
-        2. Create secret resource 
-    
-            Notes: You can skip (a) ad (b). We already did them for you. They are included so others can expose their own services through Ingress
-
-                a.  (Skip) $ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key
+                b.  $ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org
+                
+                c.  $ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key
            
-                b.  (Skip) $ kubectl get secrets daytrader-web -o yaml --export > secret.yaml        
+                d.  $ kubectl get secrets daytrader-web -o yaml --export > secret.yaml  
 
-                c.  $ kubectl apply -f secret.yaml
+        2. Create the Secret for TLS/SSL
+
+                a.  $ kubectl apply -f secret.yaml
+                
+                b.  $ kubectl get secrets
+                
+                    NAME            TYPE                                  DATA   AGE
+                    daytrader-web   kubernetes.io/tls                     2      8s
     
         3.  Create the Ingress resource
 
@@ -405,15 +413,27 @@ it still contains the business functions, their implementations have been change
                               
                             - See also https://stackoverflow.com/questions/24631714/dynamic-ip-changing-in-amazon-elastic-load-balancer-creating-issue
         
-                d.  Add a line in your etc/hosts that maps the *public* IP Address to the HOSTS. 
+                d.  Add a lines to your /etc/hosts that maps the *Public* IP Address to the HOSTS, e.g.
         
                         <Public IP Address>  web.daytrader.geronimo.apache.org         
 
                 e.  Test the connection
     
-                    $ curl -k -v https://web.daytrader.geronimo.apache.org/health
+                    --  Using the curl command
+                    
+                        $ curl -k -v https://web.daytrader.geronimo.apache.org/health
 
-                    ## You should see {"status":"UP"}; if not see Troubleshooting
+                        {"status":"UP"} 
+                    
+                        ## You should see the above, but if not see Troubleshooting
+
+        	        --- Using the browser
+    	        
+    	                Point you browser to https://web.daytrader.geronimo.apache.org/health
+ 	
+    	    			{"status":"UP"} 
+
+                        ## You should see the above, but if not see Troubleshooting
 
         
                             
@@ -423,8 +443,10 @@ it still contains the business functions, their implementations have been change
 ### Pods
         
         1.	Retrieve the pods (application) logs
-    
-	           	a.	$ kubectl logs {POD_NAME} -f      ## The -f option tails the logs
+   
+                a.  $ kubectl get pods
+                 
+	           	b.	$ kubectl logs <POD_NAME> -f      ## The -f option tails the logs
                
 
         2.  Access the pod (application) through the port forwarder
@@ -440,7 +462,7 @@ it still contains the business functions, their implementations have been change
         	    	
 ### Services
         
-        1.	Access the service (application) through the API Server
+        1.	Access the service (application) through the API Server. 
                         
 	    		a.	$ kubectl proxy
         
@@ -461,7 +483,7 @@ it still contains the business functions, their implementations have been change
 	    		   - https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/ 
 
 	    		   
-### Secrets
+### Ingress
 			                 
 	    1.	Check and verify your certificate and key. This can be useful before applying them to your server. 
 
@@ -474,25 +496,30 @@ it still contains the business functions, their implementations have been change
 	        	a.	$ openssl x509 -noout -modulus -in tls.crt | openssl md5
         
         		b.	$ openssl rsa -noout -modulus -in tls.key | openssl md5      
+                                            
+        3.  If the Ingress resource failed to start then check the logs on the nginx-ingress-controller-***********
         
-        
-### Ingress
-                                    
-        1.	Access the ingress (application) using the curl command
-        
-    			a.	$ curl -k https://web.daytrader.geronimo.apache.org/health      
-		
-	    			{"status":"UP"}      	
-	    			
-	    2.  Access the ingress (application) using the browser
-	    
-    	        a.  Point you browser to https://web.daytrader.geronimo.apache.org/health
- 	
-	    			{"status":"UP"}  
-	    			
-	    3.  See also
+                a.  $ kubectl -n ingress-nginx get pods
                 
-                a.  https://stackoverflow.com/questions/51363674/kubernetes-eks-ingress-and-tls
+                    NAME                                       READY   STATUS    RESTARTS   AGE
+                    nginx-ingress-controller-f88c75bc6-qbccj   1/1     Running   0          1h
+                
+                b.  $ kubectl -n ingress-nginx logs nginx-ingress-controller-f88c75bc6-qbccj
+        
+                    ## If there are any errors in the logs then they should give you a good indication of what went wrong
+                    
+        4.  If the connection timed out when accessing the application through an Ingress then
+        
+                a.  Make sure that you have the correct HOST and Public IP Address in your /etc/hosts file. 
+                
+                b.  For EKS
+                
+                    Make sure the "Security group for Kubernetes ELB" allows inbound traffic from your home IP address
+                    
+                    TYPE    PROTOCOL    PORT RANGE      SOURCE                  DESCRIPTION
+                    HTTP    TCP         80              Custom  xx.xx.xx.xx/32  Home IP access
+                    HTTPS   TCP         443             Custom  xx.xx.xx.xx/32  Home IP access     
+                    
 
 
 ### Dashboard
