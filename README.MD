@@ -151,6 +151,12 @@ it still contains the business functions, their implementations have been change
                     
                     Kubernetes master is running at https://192.168.99.100:8443
                     KubeDNS is running at https://192.168.99.100:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+                    
+                    $ kubectl get nodes
+                    
+                    NAME       STATUS   ROLES    AGE   VERSION
+                    minikube   Ready    master   24d   v1.10.0
+
                         
                 b.  For Amazon EKS,
         
@@ -161,9 +167,74 @@ it still contains the business functions, their implementations have been change
                     $ kubectl kubectl cluster-info
                     
                     Kubernetes master is running at https://8D36DB7CBD2E3394FF0843CEA0C0A266.sk1.us-east-1.eks.amazonaws.com
+                    
+                    $ kubectl get nodes
                 
+                    NAME                            STATUS   ROLES    AGE   VERSION
+                    ip-172-31-19-232.ec2.internal   Ready    <none>   3h    v1.10.3
+                    ip-172-31-2-133.ec2.internal    Ready    <none>   3h    v1.10.3
+                    ip-172-31-30-11.ec2.internal    Ready    <none>   3h    v1.10.3
 
-   
+#### Kubernetes Ingress
+
+    To make ingress resources work, you need an ingress controller running in the cluster. Different Kubernetes platforms use different implementations of ingress 
+    controllers. For example, Minikube includes an add-on NGINX Ingress Controller that can be enabled. EKS does not include an ingress controller out of the box,
+    but you can install the NGiNX Ingress Controller to provide the functionality. 
+    
+        1.  For Minikube,
+        
+                a.  Create configmaps for tcp-services and udp-services; otherwise the controller will throw an unexpected error reading these missing configmaps
+                
+                    $ cd daytrader-web/env/external/k8s
+                    
+                    $ kubectl apply -f tcp-services-configmap.yaml
+                    
+                    $ kubectl apply -f udp-services-configmap.yaml
+                    
+                    ## See also: https://github.com/kubernetes/minikube/blob/master/deploy/addons/ingress/ingress-configmap.yaml 
+                
+                b.  Enable the ingress add-on
+               
+                    $ minikube addons enable ingress
+                    
+                    ingress was successfully enabled
+                    
+                c.  Make sure the controller is running and in the ready state. It may take a few minutes to start
+                
+                    $ kubectl -n kube-system get pods 
+                    
+                    NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
+                    kube-system   nginx-ingress-controller-67956bf89d-j7d6c   1/1     Running   0          39s
+                    
+                d.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
+                
+                    $ kubectl -n kube-system logs <POD_NAME>
+                    
+                    ## You should see "successfully acquired lease kube-system/ingress-controller-leader-nginx". 
+
+        2.  For EKS,
+        
+                a.  Deploy NGINX Ingress
+                
+                    $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml
+
+                    $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/cloud-generic.yam
+                    
+                b.  Make sure the controller is running and in the ready state. Note that it may take a few minutes to start
+                
+                    $ kubectl -n ingress-nginx get pods 
+                    
+                    NAMESPACE       NAME                                       READY   STATUS    RESTARTS   AGE
+                    ingress-nginx   nginx-ingress-controller-f88c75bc6-nc4bt   1/1     Running   0          39s
+                    
+                c.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
+                
+                    $ kubectl -n ingress-nginx logs <POD_NAME>
+                    
+                    ## You should see "successfully acquired lease ingress-nginx/ingress-controller-leader-nginx". 
+                    
+        3.  See also https://kubernetes.github.io/ingress-nginx/deploy/
+
 ## Delivery Pipeline
 
 
@@ -251,7 +322,7 @@ it still contains the business functions, their implementations have been change
 
 ### Continuous Delivery
 
-    Many of these manual steps can be automated by maven at a later date.
+    Many of these manual steps can be automated by Maven at a later date.
     
 
 #### Create the Docker image and push it to DockerHub
