@@ -1,6 +1,8 @@
 		                
 ## Run on EKS
 
+
+
 ### Prerequisites
 
 	1.  Install Java Development Kit (64 bit) 1.8+
@@ -108,11 +110,13 @@
            --  https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html        
 
 
+
 ### Build Automation
 
     1.	$ cd daytrader-webapp     
     
     2.	$ mvn -Pcd clean install   ## builds docker image and pushes to docker hub
+
 
 
 ### Continuous Delivery

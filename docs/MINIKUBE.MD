@@ -1,10 +1,12 @@
 ## Run on Minikube
 
+
+
 ### Prerequisites
 
-	1.	Install Java Development Kit (64 bit) 1.8+
+	1.  Install Java Development Kit (64 bit) 1.8+
 
-	2.	Install Apache Maven 3.3.9+
+	2.  Install Apache Maven 3.3.9+
         
 	3.  Create DockerHub Account (https://hub.docker.com/)
 
@@ -112,11 +114,13 @@
         a.  $ minikube dashboard
         
 
+
 ### Build Automation
 
     1.	$ cd daytrader-webapp     
     
 	2.	$ mvn -Pcd clean install   ## builds docker image and pushes to docker hub
+
 
 
 ### Continuous Delivery
@@ -198,6 +202,7 @@
 						  
             -- https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/ 
 
+
 #### Create Secret
         
     1.  (Optional) Create certificates and private keys
@@ -237,8 +242,6 @@
             NAME            TYPE                                  DATA   AGE
             daytrader-web   kubernetes.io/tls                     2      8s
             
-
-
 
 #### Create Ingress
 
@@ -310,8 +313,7 @@
         
 ### Functional Test
 
-    The functional test is done in three phases: pre-functional-test functional-test, and post-functional-test
-    
+    The functional test is done in three phases: pre-functional-test functional-test, and post-functional-test   
     
 
 #### Phase #1: pre-functional-test
@@ -335,13 +337,13 @@
     			
     1.  Under The Configuration Tab
 
-		a.  Press (Re)-create DayTrader Database Tables and Indexes
+        a.  Press (Re)-create DayTrader Database Tables and Indexes
 
         b.  Press (Re)-populate DayTrader Database
 
         c.  Press Test Daytrader Scenario
 
-	2.	Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+	2.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
 
         Note: each time you refresh the browser, it runs another functional test scenario. 
 
@@ -354,6 +356,7 @@
     
     $ kubectl delete all --all    
   
+                            
                             
 ### Swagger UI Documentation
 
@@ -373,7 +376,7 @@
                 
             ## Locates and authenticates to the API Server. 
 		
-		b.  Point you browser to http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html        		
+        b.  Point you browser to http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html        		
         		
     3.  (Option 3) Access Swagger UI through an Ingress
         
