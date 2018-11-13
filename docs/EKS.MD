@@ -135,7 +135,7 @@
         NAME                                READY   STATUS    RESTARTS   AGE   
         daytrader-web-87b5658f4-889gp       1/1     Running   0          6m    
 		
-		## Record the NAME of the pod, and wait until the STATUS is Running and all pods are READY (e.g. 1/1, 2/2, or 3/3)
+        ## Record the NAME of the pod, and wait until the STATUS is Running and all pods are READY (e.g. 1/1, 2/2, or 3/3)
               
     4.  Retrieve the pods (application) logs
         
@@ -219,7 +219,7 @@
 
             --	$ openssl rsa -in tls.key -check  ## Check the SSL key and verify the consistency
     
-    	c.  Verify the certificate and key match by comparing their checksums for equality
+        c.  Verify the certificate and key match by comparing their checksums for equality
 
             --	$ openssl x509 -noout -modulus -in tls.crt | openssl md5
         
@@ -326,11 +326,15 @@
     
     Deploy the microservies. See the README.MD files in the following repos
         
-    1.  daytrader-example-accountserepo
-    2.  daytrader-example-gatewayrepo
-    3.  daytrader-example-portfoliosrepo
-    4.  daytrader-example-quotesrepo
-    5.  daytrader-example-webrepo
+    1.  daytrader-example-accountserepo (https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
+
+    2.  daytrader-example-gatewayrepo (https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
+
+    3.  daytrader-example-portfoliosrepo (https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/)
+        
+    4.  daytrader-example-quotesrepo (https://github.com/jpmorganchase/daytrader-example-quotesrepo/)
+        
+    5.  daytrader-example-webrepo (https://github.com/jpmorganchase/daytrader-example-webrepo/)
                
                                 
 #### Phase #2: functional-test

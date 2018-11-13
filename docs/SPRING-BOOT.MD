@@ -82,7 +82,7 @@
 
 		a.	cd daytrader-accountsapp\daytrader-accounts
  		
-        b.	env\external\bin\stop_server.bat
+        b.  env\external\bin\stop_server.bat
 
 	2.	Stop Portfolios
 
@@ -114,9 +114,9 @@
 
 	1. Start the application
 
-		a.	$ cd daytrader-webapp
+        a.	$ cd daytrader-webapp
 
-		b.	$ daytrader-web\env\external\bin\start_server
+        b.	$ daytrader-web\env\external\bin\start_server
 
 	2. 	Point you browser to https://localhost:5443/swagger-ui.html
 
