@@ -49,7 +49,7 @@ it still contains the business functions, their implementations have been change
 
 ## Run on Spring Boot
 
-![SPRING-BOOT](docs/SPRING-BOOT.MD)
+[Instructions for running on Spring Boot](docs/SPRING-BOOT.MD)
 
 ## Run on Minikube
 
