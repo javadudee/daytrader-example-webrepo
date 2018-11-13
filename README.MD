@@ -18,9 +18,10 @@ For the original monolithic architecture, see http://geronimo.apache.org/GMOxDOC
 
 ## Target State Architecture
 
-The Webmicroservice is a Spring Boot Application responsible for the UI to the DayTrader business functions. Although 
-it still contains the business functions, their implementations have been changed to delegate their invocation to the 
-Gateway microservice which directs them to the appropriate microservice (Accounts, Portfolios, and Quotes). 
+The Web application is a Spring Boot Application responsible for the UI to the DayTrader business functions. Although it still contains 
+all the business operations, their implementations have been changed to call the Gateway microservice; which then directs them onto the 
+appropriate microservice (Accounts, Portfolios, and Quotes). It is the microservices that contain the busienss logic so that it can now
+be leveraged by other business applications.  
 
 ![Target-State-Architecture](images/Target-State-Architecture.JPG)
 

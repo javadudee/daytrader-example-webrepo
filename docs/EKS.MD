@@ -3,9 +3,9 @@
 
 ### Prerequisites
 
-	1.	Install Java Development Kit (64 bit) 1.8+
+	1.  Install Java Development Kit (64 bit) 1.8+
 
-    2.	Install Apache Maven 3.3.9+
+    2.  Install Apache Maven 3.3.9+
         
 	3.  Create DockerHub Account (https://hub.docker.com/)
 
@@ -39,7 +39,7 @@
 			
 	7.  Install and Verify the EKS Cluster
 		
-		a.  Install the EKS Cluster (https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
+        a.  Install the EKS Cluster (https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
 		        
             --  Start with "Amazon EKS Prerequisites" up to, but not including, "Step 4: Launch a Guest Book Application"
 
@@ -124,7 +124,7 @@
 
 	1.  $ cd daytrader-quotesapp\daytrader-web\env\external\k8s
     
-	2.	$ kubectl apply -f deployment.yaml    ## This creates the PODs that run the application and a ReplicaSet to manage the lifecycle of pods 
+	2.  $ kubectl apply -f deployment.yaml    ## This creates the PODs that run the application and a ReplicaSet to manage the lifecycle of pods 
 		
 	3.  $ kubectl get pods
 		
@@ -333,13 +333,15 @@
                                  
 	Open your browser and navigate to: https://web.daytrader.geronimo.apache.org
     			
-    1.	Under The Configuration Tab
+    1.  Under The Configuration Tab
 
         a.  Press(Re)-create DayTrader Database Tables and Indexes
+        
 		b.  Press (Re)-populate DayTrader Database
+		
 		c.  Press Test Daytrader Scenario
 
-	2.	Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+	2.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
 
         Note: each time you refresh the browser, it runs another functional test scenario. 
 
@@ -366,7 +368,7 @@
 
     2.  (Option 2) Access Swagger UI through the API Server
 		
-		a.	$ kubectl proxy    ## Locates and authenticates to the API Server.
+		a.  $ kubectl proxy    ## Locates and authenticates to the API Server.
         
             Starting to serve on 127.0.0.1:8001 
 		
