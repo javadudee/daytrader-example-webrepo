@@ -118,7 +118,7 @@
 
         b.	$ daytrader-web\env\external\bin\start_server
 
-	2. 	Point you browser to https://localhost:5443/swagger-ui.html
+	2.  Point you browser to https://localhost:5443/swagger-ui.html
 
     3.  Stop the application after reviewing the APIs
 

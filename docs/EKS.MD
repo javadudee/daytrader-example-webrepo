@@ -215,15 +215,15 @@
                 
         b.  Check and verify your certificate and key. This can be useful before applying them to your server. 
 
-            -- 	$ openssl x509 -in tls.crt -text  ## Check the certificate and its information (signing authority, expiration date, etc.)
+            --  $ openssl x509 -in tls.crt -text  ## Check the certificate and its information (signing authority, expiration date, etc.)
 
-            --	$ openssl rsa -in tls.key -check  ## Check the SSL key and verify the consistency
+            --  $ openssl rsa -in tls.key -check  ## Check the SSL key and verify the consistency
     
         c.  Verify the certificate and key match by comparing their checksums for equality
 
-            --	$ openssl x509 -noout -modulus -in tls.crt | openssl md5
+            --  $ openssl x509 -noout -modulus -in tls.crt | openssl md5
         
-            --	$ openssl rsa -noout -modulus -in tls.key | openssl md5   
+            --  $ openssl rsa -noout -modulus -in tls.key | openssl md5   
 
     2. Create the Secret for TLS/SSL
 
