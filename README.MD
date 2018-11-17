@@ -191,7 +191,7 @@ see [Using Docker from Maven and Maven from Docker](https://codefresh.io/howtos/
         <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
     </configuration>
 </plugin>
-        ```
+```
 
 ### Build and Push the Docker image
 
@@ -282,13 +282,15 @@ spec:
 
 4. (Optional) Test the connection using the port forwarder
         
-    a. `$ kubectl port-forward <POD_NAME> 8888:5443`  ## This command forwards local port 8888 to port 5443 of your pod
+    `$ kubectl port-forward <POD_NAME> 8888:5443`
+    
+    This command forwards local port 8888 to port 5443 of your pod
        
     Forwarding from 127.0.0.1:8888 -> 5443
        
-    b.  `$ curl -k https://127.0.0.1:8888/health`
+    `$ curl -k https://127.0.0.1:8888/health`
 
-        {"status":"UP"} 
+    {"status":"UP"} 
             
         
 ## Create the Service
