@@ -90,30 +90,27 @@ be leveraged by other business applications.
 
 ## Setup the Cluster
 
-Kubernetes can run on various platforms from laptops, to cloud providers, to bare-metal servers. The instructions to setup a cluster on them can also vary.
+Kubernetes can run on various platforms and there are various ways to setup a Kubernetes cluster. See [Picking the right Solution](https://kubernetes.io/docs/setup/pick-right-solution/). This section details the steps that we used to install the cluster and to install the NGINX Ingress Controller. If you already have a cluster with the NGINX Ingress Controller then feel free to use it. All other instructions in this README should be portable across platforms.
     
 
-### Setup on [Minikube](https://kubernetes.io/docs/setup/minikube/)
+### Setup on Minikube
 
-[Instructions to setup a cluster on Minikube](docs/GKE.MD)
-
-
-### Setup on [Amazon Elastic Container Service for Kubernetes](https://aws.amazon.com/eks/)
-
-[Instructions to setup a cluster on Amazon EKS](docs/GKE.MD)
+[Click here for instructions to setup a cluster on Minikube](docs/GKE.MD)
 
 
-### Setup on [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)
+### Setup on Amazon EKS
 
-[Instructions to setup a cluster on Google GKE](docs/GKE.MD)
-
-
-### Setup on [Azure Kubernetes Service](https://azure.microsoft.com/services/container-service/)
-
-[Instructions to setup a cluster on Aure AKS](docs/GKE.MD)
+[Click here for instructions to setup a cluster on Amazon EKS](docs/GKE.MD)
 
 
-For other platforms, see [Picking the right Solution](https://kubernetes.io/docs/setup/pick-right-solution/).
+### Setup on Google Kubernetes Engine
+
+[Click here for instructions to setup a cluster on Google GKE](docs/GKE.MD)
+
+
+### Setup on Azure Kubernetes Service
+
+[Click here for instructions to setup a cluster on Azure AKS](docs/GKE.MD)
 
 
 
