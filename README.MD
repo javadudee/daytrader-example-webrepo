@@ -161,7 +161,7 @@ ENTRYPOINT exec java $JAVA_OPTS -jar app.war
 ### (Optional) Review the Dockerfile Maven plugin
 
 To build and push the Docker image, we elected to use the [Spotify Dockerfile Maven Plugin](https://github.com/spotify/dockerfile-maven). It is one of two major Docker plugins that you still
-see active development. The other major Docker plugin is the [fabric8 Docker plugin](https://github.com/fabric8io/docker-maven-plugin). They are both valid options. For a recent comparison, 
+see active development. The other major Docker plugin is the [fabric8 Docker plugin](https://github.com/fabric8io/docker-maven-plugin). For a recent comparison, 
 see [Using Docker from Maven and Maven from Docker](https://codefresh.io/howtos/using-docker-maven-maven-docker/)
     
 1.  `$ cd daytrader-webapp/daytrader-web`
@@ -271,12 +271,13 @@ spec:
 
 1. `$ kubectl apply -f deployment.yaml` 
 
-    This command creates a Deployment resource. The Deployment resource creates a ReplicaSet, which then create the Pods
+    This command creates a Deployment resource, which creates the ReplicaSet, which then creates the Pods
     
 2.  (Optional) `$ kubectl get pods`
     
-    NAME                                READY   STATUS    RESTARTS   AGE
-    daytrader-web-*********-*****       1/1     Running   0          6m
+    NAME | READY | STATUS | RESTARTS | AGE
+    ---- | ----- | ------ | -------- | ---
+    daytrader-web-*********-***** | 1/1 | Running | 0 | 6m
     
     Wait until the STATUS is Running and the pods are READY (1/1)
               
