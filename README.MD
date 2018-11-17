@@ -197,9 +197,11 @@ see [Using Docker from Maven and Maven from Docker](https://codefresh.io/howtos/
 
 1. `$ cd daytrader-webapp`
     
-2. `$ mvn -Pcd clean install`   ## This command builds the Docker image and pushes it to the specified DockerHub account
+2. `$ mvn -Pcd clean install`
+This command builds the Docker image and pushes it to the specified DockerHub account
     
-3. `$ cd daytrader-web/env/external/k8s`   ## This directory contains the application's Kubernetes configuration files written in YAML
+3. `$ cd daytrader-web/env/external/k8s`
+This directory contains the application's Kubernetes configuration files written in YAML
 
 
 ## Create the Deployment, ReplicaSet, and Pod(s)
