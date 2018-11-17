@@ -34,47 +34,47 @@ be leveraged by other business applications.
 
 ## Prerequisites
 
-1. [Install Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+1.  [Install Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-2. [Install Maven](https://maven.apache.org/download.cgi) (3.3.9+)
+2.  [Install Maven](https://maven.apache.org/download.cgi) (3.3.9+)
 
-3. [Install Docker](https://www.docker.com/get-docker)
+3.  [Install Docker](https://www.docker.com/get-docker)
     
-4. [Create DockerHub Account](https://hub.docker.com/)
+4.  [Create DockerHub Account](https://hub.docker.com/)
 
 ## Configuration
 
 Maven must be able to authenticate to your DockerHub account so it can push Docker images
 
-1. Change the following property in daytrader-web/pom.xml to your DockerHub user name:
+1.  Change the following property in daytrader-web/pom.xml to your DockerHub user name:
 
-```xml
-<docker.image.prefix>${user.name}</docker.image.prefix>
-``` 
+    ```xml
+    <docker.image.prefix>${user.name}</docker.image.prefix>
+    ``` 
 
-2. Change the image in daytrader-web/env/external/k8s/web-deployment.yaml to your DockerHub username
+2.  Change the image in daytrader-web/env/external/k8s/web-deployment.yaml to your DockerHub username
 
-```yaml
-image: YOUR_DOCKERHUB_USERNAME/daytrader-gateway:4.0.18
-```
+    ```yaml
+    image: YOUR_DOCKERHUB_USERNAME/daytrader-gateway:4.0.18
+    ```
 
-3. The following property in daytrader-web/pom.xml is also worth noting. You do not have to change it, but if you do, change the above key-value accordingly.
+3.  The following property in daytrader-web/pom.xml is also worth noting. You do not have to change it, but if you do, change the above key-value accordingly.
         
-```xml
-<tag>4.0.18</tag>
-```
+    ```xml
+    <tag>4.0.18</tag>
+    ```
 
-4. Add the following to your Maven ~/.m2/settings.xml so Maven can push images to your DockerHub account
+4.  Add the following to your Maven ~/.m2/settings.xml so Maven can push images to your DockerHub account
 
-```xml
-<servers>
-    <server>
-        <id>docker.io</id>
-        <username>YOUR_DOCKERHUB_USERNAME</username>
-        <password>YOUR_DOCKERHUB_PASSWORD</password>
-    </server>
-</servers> 
-```
+    ```xml
+    <servers>
+        <server>
+            <id>docker.io</id>
+            <username>YOUR_DOCKERHUB_USERNAME</username>
+            <password>YOUR_DOCKERHUB_PASSWORD</password>
+        </server>
+    </servers> 
+    ```
 
 ## Setup the Cluster
 
@@ -198,17 +198,19 @@ see [Using Docker from Maven and Maven from Docker](https://codefresh.io/howtos/
 1. `$ cd daytrader-webapp`
     
 2. `$ mvn -Pcd clean install`
-This command builds the Docker image and pushes it to the specified DockerHub account
+
+    This command builds the Docker image and pushes it to the specified DockerHub account
     
 3. `$ cd daytrader-web/env/external/k8s`
-This directory contains the application's Kubernetes configuration files written in YAML
+
+    This directory contains the application's Kubernetes configuration files written in YAML
 
 
 ## Create the Deployment, ReplicaSet, and Pod(s)
 
 ### (Optional) Review the Deployment YAML
 
-The `deployment.yaml` is where you specify the containers that will host your application along with some other specifications
+The `deployment.yaml` is where you specify the containers that will host your application along with other specifications
     
 ```yaml
 apiVersion: extensions/v1beta1
@@ -267,14 +269,16 @@ spec:
             
 ### Create the Deployment Resource
 
-1. `$ kubectl apply -f deployment.yaml`    ## This command creates a Deployment resource. The Deployment resource creates a ReplicaSet, which then create the Pods
+1. `$ kubectl apply -f deployment.yaml` 
+
+This command creates a Deployment resource. The Deployment resource creates a ReplicaSet, which then create the Pods
     
 2. (Optional) `$ kubectl get pods`
     
     NAME                                READY   STATUS    RESTARTS   AGE   
     daytrader-web-*********-*****       1/1     Running   0          6m    
     
-    ## Wait until the STATUS is Running and the pods are READY (1/1)
+Wait until the STATUS is Running and the pods are READY (1/1)
               
 3. (Optional) Review the pods (application) logs
         
