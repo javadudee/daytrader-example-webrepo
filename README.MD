@@ -279,13 +279,13 @@ spec:
     ---- | ----- | ------ | -------- | ---
     daytrader-web-*********-***** | 1/1 | Running | 0 | 6m
     
-    Wait until the STATUS is Running and the pods are READY (1/1)
+    Wait until you see STATUS `Running` and READY `1/1`
               
 3.  (Optional) Review the pods (application) logs
         
-    `$ kubectl logs <POD_NAME> -f`     ## the -f option tails the logs
+    `$ kubectl logs <POD_NAME> -f`
     
-    Tomcat started on port(s): 5443 (https).
+    You should see `Tomcat started on port(s): 5443 (https)`
 
 4.  (Optional) Test the connection using the port forwarder
         
@@ -293,11 +293,11 @@ spec:
     
     This command forwards local port 8888 to port 5443 of your pod
        
-    Forwarding from 127.0.0.1:8888 -> 5443
+    You shouhld see `Forwarding from 127.0.0.1:8888 -> 5443`
        
     `$ curl -k https://127.0.0.1:8888/health`
 
-    {"status":"UP"} 
+    You should see `{"status":"UP"}` 
             
         
 ## Create the Service
