@@ -47,13 +47,13 @@ be leveraged by other business applications.
 
 ## Prerequisites
 
-    1.  [Install Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+1. [Install Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-    2.  [Install Maven](https://maven.apache.org/download.cgi) (3.3.9+)
+1. [Install Maven](https://maven.apache.org/download.cgi) (3.3.9+)
 
-    3.  [Install Docker](https://www.docker.com/get-docker)
+1. [Install Docker](https://www.docker.com/get-docker)
     
-    4.  [Create DockerHub Account](https://hub.docker.com/)
+1. [Create DockerHub Account](https://hub.docker.com/)
 
 
 ## Configuration
