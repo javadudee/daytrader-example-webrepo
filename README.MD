@@ -58,34 +58,33 @@ be leveraged by other business applications.
 
 ## Configuration
 
-    Maven must be able to authenticate to your DockerHub account so it can push Docker images
+Maven must be able to authenticate to your DockerHub account so it can push Docker images
 
-    1..  Change the following property in daytrader-web/pom.xml to your DockerHub user name:
+1. Change the following property in daytrader-web/pom.xml to your DockerHub user name:
     
-        ```xml
-        <docker.image.prefix>${user.name}</docker.image.prefix>
-        ```
-               
-    2.  Change the following key-value in daytrader-web/env/external/k8s/web-deployment.yaml to your DockerHub user name
+```xml
+<docker.image.prefix>${user.name}</docker.image.prefix>
+```
+              
+1. Change the following key-value in daytrader-web/env/external/k8s/web-deployment.yaml to your DockerHub user name
         
-        image: YOUR_DOCKERHUB_USERNAME/daytrader-gateway:4.0.18
+    image: YOUR_DOCKERHUB_USERNAME/daytrader-gateway:4.0.18
+    
+1. The following property in daytrader-web/pom.xml is also worth noting. You do not have to change it, but if you do, change the above key-value accordingly.
         
-    3.  The following property in daytrader-web/pom.xml is also worth noting. You do not have to change it, but if you do, change the above key-value accordingly.
-        
-        ```xml
-        <tag>4.0.18</tag>
-        ```
-       
-    4.  Add the following settings to your Maven ~/.m2/settings.xml so Maven can push images to your DockerHub account
+```xml
+<tag>4.0.18</tag>
+```
+1. Add the following settings to your Maven ~/.m2/settings.xml so Maven can push images to your DockerHub account
 
-        ```xml
-        <servers>
-            <server>
-                <id>docker.io</id>
-                <username>YOUR_DOCKERHUB_USERNAME</username>
-                <password>YOUR_DOCKERHUB_PASSWORD</password>
-            </server>
-        </servers> 
+```xml
+<servers>
+    <server>
+        <id>docker.io</id>
+        <username>YOUR_DOCKERHUB_USERNAME</username>
+        <password>YOUR_DOCKERHUB_PASSWORD</password>
+    </server>
+</servers> 
 
 
 ## Setup the Cluster
