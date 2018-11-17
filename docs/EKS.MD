@@ -1,17 +1,17 @@
-		                
+                
 ## Run on EKS
 
 
 
 ### Prerequisites
 
-	1.  Install Java Development Kit (64 bit) 1.8+
+    1.  Install Java Development Kit (64 bit) 1.8+
 
     2.  Install Apache Maven 3.3.9+
         
-	3.  Create DockerHub Account (https://hub.docker.com/)
+    3.  Create DockerHub Account (https://hub.docker.com/)
 
-	4.  Install Docker (https://www.docker.com/get-docker)
+    4.  Install Docker (https://www.docker.com/get-docker)
         
     5.  Configure Maven to push Docker images to your DockerHub account
 
@@ -25,7 +25,7 @@
         
         c.  The following property in daytrader-web/pom.xml is also worth noting. You do not have to change it, but if you do, change the above key-value accordingly.
         
-	    	<tag>4.0.18</tag>
+            <tag>4.0.18</tag>
        
         d.  Add the following settings to your Maven ~/.m2/settings.xml so Maven can push images to your DockerHub account
 
@@ -37,16 +37,16 @@
                 </server>
             </servers> 
                         
-	6.  Create AWS Account (https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
-			
-	7.  Install and Verify the EKS Cluster
-		
+    6.  Create AWS Account (https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
+
+    7.  Install and Verify the EKS Cluster
+    
         a.  Install the EKS Cluster (https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
-		        
+        
             --  Start with "Amazon EKS Prerequisites" up to, but not including, "Step 4: Launch a Guest Book Application"
 
         b.  Verify the EKS Cluster
- 
+     
             --  $ kubectl config use-context user116-eks-cluster  ## Use the name of your Amazon EKS cluster
                     
                 Switched to context "user116-eks-cluster".
@@ -67,7 +67,7 @@
         a.  Deploy NGINX Ingress
                 
             --  $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml
-
+    
             --  $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/cloud-generic.yam
                     
         b.  Make sure the controller is running and in the ready state. Note that it may take a few minutes to start
@@ -113,28 +113,28 @@
 
 ### Build Automation
 
-    1.	$ cd daytrader-webapp     
+    1.  $ cd daytrader-webapp
     
-    2.	$ mvn -Pcd clean install   ## builds docker image and pushes to docker hub
+    2.  $ mvn -Pcd clean install   ## builds docker image and pushes to docker hub
 
 
 
 ### Continuous Delivery
 
     Note: many of these manual steps can be automated via Maven at a later date
-		            
+            
             
 #### Create Deployment
 
-	1.  $ cd daytrader-quotesapp\daytrader-web\env\external\k8s
+    1.  $ cd daytrader-quotesapp\daytrader-web\env\external\k8s
     
-	2.  $ kubectl apply -f deployment.yaml    ## This creates the PODs that run the application and a ReplicaSet to manage the lifecycle of pods 
-		
-	3.  $ kubectl get pods
-		
+    2.  $ kubectl apply -f deployment.yaml    ## This creates the PODs that run the application and a ReplicaSet to manage the lifecycle of pods 
+    
+    3.  $ kubectl get pods
+    
         NAME                                READY   STATUS    RESTARTS   AGE   
         daytrader-web-87b5658f4-889gp       1/1     Running   0          6m    
-		
+    
         ## Record the NAME of the pod, and wait until the STATUS is Running and all pods are READY (e.g. 1/1, 2/2, or 3/3)
               
     4.  Retrieve the pods (application) logs
@@ -145,11 +145,11 @@
 
     5.  Access the pod (application) through the port forwarder
         
-        a.	$ kubectl port-forward <POD_NAME> 8888:5443  ## This command forwards local port 8888 to port 5443 of your pod
+        a.  $ kubectl port-forward <POD_NAME> 8888:5443  ## This command forwards local port 8888 to port 5443 of your pod
        
             Forwarding from 127.0.0.1:8888 -> 5443
        
-        b.	$ curl -k https://127.0.0.1:8888/health
+        b.  $ curl -k https://127.0.0.1:8888/health
 
             {"status":"UP"} 
             
@@ -164,36 +164,36 @@
            
     2.  $ kubectl get services
         
-        NAME           	TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
-        daytrader-web	ClusterIP   10.100.17.24     <none>        443/TCP         3d
+        NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
+        daytrader-web   ClusterIP   10.100.17.24     <none>        443/TCP         3d
        
         ## Notes
         
-        a.	The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
+        a.  The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
             to one or more pods. You can see the dnpoints buy doing kubectl get endpoints. When the service receives an HTTPS request,
             it selects one of the endpoints (pods) and forwards the HTTPS request to the pod. The application running inside the pod 
             handles the request and returns an HTTPS response.
-            	
-        b.	See also https://kubernetes.io/docs/concepts/services-networking/service/   
-              	
+            
+        b.  See also https://kubernetes.io/docs/concepts/services-networking/service/   
+              
     3.  Test the connection to the service using the API Server. 
                         
-        a.	$ kubectl proxy      ## Locates and authenticates to the API Server.
+        a.  $ kubectl proxy      ## Locates and authenticates to the API Server.
         
             Starting to serve on 127.0.0.1:8001
 
-        b.	$ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health      
-		
-            {"status":"UP"}      		
-				
+        b.  $ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health      
+    
+            {"status":"UP"}      
+    
             ## The curl command sent the HTTP request (without any authentication headers) to the proxy that is running on your local machine.
             ## The proxy, then, sent an HTTPS request to the API server's identity by validating its certificate. Encryption, authentication,
             ## and server verification is handled by the proxy. This is the easiest way to connect to the API server. 
-			    
+    
         c. See also
-						  
+    
             --  https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/ 
-		            
+            
             
 #### Create Secret
         
@@ -300,9 +300,9 @@
                 {"status":"UP"} 
 
         b.  (Option 2) Using the browser
-    	        
+           
              --  Point you browser to https://web.daytrader.geronimo.apache.org/health
- 	
+    
                 {"status":"UP"} 
 
     5.  If the connection timed out then
@@ -339,49 +339,49 @@
                                 
 #### Phase #2: functional-test
                                  
-	Open your browser and navigate to: https://web.daytrader.geronimo.apache.org
-    			
+    Open your browser and navigate to: https://web.daytrader.geronimo.apache.org
+    
     1.  Under The Configuration Tab
-
+    
         a.  Press(Re)-create DayTrader Database Tables and Indexes
         
-		b.  Press (Re)-populate DayTrader Database
-		
-		c.  Press Test Daytrader Scenario
-
-	2.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+        b.  Press (Re)-populate DayTrader Database
+    
+        c.  Press Test Daytrader Scenario
+    
+    2.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
 
         Note: each time you refresh the browser, it runs another functional test scenario. 
 
-	That's it! You have now tested the daytrader
+    That's it! You have now tested the daytrader
         
         
 #### Phase #3: post-functional-test
 
     (Optional)
                           
-    $ kubectl delete all --all    
+    $ kubectl delete all --all
     
-
+    
                             
 ### Swagger UI Documentation
 
     1.  (Option 1) Access Swagger UI through port forwarding
          
-        a.	$ kubectl port-forward <POD_NAME> 8888:5443  ## This command forwards local port 8888 to port 5443 of your pod
+        a.  $ kubectl port-forward <POD_NAME> 8888:5443  ## This command forwards local port 8888 to port 5443 of your pod
        
             Forwarding from 127.0.0.1:8888 -> 5443
             
         b.  Point you browser to https://localhost:8888/swagger-ui.html
 
     2.  (Option 2) Access Swagger UI through the API Server
-		
-		a.  $ kubectl proxy    ## Locates and authenticates to the API Server.
+    
+        a.  $ kubectl proxy    ## Locates and authenticates to the API Server.
         
             Starting to serve on 127.0.0.1:8001 
-		
-		b.  Point you browser to http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html        		
-        		
+    
+        b.  Point you browser to http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html        
+        
     3.  (Option 3) Access Swagger UI through an Ingress
         
         a.  Point you browser to https://web.daytrader.geronimo.apache.org/swagger-ui.html

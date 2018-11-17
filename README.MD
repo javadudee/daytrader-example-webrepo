@@ -21,7 +21,7 @@ For the original monolithic architecture, see http://geronimo.apache.org/GMOxDOC
 The Web application is a Spring Boot Application responsible for the UI to the DayTrader business functions. Although it still contains 
 all the business operations, their implementations have been changed to call the Gateway microservice; which then directs them onto the 
 appropriate microservice (Accounts, Portfolios, and Quotes). It is the microservices that contain the busienss logic so that it can now
-be leveraged by other business applications.  
+be leveraged by other business applications.
 
 ![Target-State-Architecture](images/Target-State-Architecture.JPG)
 
@@ -62,3 +62,7 @@ be leveraged by other business applications.
 [Instructions to Run on Amazon EKS](docs/EKS.MD)
 
 
+
+## Run on GKE
+
+[Instructions to Run on Google GKE](docs/GKE.MD)

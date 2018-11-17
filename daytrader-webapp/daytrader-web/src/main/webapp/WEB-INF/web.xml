@@ -17,10 +17,6 @@
     limitations under the License.
 -->
 
-<!--  
-	on 06/06/2018
-	- Upgraded to Servlet 3.1
--->
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd">
