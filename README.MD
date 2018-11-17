@@ -277,9 +277,9 @@ spec:
     
     NAME | READY | STATUS | RESTARTS | AGE
     ---- | ----- | ------ | -------- | ---
-    daytrader-web-*********-***** | 1/1 | Running | 0 | 6m
+    daytrader-web-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 6m
     
-    Wait until you see STATUS `Running` and READY `1/1`
+    Wait until you see READY `1/1` and STATUS `Running`
               
 3.  (Optional) Review the pods (application) logs
         
