@@ -46,25 +46,25 @@ be leveraged by other business applications.
 
 Maven must be able to authenticate to your DockerHub account so it can push Docker images
 
-1.  Change the following property in daytrader-web/pom.xml to your DockerHub user name:
+1.  In `daytrader-web/pom.xml` change the ${user.name} to your DockerHub user name:
 
     ```xml
     <docker.image.prefix>${user.name}</docker.image.prefix>
     ``` 
 
-2.  Change the image in daytrader-web/env/external/k8s/web-deployment.yaml to your DockerHub username
+2.  In `daytrader-web/env/external/k8s/web-deployment.yaml`, change the image to your DockerHub username
 
     ```yaml
     image: YOUR_DOCKERHUB_USERNAME/daytrader-gateway:4.0.18
     ```
 
-3.  The following property in daytrader-web/pom.xml is also worth noting. You do not have to change it, but if you do, change the above key-value accordingly.
+3.  In `daytrader-web/pom.xml`, you don't have to change the <tag>, but if you do, change the above version too.
         
     ```xml
     <tag>4.0.18</tag>
     ```
 
-4.  Add the following to your Maven ~/.m2/settings.xml so Maven can push images to your DockerHub account
+4.  In `~/.m2/settings.xml`, add the following so Maven can push images to your DockerHub account
 
     ```xml
     <servers>
@@ -164,44 +164,44 @@ To build and push the Docker image, we elected to use the [Spotify Dockerfile Ma
 see active development. The other major Docker plugin is the [fabric8 Docker plugin](https://github.com/fabric8io/docker-maven-plugin). They are both valid options. For a recent comparison, 
 see [Using Docker from Maven and Maven from Docker](https://codefresh.io/howtos/using-docker-maven-maven-docker/)
     
-1. `$ cd daytrader-webapp/daytrader-web`
+1.  `$ cd daytrader-webapp/daytrader-web`
     
-2. In the `pom.xml`, review the `dockerfile-maven-plugin`
+2.  In `pom.xml`, review the `dockerfile-maven-plugin`
         
-```xml
-<plugin>
-    <groupId>com.spotify</groupId>
-    <artifactId>dockerfile-maven-plugin</artifactId>
-    <version>${dockerfile-maven-version}</version>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>build</goal>    <!-- Builds the Docker image -->
-                <goal>push</goal>     <!-- Pushes the Docker image -->
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <repository>${docker.image.prefix}/${project.artifactId}</repository>
-        <tag>4.0.18</tag>
-        <buildArgs>
-            <JAR_FILE>target/${project.artifactId}-${project.version}.war</JAR_FILE>
-        </buildArgs>
-        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-    </configuration>
-</plugin>
-```
+    ```xml
+    <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>${dockerfile-maven-version}</version>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                    <goal>build</goal>    <!-- Builds the Docker image -->
+                    <goal>push</goal>     <!-- Pushes the Docker image -->
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <repository>${docker.image.prefix}/${project.artifactId}</repository>
+            <tag>4.0.18</tag>
+            <buildArgs>
+                <JAR_FILE>target/${project.artifactId}-${project.version}.war</JAR_FILE>
+            </buildArgs>
+            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+        </configuration>
+    </plugin>
+    ```
 
 ### Build and Push the Docker image
 
-1. `$ cd daytrader-webapp`
+1.  `$ cd daytrader-webapp`
     
-2. `$ mvn -Pcd clean install`
+2.  `$ mvn -Pcd clean install`
 
     This command builds the Docker image and pushes it to the specified DockerHub account
     
-3. `$ cd daytrader-web/env/external/k8s`
+3.  `$ cd daytrader-web/env/external/k8s`
 
     This directory contains the application's Kubernetes configuration files written in YAML
 
@@ -210,7 +210,7 @@ see [Using Docker from Maven and Maven from Docker](https://codefresh.io/howtos/
 
 ### (Optional) Review the Deployment YAML
 
-The `deployment.yaml` is where you specify the containers that will host your application along with other specifications
+The `deployment.yaml` is where you specify the containers that will host your application along with other specs
     
 ```yaml
 apiVersion: extensions/v1beta1
@@ -271,22 +271,22 @@ spec:
 
 1. `$ kubectl apply -f deployment.yaml` 
 
-This command creates a Deployment resource. The Deployment resource creates a ReplicaSet, which then create the Pods
+    This command creates a Deployment resource. The Deployment resource creates a ReplicaSet, which then create the Pods
     
-2. (Optional) `$ kubectl get pods`
+2.  (Optional) `$ kubectl get pods`
     
-    NAME                                READY   STATUS    RESTARTS   AGE   
-    daytrader-web-*********-*****       1/1     Running   0          6m    
+    NAME                                READY   STATUS    RESTARTS   AGE
+    daytrader-web-*********-*****       1/1     Running   0          6m
     
-Wait until the STATUS is Running and the pods are READY (1/1)
+    Wait until the STATUS is Running and the pods are READY (1/1)
               
-3. (Optional) Review the pods (application) logs
+3.  (Optional) Review the pods (application) logs
         
     `$ kubectl logs <POD_NAME> -f`     ## the -f option tails the logs
     
     Tomcat started on port(s): 5443 (https).
 
-4. (Optional) Test the connection using the port forwarder
+4.  (Optional) Test the connection using the port forwarder
         
     `$ kubectl port-forward <POD_NAME> 8888:5443`
     
@@ -301,74 +301,75 @@ Wait until the STATUS is Running and the pods are READY (1/1)
         
 ## Create the Service
 
-    The Service load balances requests across the Pods. Remember that the pods are ephemeral. So if one of the stops, the ReplicaSet will 
-    create a replacement, but it will have a different IP. For that reason, clients should not communicate directly with the application 
-    in a Pod. Instead clients should talk to applications via the service. 
+The Service load balances requests across the Pods. Remember that the pods are ephemeral. So if one of the stops, the ReplicaSet will 
+create a replacement, but it will have a different IP. For that reason, clients should not communicate directly with the application 
+in a Pod. Instead clients should talk to applications via the service. 
     
 ### (Optional) Review the Service YAML
 
-    The `service.yaml` is where you specify the selector for pods along with other specifications
+The `service.yaml` is where you specify the selector for the backend pods along with other specs
 
-    ```yaml
-    apiVersion: v1
-    kind: Service
-    metadata:
-      labels:
-        app: daytrader-web
-      name: daytrader-web
-      namespace: default
-    spec:
-      ports:
-      - port: 443
-        protocol: TCP
-        targetPort: 5443
-      selector:
-        app: daytrader-web
-      sessionAffinity: None
-      type: ClusterIP
-    ```
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: daytrader-web
+  name: daytrader-web
+  namespace: default
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 5443
+  selector:
+    app: daytrader-web
+  sessionAffinity: None
+  type: ClusterIP
+```
 
 ### Create the Service Resource
 
-    1.  `$ kubectl apply -f service.yaml`
+1.  `$ kubectl apply -f service.yaml`
            
-    2.  (Optional) `$ kubectl get services`
+2.  (Optional) `$ kubectl get services`
         
-        NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
-        daytrader-web   NodePort    10.7.254.225   <none>        443:30650/TCP   23s
+    NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
+    daytrader-web   NodePort    10.7.254.225   <none>        443:30650/TCP   23s
        
-        ## Notes
-        
-        a.  The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
-            to one or more pods. You can see the dnpoints buy doing kubectl get endpoints. When the service receives an HTTPS request,
-            it selects one of the endpoints (pods) and forwards the HTTPS request to the pod. The application running inside the pod 
-            handles the request and returns an HTTPS response.
-            
-        b.  See also [Kubernetes Concepts - Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/service)
+    Notes
 
-    3.  (Optional) Test the connection using the Kubernetes API. 
-    
+    a.  The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
+        to one or more pods. You can see the dnpoints buy doing kubectl get endpoints. When the service receives an HTTPS request,
+        it selects one of the endpoints (pods) and forwards the HTTPS request to the pod. The application running inside the pod 
+        handles the request and returns an HTTPS response.
+            
+    b.  See also [Kubernetes Concepts - Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/service)
+
+3.  (Optional) Test the connection using the Kubernetes API.
                         
-        a.  `$ kubectl proxy`      ## Locates and authenticates to the API Server.
+    a.  Start the proxy to locates and authenticate to the API Server.
+    
+        `$ kubectl proxy`      
         
-            Starting to serve on 127.0.0.1:8001
+        Starting to serve on 127.0.0.1:8001
             
-            If you get a port binding error then find the processId for that server and kill it 
+    b.  If you get a port binding error then find the processId for that server and kill it 
 
-            --  `$ lsof -P | grep ':8001'`
-            --  `$ kill -9 processId`
+        `$ lsof -P | grep ':8001'`
+        `$ kill -9 processId`
 
-        b.  `$ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health`
+    c.  `$ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health`
     
-            {"status":"UP"}
+        {"status":"UP"}
     
-            ## The curl command sent the HTTP request (without any authentication headers) to the proxy that is running on your local machine.
-            ## The proxy, then, sent an HTTPS request to the API server's identity by validating its certificate. Encryption, authentication,
-            ## and server verification is handled by the proxy. This is the easiest way to connect to the API server. 
+        Notes
+        
+        a.  The above curl command sends the HTTP request (without any authentication headers) to the proxy that is running on your local machine.
+            The proxy, then, sends an HTTPS request with appropriate authentication headers to the API server. This is the easiest way to connect 
+            to the API server. 
     
-        c. See also
-    
-            --  [Access Clusters Using the Kubernetes API](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/) 
+        b. See also [Access Clusters Using the Kubernetes API](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/) 
             
             
 ## Create the Secret
