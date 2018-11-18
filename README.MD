@@ -21,7 +21,7 @@ Gateway Microservice in turn redirects the request to the ([Accounts Microservic
 
 ![Target-State-Architecture](images/Target-State-Architecture.JPG)
 
-This README shows you how to build and push a Docker image for the Web Application and how to deploy that Docker image to a Kubernetes Cluster. 
+This README shows how to generate a Docker Image for the Web and how to Deploy that Docker Image to a Kubernetes Cluster. 
 
 ## Prerequisites
 
@@ -83,13 +83,15 @@ You will need a cluster to run the application. If you already have a cluster wi
 
 1.  Build the Web UI
 
-    `$ cd daytrader-webapp`
-    `$ mvn -Plocal clean install`
+    a.  `$ cd daytrader-webapp`
+    
+    b.  `$ mvn -Plocal clean install`
 
 2.  Start the Web UI
 
-    `$ cd daytrader-web`
-    `$ ./env/ext/bin/start_server.sh`
+    a.  `$ cd daytrader-web`
+    
+    b.  `$ ./env/ext/bin/start_server.sh`
     
 3.  Test the Web UI
 
@@ -115,7 +117,7 @@ You will need a cluster to run the application. If you already have a cluster wi
 
     Pre-Condition: Start the microservices
     
-    Open your browser and navigate to: `https://localhost:5443/swagger-ui.html`
+    a.  Open your browser and navigate to: `https://localhost:5443/swagger-ui.html`
     
     Post-Condition: Stop the microservices
     
@@ -129,8 +131,9 @@ You will need a cluster to run the application. If you already have a cluster wi
 
 1.  Start the Web UI
 
-    `$ cd daytrader-webapp`
-    `$ mvn -Pcd clean install`
+    a.  `$ cd daytrader-webapp`
+    
+    b.  `$ mvn -Pcd clean install`
   
 2.  Test the Web UI
 
@@ -158,7 +161,7 @@ You will need a cluster to run the application. If you already have a cluster wi
     
     Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
     
-    Post-Condition: Stop the microservices
+    a.  Post-Condition: Stop the microservices
     
 4.  Stop the Web UI
 
@@ -171,7 +174,7 @@ These steps were very straightforward and easy to perform.
  
 ### Create the Dockerfile
     
-The `Dockerfile` is where you defines all the commands to setup the environment and start the Web UI in the container.
+The `Dockerfile` is where you define all the commands to setup the environment and start the Web UI in the container.
 
 ```yaml
 FROM openjdk:8-jdk
@@ -256,17 +259,18 @@ In `daytrader-webapp/daytrader-web/pom.xml`, add the [Dockerfile Maven Plugin](h
 
 With the `Dockerfile` and the `Dockerfile Maven Plugin` in place, we can use Maven to build and push the Docker image to DockerHub.
 
-`$ cd daytrader-webapp`
-`$ mvn -Pcd clean install`
+1.  `$ cd daytrader-webapp`
+
+2.  `$ mvn -Pcd clean install`
 
 This command creates an image with the version <tag> you specified in the configuration. For rolling update, we can update this <tag>. 
     
     
-## Steps to Deploy to Kubernetes Cluster
+## Steps to Deploy the Docker Image to a Kubernetes Cluster
 
 Deployment to Kubernetes required a number of manual steps. Some of these steps were to specify the configuration of the resources; others were to create the resources; and still others were used to verify the deployment. You only have to specify the configuration once; after that you can use it to create the resources. The creation of resources has be done whenever you do a deployment. As such they should be automated via Maven. The other other steps to verify the deployment should only used by developers troubleshooting a problem. Before automating though it is important to first identify the manual steps which is what we do in this section. It is important to note that these steps were completely portable across the Kubernetes platforms that we tested. This means that you write once and run anywhere. This is great news for DevOps!
 
-
+Important note: all of the configuration files are in this folder: `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
 
 ### Create the Deployment for our Container
 
@@ -464,11 +468,11 @@ We are going to use an Ingress for routing to our Service but first need to crea
 
 The `secret.yaml` contains certificates and private keys that are used by our Ingress resource. 
 
-Instead of creating the `secret.yaml` from scratch, which involved cutting and pasting certificates, we ran
+Instead of creating the `secret.yaml` from scratch, which involved cutting and pasting certificates, run
 
 `$ kubectl create secret tls daytrader-web --key tls.key --cert tls.crt --dry-run > secret.yaml`
 
-It was simply less error prone to use `kubectl`. We still use the `secret.yaml` to create the secret resource.
+It is simply less error prone to use `kubectl` to generate the `secret.yaml` than create it from scratch.
 
 ```yaml
 apiVersion: v1
@@ -526,7 +530,7 @@ spec:
 
 #### Use `kubectl apply -f` to create the Ingress resource
 
-1..  `$ kubectl apply -f ingress.yaml`
+1.  `$ kubectl apply -f ingress.yaml`
             
 2.  (Optional) `$ kubectl get ingress`
 
@@ -563,7 +567,7 @@ This is a good solution for local development servers
 
 1.  Add an entry to your /etc/hosts in the following format
     
-    <ADDRESS>   <web.daytrader.geronimo.apache.org>
+    `<ADDRESS>   <web.daytrader.geronimo.apache.org>`
         
 2.  It is impportant to note that the <ADDRESS> must be an External IP Address. 
         
