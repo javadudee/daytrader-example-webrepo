@@ -116,10 +116,8 @@ To undeploy the container from Kubernetes
 
     a.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
 
-        ```bash
         $ cd daytrader-accountsapp\daytrader-accounts
         $ mvn -P clean install
-        ```
 
     b.  [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
 
