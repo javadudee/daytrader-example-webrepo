@@ -112,7 +112,7 @@ To undeploy the container from Kubernetes
 
 ### Functional Test
 
-1.  Setup the environment for running the functional test
+1.  Setup the environment before running the functional test
 
     a.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
 
@@ -121,85 +121,71 @@ To undeploy the container from Kubernetes
 
     b.  [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
 
-        ```sh
         $ cd daytrader-gatewayapp\daytrader-gateway
         $ mvn -P clean install
-        ```
 
-3.  [Portfolios Microservice](https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/)
+    c.  [Portfolios Microservice](https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/)
 
         $ cd daytrader-portfoliosapp\daytrader-portfolios
-        
         $ mvn -P clean install
 
-4.  [Quotes Microservice](https://github.com/jpmorganchase/daytrader-example-quotesrepo/)
+    d.  [Quotes Microservice](https://github.com/jpmorganchase/daytrader-example-quotesrepo/)
 
         $ cd daytrader-quotesapp\daytrader-quotes
-        
         $ mvn -P clean install
 
-5.  [Web Microservice](https://github.com/jpmorganchase/daytrader-example-webrepo/)
+    e.  [Web Microservice](https://github.com/jpmorganchase/daytrader-example-webrepo/)
 
         $ cd daytrader-webapp\daytrader-web
-        
         $ mvn -P clean install
 
-To run the functional tests
+2.  Run the functional tests
                                 
-1.  Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org`
+    a.  Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org`
 
-2.  Under The Configuration Tab
+    b.  Under The Configuration Tab
 
-    a.  Press(Re)-create DayTrader Database Tables and Indexes
-    
-    b.  Press (Re)-populate DayTrader Database
+        * Press(Re)-create DayTrader Database Tables and Indexes
+        * Press (Re)-populate DayTrader Database
+        * Press Test Daytrader Scenario
 
-    c.  Press Test Daytrader Scenario
+    c.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
 
-3.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+        Note: each time you refresh the browser, it runs another functional test scenario. 
 
-    Note: each time you refresh the browser, it runs another functional test scenario. 
-
-That's it! You have now tested the daytrader
+    d.  That's it! You have now tested the daytrader
  
-To teardown the environment
+3. Teardown the environment after running the functional test
        
-1.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
+    a.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
 
-    a.	cd daytrader-accountsapp\daytrader-accounts
+        $ cd daytrader-accountsapp\daytrader-accounts
+        $ mvn -P clean install
 
-    b.	mvn -P clean install
+    b.  [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
 
-2.  [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
+        $ cd daytrader-gatewayapp\daytrader-gateway
+        $ mvn -P clean install
 
-    a.	cd daytrader-gatewayapp\daytrader-gateway
+    c.  [Portfolios Microservice](https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/)
 
-    b.	mvn -P clean install
+        $ cd daytrader-portfoliosapp\daytrader-portfolios
+        $ mvn -P clean install
 
-3.  [Portfolios Microservice](https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/)
+    d.  [Quotes Microservice](https://github.com/jpmorganchase/daytrader-example-quotesrepo/)
 
-    a.  cd daytrader-portfoliosapp\daytrader-portfolios
-        
-    b.	mvn -P clean install
+        $ cd daytrader-quotesapp\daytrader-quotes
+        $ mvn -P clean install
 
-4.  [Quotes Microservice](https://github.com/jpmorganchase/daytrader-example-quotesrepo/)
+    e.  [Web Microservice](https://github.com/jpmorganchase/daytrader-example-webrepo/)
 
-    a.  cd daytrader-quotesapp\daytrader-quotes
-        
-    b.	mvn -P clean install
-
-5.  [Web Microservice](https://github.com/jpmorganchase/daytrader-example-webrepo/)
-
-    a.  cd daytrader-webapp\daytrader-web
-        
-    b.	mvn -P clean install
+        $ cd daytrader-webapp\daytrader-web
+        $ mvn -P clean install
     
                             
 ## Swagger UI Documentation
 
 Point you browser to `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
-    
-
 
 
 
