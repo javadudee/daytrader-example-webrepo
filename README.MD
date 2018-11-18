@@ -21,7 +21,7 @@ Gateway Microservice in turn redirects the request to the ([Accounts Microservic
 
 ![Target-State-Architecture](images/Target-State-Architecture.JPG)
 
-This README shows how to generate a Docker Image for the Web and how to Deploy that Docker Image to a Kubernetes Cluster. 
+This README shows how to put the Web App into a Docker Image and how to deploy that Docker Image to Kubernetes. 
 
 ## Prerequisites
 
@@ -95,7 +95,7 @@ You will need a cluster to run the application. If you already have a cluster wi
     
 3.  Test the Web UI
 
-    Pre-Condition: Start the microservices
+    **Pre-Condition:** Start the microservices
                                    
     a.  Open your browser and navigate to: `https://localhost:5443`
 
@@ -115,11 +115,11 @@ You will need a cluster to run the application. If you already have a cluster wi
     
 4.  Access the Swagger UI
 
-    Pre-Condition: Start the microservices
+    **Pre-Condition:** Start the microservices
     
     a.  Open your browser and navigate to: `https://localhost:5443/swagger-ui.html`
     
-    Post-Condition: Stop the microservices
+    **Post-Condition:** Stop the microservices
     
 4.  Stop the Web UI
 
@@ -157,11 +157,11 @@ You will need a cluster to run the application. If you already have a cluster wi
     
 4.  Access the Swagger UI
 
-    Pre-Condition: Start the microservices
+    **Pre-Condition:** Start the microservices
     
-    Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
+    a.  Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
     
-    a.  Post-Condition: Stop the microservices
+    **Post-Condition:** Stop the microservices
     
 4.  Stop the Web UI
 
@@ -272,11 +272,11 @@ Deployment to Kubernetes required a number of manual steps. Some of these steps 
 
 Important note: all of the configuration files are in this folder: `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
 
-### Create the Deployment for our Container
+### Create the Deployment for our Docker Image
 
 #### Use `yaml` to specify the deployment configuration
 
-The `deployment.yaml` is where you specify the containers that will host your application along with other specs
+The `deployment.yaml` is where you specify the Docker Image for your application along with other specs
     
 ```yaml
 apiVersion: extensions/v1beta1
@@ -458,9 +458,13 @@ We are going to use an Ingress for routing to our Service but first need to crea
             
 2.  Check and verify your certificate and key. This can be useful before applying them to your server. 
 
-    a.  `$ openssl x509 -in tls.crt -text`  ## Check the certificate and its information (signing authority, expiration date, etc.)
+    a.  `$ openssl x509 -in tls.crt -text`
     
-    b.  `$ openssl rsa -in tls.key -check`  ## Check the SSL key and verify the consistency
+        This command check the certificate and its information (signing authority, expiration date, etc.)
+    
+    b.  `$ openssl rsa -in tls.key -check`
+    
+        This command checks the SSL key and verifies its consistency
 
 3.  Verify the certificate and key match by comparing their checksums for equality
 
@@ -574,11 +578,11 @@ This is a good solution for local development servers
     
     `<ADDRESS>   <web.daytrader.geronimo.apache.org>`
         
-2.  It is impportant to note that the <ADDRESS> must be an External IP Address. 
+2.  Note that `<ADDRESS>` must be an External IP Address. 
         
-    a.  If the ADDRESS is a DNS name, then `ping` <ADDRESS>` to get the External IP Address.
+    a.  If it is a DNS name, then `ping <ADDRESS>` to get the External IP Address.
          
-    b.  If the ADDRESS is an Internal IP Address, then `kubectl cluster-info` to get the External IP Address
+    b.  If it is an Internal IP Address, then `kubectl cluster-info` to get the External IP Address
 
 #### Use CNAME record to resolve the custom domain name
 
