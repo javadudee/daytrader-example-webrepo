@@ -481,7 +481,7 @@ Instead of creating the `secret.yaml` from scratch, which involved cutting and p
 
 `$ kubectl create secret tls daytrader-web --key tls.key --cert tls.crt --dry-run > secret.yaml`
 
-It is simply less error prone to use `kubectl` to generate the `secret.yaml` than create it from scratch.
+It is simply less error prone to use `kubectl` to generate the `secret.yaml` than to create it from scratch.
 
 ```yaml
 apiVersion: v1
@@ -586,7 +586,7 @@ This is a good solution for local development servers
 
 #### Use CNAME record to resolve the custom domain name
 
-This is a good solution for more controlled environments
+This is a good solution for controlled environments; like UAT and PROD
     
 1.  (TODO) Create a CNAME record to your DNS custom domain
 
