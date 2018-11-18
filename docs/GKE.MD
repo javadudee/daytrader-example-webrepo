@@ -87,7 +87,7 @@
 See also NGINX Ingress Controller Installation Guide (https://kubernetes.github.io/ingress-nginx/deploy/)
 
                     
-### (N/A) Install the Kubernetes Dashboard
+### Install the Kubernetes Dashboard (N/A)
         
 The Kubernetes Dashboard is disabled and deprecated in GKE. instead, use the built-in [GKE Dashboard](https://cloud.google.com/kubernetes-engine/docs/concepts/dashboards) through the Console.
 

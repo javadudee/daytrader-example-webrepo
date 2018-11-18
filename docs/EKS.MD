@@ -21,11 +21,11 @@
                     
     c.  $ kubectl get nodes
                 
-        NAME | STATUS | ROLES | AGE | VERSION
-        ---- | ------ | ----- | --- | -------
-        ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
-        ip-172-31-2-133.ec2.internal | Ready | <none> | 3h | v1.10.3
-        ip-172-31-30-11.ec2.internal | Ready | <none> | 3h | v1.10.3
+NAME | STATUS | ROLES | AGE | VERSION
+---- | ------ | ----- | --- | -------
+ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
+ip-172-31-2-133.ec2.internal  | Ready | <none> | 3h | v1.10.3
+ip-172-31-30-11.ec2.internal  | Ready | <none> | 3h | v1.10.3
 
 ### Install the Ingres Controller
 

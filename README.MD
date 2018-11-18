@@ -448,20 +448,25 @@ We are going to use an Ingress for routing to our Service but first need to crea
     to the Ingress resource. To do that, the certificate and private key must be stored in a Kubernetes resource called a secret so it 
     can be referenced by the Ingress resource. 
 
-    `$ openssl genrsa -out tls.key 2048`
-    `$ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org`
-    `$ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key`
-    `$ kubectl get secrets daytrader-web -o yaml --export > secret.yaml`
+    a.  `$ openssl genrsa -out tls.key 2048`
+    
+    b.  `$ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org`
+    
+    c.  `$ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key`
+    
+    d.  `$ kubectl get secrets daytrader-web -o yaml --export > secret.yaml`
             
 2.  Check and verify your certificate and key. This can be useful before applying them to your server. 
 
-    `$ openssl x509 -in tls.crt -text`  ## Check the certificate and its information (signing authority, expiration date, etc.)
-    `$ openssl rsa -in tls.key -check`  ## Check the SSL key and verify the consistency
+    a.  `$ openssl x509 -in tls.crt -text`  ## Check the certificate and its information (signing authority, expiration date, etc.)
+    
+    b.  `$ openssl rsa -in tls.key -check`  ## Check the SSL key and verify the consistency
 
 3.  Verify the certificate and key match by comparing their checksums for equality
 
-    `$ openssl x509 -noout -modulus -in tls.crt | openssl md5`
-    `$ openssl rsa -noout -modulus -in tls.key | openssl md5`
+    a.  `$ openssl x509 -noout -modulus -in tls.crt | openssl md5`
+    
+    b.  `$ openssl rsa -noout -modulus -in tls.key | openssl md5`
             
 
 #### Use `kubectl create secret` to generate the secret configuration
