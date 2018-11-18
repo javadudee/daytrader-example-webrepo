@@ -167,7 +167,7 @@ You will need a cluster to run the application. If you already have a cluster wi
     
 ## Steps to Generate the Docker Image
 
-This was very straightforward and easy to perform.
+These steps were very straightforward and easy to perform.
  
 ### Create the Dockerfile
     
@@ -227,30 +227,30 @@ ENTRYPOINT exec java $JAVA_OPTS -jar app.war
 
 In `daytrader-webapp/daytrader-web/pom.xml`, add the [Dockerfile Maven Plugin](https://github.com/spotify/dockerfile-maven) and specify the DockerHub account. 
         
-    ```xml
-    <plugin>
-        <groupId>com.spotify</groupId>
-        <artifactId>dockerfile-maven-plugin</artifactId>
-        <version>${dockerfile-maven-version}</version>
-        <executions>
-            <execution>
-                <phase>package</phase>
-                <goals>
-                    <goal>build</goal>    <!-- Builds the Docker image -->
-                    <goal>push</goal>     <!-- Pushes the Docker image -->
-                </goals>
-            </execution>
-        </executions>
-        <configuration>
-            <repository>${docker.image.prefix}/${project.artifactId}</repository>
-            <tag>4.0.18</tag>
-            <buildArgs>
-                <JAR_FILE>target/${project.artifactId}-${project.version}.war</JAR_FILE>
-            </buildArgs>
-            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>   <!-- Authenticates to your DockerHub account -->
-        </configuration>
-    </plugin>
-    ```
+```xml
+<plugin>
+    <groupId>com.spotify</groupId>
+    <artifactId>dockerfile-maven-plugin</artifactId>
+    <version>${dockerfile-maven-version}</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>build</goal>    <!-- Builds the Docker image -->
+                <goal>push</goal>     <!-- Pushes the Docker image -->
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <repository>${docker.image.prefix}/${project.artifactId}</repository>
+        <tag>4.0.18</tag>
+        <buildArgs>
+            <JAR_FILE>target/${project.artifactId}-${project.version}.war</JAR_FILE>
+        </buildArgs>
+        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>   <!-- Authenticates to your DockerHub account -->
+    </configuration>
+</plugin>
+```
 
 ### Build and Push the Docker image
 
@@ -261,11 +261,16 @@ With the `Dockerfile` and the `Dockerfile Maven Plugin` in place, we can use Mav
 
 This command creates an image with the version <tag> you specified in the configuration. For rolling update, we can update this <tag>. 
     
+    
 ## Steps to Deploy to Kubernetes Cluster
 
-### Deploy the Container
+Deployment to Kubernetes required a number of manual steps. Some of these steps were to specify the configuration of the resources; others were to create the resources; and still others were used to verify the deployment. You only have to specify the configuration once; after that you can use it to create the resources. The creation of resources has be done whenever you do a deployment. As such they should be automated via Maven. The other other steps to verify the deployment should only used by developers troubleshooting a problem. Before automating though it is important to first identify the manual steps which is what we do in this section. It is important to note that these steps were completely portable across the Kubernetes platforms that we tested. This means that you write once and run anywhere. This is great news for DevOps!
 
-#### Ceate the Deployment YAML
+
+
+### Create the Deployment for our Container
+
+#### Use `yaml` to specify the deployment configuration
 
 The `deployment.yaml` is where you specify the containers that will host your application along with other specs
     
@@ -323,21 +328,13 @@ spec:
         - name: GET_HOSTS_FROM
           value: dns
 ```
-            
-#### Create the Deployment Resource
 
-1.  `$ kubectl apply -f deployment.yaml` 
+#### Use `kubectl apply -f` to create the deloyment resource
+
+1.  `$ kubectl apply -f deployment.yaml`
 
     This command creates a Deployment resource, which creates the ReplicaSet, which then creates the Pods
     
-2.  `$ kubectl get deployments` 
-
-NAME | DESIRED | CURRENT | UP-TO-DATE
----- | ------- | ------- | ----------
-daytrader-web | 1 | 1 | 1
-    
-#### Check Pod Information
-
 2.  `$ kubectl get pods`
     
     NAME | READY | STATUS | RESTARTS | AGE
@@ -351,29 +348,29 @@ daytrader-web | 1 | 1 | 1
     `$ kubectl logs <POD_NAME> -f`
     
     You should see `Tomcat started on port(s): 5443 (https)`
-
-4.  (Optional) Test the connection using the port forwarder
+    
+#### Use `kubectl port-forward` to test the connection
         
-    `$ kubectl port-forward <POD_NAME> 8888:5443`
+1.  `$ kubectl port-forward <POD_NAME> 8888:5443`
     
     This command forwards local port 8888 to port 5443 of your pod
        
-    You shouhld see `Forwarding from 127.0.0.1:8888 -> 5443`
+    You should see `Forwarding from 127.0.0.1:8888 -> 5443`
        
-    `$ curl -k https://127.0.0.1:8888/health`
+2.  `$ curl -k https://127.0.0.1:8888/health`
 
     You should see `{"status":"UP"}` 
             
         
-## Create the Service
+### Create the Service for our Pod
 
-The Service load balances requests across the Pods. Remember that the pods are ephemeral. So if one of the stops, the ReplicaSet will 
-create a replacement, but it will have a different IP. For that reason, clients should not communicate directly with the application 
-in a Pod. Instead clients should talk to applications via the service. 
+The Service load balances requests across the Pods. Remember that the pods are ephemeral. So if one of them stops, the ReplicaSet will 
+create a replacement, but that Pod will have a different IP address. For that reason, clients should not communicate directly with the 
+application in a Pod. Instead clients should talk to applications via their service. 
     
-### Create the Service YAML
+#### Use `yaml` to specify the service configuration
 
-The `service.yaml` is where you specify the selector for the backend pods along with other specs
+The `service.yaml` is where you specify the selector for the backend pods along with other specifications
 
 ```yaml
 apiVersion: v1
@@ -394,83 +391,84 @@ spec:
   type: ClusterIP
 ```
 
-### Create the Service Resource
+#### Use `kubectl apply -f` to create the service resource
 
 1.  `$ kubectl apply -f service.yaml`
            
-2.  (Optional) `$ kubectl get services`
+2.  `$ kubectl get services`
         
     NAME | TYPE | CLUSTER-IP | EXTERNAL-IP | PORT(S) | AGE
     ---- | ---- | ---------- | ----------- | ------- | ---
     daytrader-web | NodePort | 10.7.254.225| <none> | 443:30650/TCP | 23s
        
-    Notes
-
-    a.  The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
-        to one or more pods. You can see the dnpoints buy doing kubectl get endpoints. When the service receives an HTTPS request,
-        it selects one of the endpoints (pods) and forwards the HTTPS request to the pod. The application running inside the pod 
-        handles the request and returns an HTTPS response.
+    The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
+    to one or more pods. You can see the enpoints buy doing `kubectl get endpoints`. When the service receives an HTTPS request,
+    it selects one of the endpoints (pods) and forwards the HTTPS request to the pod. The application running inside the pod 
+    handles the request and returns an HTTPS response.
             
-    b.  See also [Kubernetes Concepts - Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/service)
+    See also [Kubernetes Concepts - Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/service)
 
-3.  (Optional) Test the connection using the Kubernetes API.
+#### Use `kubectl proxy` to test the connection
                         
-    a.  Start the proxy to locates and authenticate to the API Server.
+1.  Start the proxy to locates and authenticate to the API Server.
     
-        `$ kubectl proxy`      
+    `$ kubectl proxy`
         
-        Starting to serve on 127.0.0.1:8001
+    You should see `Starting to serve on 127.0.0.1:8001`
             
-    b.  If you get a port binding error then find the processId for that server and kill it 
+2.  If you get a port binding error then find the processId for that server and kill it 
 
-        `$ lsof -P | grep ':8001'`
-        `$ kill -9 processId`
+    `$ lsof -P | grep ':8001'`
+    `$ kill -9 processId`
 
-    c.  `$ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health`
+3.  Test the connection using the `curl` command
+
+    `$ curl -k http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/health`
     
-        {"status":"UP"}
+    You should see `{"status":"UP"}`
     
-        The above curl command sends the HTTP request (without any authentication headers) to the proxy that is running on your local machine.
-        The proxy, then, sends an HTTPS request with appropriate authentication headers to the API server. This is the easiest way to connect 
-        to the API server. 
+    The above curl command sends the HTTP request (without any authentication headers) to the proxy that is running on your local machine.
+    The proxy, then, sends an HTTPS request with appropriate authentication headers to the API server. This is the easiest way to connect 
+    to the API server. 
     
-    d.  See also [Access Clusters Using the Kubernetes API](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/) 
+4.  See also [Access Clusters Using the Kubernetes API](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/) 
             
             
-## Create the Secret
-        
-### Create Certificates and Private Keys
+### Create the Secret whch holds certificates and private keys
+
+We are going to use an Ingress for routing to our Service but first need to create a Secret which holds certificates and private keys that are used by the Ingress
+ 
+#### Create the certificates and private keys for our secret
           
-1.  To encrypt the connection between the browser and the ingress controller, you need to attach a certificate and a private key to 
-    the Ingress resource. To do that, the certificate and private key must be stored in a Kubernetes resource called a secret so it 
+1.  To encrypt the SSL/TLS connection between the browser and the Ingress resource, you need to attach a certificate and a private key 
+    to the Ingress resource. To do that, the certificate and private key must be stored in a Kubernetes resource called a secret so it 
     can be referenced by the Ingress resource. 
 
-    a.  `$ openssl genrsa -out tls.key 2048`
-            
-    b.  `$ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org`
-            
-    c.  `$ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key`
-       
-    d.  `$ kubectl get secrets daytrader-web -o yaml --export > secret.yaml`
+    `$ openssl genrsa -out tls.key 2048`
+    `$ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org`
+    `$ kubectl create secret tls daytrader-web --cert=tls.crt  --key=tls.key`
+    `$ kubectl get secrets daytrader-web -o yaml --export > secret.yaml`
             
 2.  Check and verify your certificate and key. This can be useful before applying them to your server. 
 
-    a.  `$ openssl x509 -in tls.crt -text`  ## Check the certificate and its information (signing authority, expiration date, etc.)
-
-    b.  `$ openssl rsa -in tls.key -check`  ## Check the SSL key and verify the consistency
+    `$ openssl x509 -in tls.crt -text`  ## Check the certificate and its information (signing authority, expiration date, etc.)
+    `$ openssl rsa -in tls.key -check`  ## Check the SSL key and verify the consistency
 
 3.  Verify the certificate and key match by comparing their checksums for equality
 
-    a.  `$ openssl x509 -noout -modulus -in tls.crt | openssl md5`
-    
-    b.  `$ openssl rsa -noout -modulus -in tls.key | openssl md5`
+    `$ openssl x509 -noout -modulus -in tls.crt | openssl md5`
+    `$ openssl rsa -noout -modulus -in tls.key | openssl md5`
             
 
-### Create the Secret YAML
+#### Use `kubectl create secret` to generate the secret configuration
 
-The `secret.yaml` contains certificates and private keys that are used by other resources; such as Ingress. 
+The `secret.yaml` contains certificates and private keys that are used by our Ingress resource. 
 
-// ADD THE COMMANDS TO CREATE THE SECRET //
+Instead of creating the `secret.yaml` from scratch, which involved cutting and pasting certificates, we ran
+
+`$ kubectl create secret tls daytrader-web --key tls.key --cert tls.crt --dry-run > secret.yaml`
+
+It was simply less error prone to use `kubectl`. We still use the `secret.yaml` to create the secret resource.
 
 ```yaml
 apiVersion: v1
@@ -485,7 +483,8 @@ metadata:
 type: kubernetes.io/tls
 ```
 
-### Create the Secret Resource
+
+#### Use `kubectl apply -f` to create the secret resource
 
 1.  `$ kubectl apply -f secret.yaml`
             
@@ -496,9 +495,9 @@ type: kubernetes.io/tls
     daytrader-web | kubernetes.io/tls | 2 | 8s
             
 
-## Create the Ingress
+### Create Ingress for routing to our Service
 
-### Create the Inress YAML
+#### Use `yaml` to specify the Ingress configuration
 
 The `ingress.yaml` defines the custom domain name for accesing the application through the Ingress and the matching secret for incoming TLS/SSL requests
 
@@ -525,7 +524,7 @@ spec:
             servicePort: 443 
 ```
 
-### Create the Ingress Resource
+#### Use `kubectl apply -f` to create the Ingress resource
 
 1..  `$ kubectl apply -f ingress.yaml`
             
@@ -537,28 +536,28 @@ spec:
                 
     Wait for the Ingress service to run; then record the HOSTS and ADDRESS
 
-    a.  The HOSTS was specified in the ingress.yaml and match the Secrets (tls.crt CN)
+    a.  The HOSTS was specified in the ingress.yaml and must match the Secrets (tls.crt CN)
                     
     b.  The ADDRESS is the DNS Name or IP Address to the Ingress resource's load balancer
         
-4.  If the Ingress resource failed to start then check the logs on the nginx-ingress-controller-xxxxxxxxx-xxxxx
+3.  If the Ingress resource failed to start then check the logs on the nginx-ingress-controller-xxxxxxxxx-xxxxx
     
-    a.  `$ kubectl -n ingress-nginx get pods`
+    `$ kubectl -n ingress-nginx get pods`
             
-        NAME | READY | STATUS | RESTARTS | AGE
-        ---- | ----- | ------ | -------- | ---
-        nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running - 0 | 1h
+    NAME | READY | STATUS | RESTARTS | AGE
+    ---- | ----- | ------ | -------- | ---
+    nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running - 0 | 1h
         
-    b.  `$ kubectl -n ingress-nginx logs nginx-ingress-controller-xxxxxxxxx-xxxxx`
+    `$ kubectl -n ingress-nginx logs nginx-ingress-controller-xxxxxxxxx-xxxxx`
     
-        If there are errors in the logs then they should give you a good indication of what went wrong
+    If there are errors in the logs then they should give you a good indication of what went wrong
         
-## Setup the DNS
+### Setup the DNS
 
 To access you application via the Kubernetes ingress resource, the incoming request must be coming from the custom domain name (HOSTS) that you specified in the ingress.yaml (whcih is also the the CN that you specified for the crt in the secrets.yaml). Otherwise you will get an invalid hosts exception during SSL/TLS handshake. This means that you must setup DNS to resolve the HOSTS (custom domain name) to the ingress' ADDRESS. 
     
     
-### Use /etc/hosts
+#### Use /etc/hosts to resolve the custom dmain name
 
 This is a good solution for local development servers
 
@@ -566,31 +565,31 @@ This is a good solution for local development servers
     
     <ADDRESS>   <web.daytrader.geronimo.apache.org>
         
-2.  Notes: <ADDRESS> must be an External IP Address. 
+2.  It is impportant to note that the <ADDRESS> must be an External IP Address. 
         
     a.  If the ADDRESS is a DNS name, then `ping` <ADDRESS>` to get the External IP Address.
          
     b.  If the ADDRESS is an Internal IP Address, then `kubectl cluster-info` to get the External IP Address
 
-### Use CNAME record
+#### Use CNAME record to resolve the custom domain name
 
-This is a good solution for DEV, TST, and PRD environments
+This is a good solution for more controlled environments
     
 1.  (TODO) Create a CNAME record to your DNS custom domain
 
-### Test DNS resolution
+#### Test the DNS resolution
     
 1.  Using the curl command
                 
     `$ curl -k https://web.daytrader.geronimo.apache.org/health`
 
-    {"status":"UP"} 
+    You should see `{"status":"UP"}` 
 
 2.  Using the browser
        
     Point you browser to `https://web.daytrader.geronimo.apache.org/health`
 
-    {"status":"UP"} 
+    You should see `{"status":"UP"}` 
 
 3.  If the connection timed out then double check your DNS configuration
 
