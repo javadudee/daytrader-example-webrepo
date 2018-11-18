@@ -3,19 +3,17 @@
 
 ### Prerequisites
 
-1.  Create AWS Account (https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
+1.  [Create AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
 
 ### Install the Cluster
 
-1.  Follow the instructions in the [EKS getting started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
-        
-    Start from "Amazon EKS Prerequisites" up to "Step 4: Launch a Guest Book Application" exclusive
+1.  Follow the [EKS getting started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) from `Amazon EKS Prerequisites` to `Step 4: Launch a Guest Book Application` exclusive
 
 2.  Verify the EKS Cluster
      
-    a.  $ kubectl config use-context user116-eks-cluster  ## Use the name of your Amazon EKS cluster
+    a.  $ kubectl config use-context user116-eks-cluster
                     
-        Switched to context "user116-eks-cluster".
+        Switched to context daytrader-eks-cluster.
                 
     b.  $ kubectl kubectl cluster-info
                     
@@ -23,10 +21,11 @@
                     
     c.  $ kubectl get nodes
                 
-        NAME                            STATUS   ROLES    AGE   VERSION
-        ip-172-31-19-232.ec2.internal   Ready    <none>   3h    v1.10.3
-        ip-172-31-2-133.ec2.internal    Ready    <none>   3h    v1.10.3
-        ip-172-31-30-11.ec2.internal    Ready    <none>   3h    v1.10.3
+        NAME | STATUS | ROLES | AGE | VERSION
+        ---- | ------ | ----- | --- | -------
+        ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
+        ip-172-31-2-133.ec2.internal | Ready | <none> | 3h | v1.10.3
+        ip-172-31-30-11.ec2.internal | Ready | <none> | 3h | v1.10.3
 
 ### Install the Ingres Controller
 
@@ -40,14 +39,15 @@
                 
     $ kubectl -n ingress-nginx get pods 
                     
-    NAMESPACE       NAME                                       READY   STATUS    RESTARTS   AGE
-    ingress-nginx   nginx-ingress-controller-f88c75bc6-nc4bt   1/1     Running   0          39s
+    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+    --------- | ---- | ----- | ------ | -------- | ---
+    ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
                     
 3.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
                 
-    $ kubectl -n ingress-nginx logs <POD_NAME>
+    $ kubectl -n ingress-nginx logs nginx-ingress-controller-xxxxxxxxx-xxxxx
                    
-    You should see "successfully acquired lease ingress-nginx/ingress-controller-leader-nginx". 
+    You should see `successfully acquired lease ingress-nginx/ingress-controller-leader-nginx`
                     
 ### Install the Kubernetes Dashboard
 

@@ -67,38 +67,20 @@ Maven must be able to authenticate to your DockerHub account so it can push Dock
 ## Setup the Cluster
 
 You will need a cluster to run the application. If you already have a cluster with the NGINX Ingress Controller then feel free to use it. If not, we have provided the instructions that we used to setup a cluster on Minikube, Amaon EKS, Google Kubernetes Engine, and Azure Kubernetes Service. We have also tested the application on those platforms. For additional information see [Picking the right Solution](https://kubernetes.io/docs/setup/pick-right-solution/). The following sections detail the steps that we used to install the cluster and the NGINX Ingress Controller. 
-    
 
-### Setup on Minikube
+1.  If you want to setup a cluster on Minikube click [here](docs/MINIKUBE.MD)
 
-If you want to know how we setup the cluster on Minikube click [here](docs/MINIKUBE.MD)
+2.  If you want to set up a cluster on Amazon EKS click [here](docs/EKS.MD)
 
+3.  If you want to setup a cluster on Google GKE, then click [here](docs/GKE.MD)
 
-### Setup on Amazon EKS
+## Create the Container
 
-If you want to know how we set up the cluster on Amazon EKS click [here](docs/EKS.MD)
+We have already created the Dockerfile to containerized the application. If you want to know how click [here](docs/CONTAINERS.MD)
 
+## Deploy the Container to Kubernetes
 
-### Setup on Google Kubernetes Engine
-
-If you want to know how to setup the cluster on Google GKE, then click [here](docs/GKE.MD)
-
-
-
-## Containerize the Application
-
-Note: we have already created the Dockerfile for this application so you can skip this step.
-
-But if you want to know how we containerized the application then click [here](docs/CONTAINERS.MD)
-
-
-## Put Containers on Kubernetes
-
-Note: we have already written the YAML files for this application so you can skip this step.
-
-But if you want to know how we put the container on Kubernetes then click [here](docs/KUBERNETES.MD)
-
-
+We have already written the YAML files to put the container on Kubernetes. If you want to know how click [here](docs/KUBERNETES.MD)
 
 ## Delivery Pipeline
 
@@ -112,7 +94,6 @@ To build the application
 
 `$ mvn -Plocal clean install`
 
-
 ### Continuous Integration
 
 To run the integration tests
@@ -121,57 +102,55 @@ To run the integration tests
 
 ### Continuous Delivery
 
-#### Provision
-
-To provision the environment
+To deploy the container on Kubernetes
 
 `$ mvn -Pcd clean install`
 
-#### Decommission
-
-To decommision the environment
+To undeploy the container from Kubernetes
 
 `$ mvn -Pcd clean install`
 
-## Functional Test
+### Functional Test
 
-### Provision the testing environment
-    
-1.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
+1.  Setup the environment for running the functional test
 
-    a.	cd daytrader-accountsapp\daytrader-accounts
+    a.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
 
-    b.	mvn -P clean install
+        ```bash
+        $ cd daytrader-accountsapp\daytrader-accounts
+        $ mvn -P clean install
+        ```
 
-2.  [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
+    b.  [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/)
 
-    a.	cd daytrader-gatewayapp\daytrader-gateway
-
-    b.	mvn -P clean install
+        ```sh
+        $ cd daytrader-gatewayapp\daytrader-gateway
+        $ mvn -P clean install
+        ```
 
 3.  [Portfolios Microservice](https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/)
 
-    a.  cd daytrader-portfoliosapp\daytrader-portfolios
+        $ cd daytrader-portfoliosapp\daytrader-portfolios
         
-    b.	mvn -P clean install
+        $ mvn -P clean install
 
 4.  [Quotes Microservice](https://github.com/jpmorganchase/daytrader-example-quotesrepo/)
 
-    a.  cd daytrader-quotesapp\daytrader-quotes
+        $ cd daytrader-quotesapp\daytrader-quotes
         
-    b.	mvn -P clean install
+        $ mvn -P clean install
 
 5.  [Web Microservice](https://github.com/jpmorganchase/daytrader-example-webrepo/)
 
-    a.  cd daytrader-webapp\daytrader-web
+        $ cd daytrader-webapp\daytrader-web
         
-    b.	mvn -P clean install
+        $ mvn -P clean install
 
-### Run the functional test
-                                 
-Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org`
+To run the functional tests
+                                
+1.  Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org`
 
-1.  Under The Configuration Tab
+2.  Under The Configuration Tab
 
     a.  Press(Re)-create DayTrader Database Tables and Indexes
     
@@ -179,14 +158,14 @@ Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org`
 
     c.  Press Test Daytrader Scenario
 
-2.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+3.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
 
     Note: each time you refresh the browser, it runs another functional test scenario. 
 
 That's it! You have now tested the daytrader
-        
-### Decommission the testing environment
-
+ 
+To teardown the environment
+       
 1.  [Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/)
 
     a.	cd daytrader-accountsapp\daytrader-accounts
@@ -220,26 +199,7 @@ That's it! You have now tested the daytrader
                             
 ## Swagger UI Documentation
 
-### Access Swagger UI through port forwarding
-         
-1.  `$ kubectl port-forward <POD_NAME> 8888:5443`  ## This command forwards local port 8888 to port 5443 of your pod
-   
-    Forwarding from 127.0.0.1:8888 -> 5443
-        
-2.  Point you browser to `https://localhost:8888/swagger-ui.html`
-
-### Access Swagger UI through the API Server
-    
-1.  `$ kubectl proxy`    ## This proxy locates and authenticates to the API Server.
-    
-    Starting to serve on 127.0.0.1:8001 
-
-2.  Point you browser to `http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html`
-        
-        
-### Access Swagger UI through an Ingress
-        
-1.  Point you browser to `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
+Point you browser to `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
     
 
 
