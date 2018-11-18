@@ -13,7 +13,7 @@ For the monolithic architecture, see [daytrader - a more complex application](ht
 
 ## Microservices Architecture
 
-Consider the following microservices architecture diagram. In this diagram, the Web is responsible for the UI to the DayTrader business operations. It accepts 
+Consider the following microservices architecture diagram. In this architecture, the Web is responsible for the UI to the DayTrader business operations. It accepts 
 incoming requests from the browser and delegates them to the [Gateway Microservice](https://github.com/jpmorganchase/daytrader-example-gatewayrepo/). The 
 Gateway Microservice in turn redirects the request to the ([Accounts Microservice](https://github.com/jpmorganchase/daytrader-example-accountsrepo/), 
 [Portfolios Microservice](https://github.com/jpmorganchase/daytrader-example-portfoliosrepo/), or 
@@ -21,7 +21,7 @@ Gateway Microservice in turn redirects the request to the ([Accounts Microservic
 
 ![Target-State-Architecture](images/Target-State-Architecture.JPG)
 
-This README shows you how to put the Web Application into a Docker container and how to put the Docker Container on a Kubernetes Cluster. 
+This README shows you how to build and push a Docker image for the Web Application and how to deploy that Docker image to a Kubernetes Cluster. 
 
 ## Prerequisites
 
