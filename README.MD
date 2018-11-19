@@ -96,7 +96,7 @@ You can run the application on Spring Boot or on the Kubernetes Cluser.
 
 2.  [Run on Kubernetes Cluster](docs/RUN-ON-SPRING-BOOT.MD)
 
-    **Note** The application is 100% portable across the Kubernetes Platforms we tested.
+**Note** Web UI is 100% portable across the Kubernetes Platforms we tested.
 
 
     

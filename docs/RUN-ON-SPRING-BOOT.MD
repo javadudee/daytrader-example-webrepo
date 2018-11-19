@@ -18,9 +18,11 @@
 
 **Pre-Condition:** Start Accounts, Gateway, Portfolios, and Quotes
                                    
-Open your browser and navigate to: `https://localhost:5443`
+1.  Open your browser and navigate to: `https://localhost:5443`
 
-1.  Under The Configuration Tab
+    **Note:** To access the Swagger UI, `https://localhost:5443/swagger-ui.html`
+
+2.  Under The Configuration Tab
 
     a.  Press(Re)-create DayTrader Database Tables and Indexes
     
@@ -28,13 +30,11 @@ Open your browser and navigate to: `https://localhost:5443`
 
     c.  Press Test Daytrader Scenario
 
-2.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+3.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
 
-    **Note** each time you refresh the browser, it runs another functional test. 
+    **Note:** Each time you refresh the browser, it runs another functional test. 
    
-3.  That's it! You have now tested the daytrader
-
-    **Note** you can also access Swagger UI at `https://localhost:5443/swagger-ui.html`
+4.  That's it! You have now tested the DayTader
     
 **Post-Condition:** Stop Accounts, Gateway, Portfolios, and Quotes
     
