@@ -33,7 +33,7 @@
 
 5.  Verify that the worker nodes are running
 
-    $ kubectl get nodes
+    `$ kubectl get nodes`
             
     NAME | STATUS | ROLES | AGE | VERSION
     ---- | ------ | ----- | --- | -------
@@ -44,10 +44,10 @@
 ### Install the NGINX Ingress Controller
       
 1.  Create the cluster role binding
-    
-    Give your GCP user account permission to administer the cluster.
         
     `$ kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $(gcloud config get-value account)`
+    
+    This command grants your GCP user account the permissions to administer the cluster.
                     
 2.  Deploy the NGINX Ingress Controller
     
@@ -55,11 +55,11 @@
             
     b.  `$ kubectl -n ingress-nginx get pods`
                 
-        NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
-        --------- | ---- | ----- | ------ | -------- | --- 
-        ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
-        
-        Wait for the controller start. It may take a few minutes
+    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+    --------- | ---- | ----- | ------ | -------- | --- 
+    ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+    
+    Wait for the controller start. It may take a few minutes
 
 3.  Create the NGINX Ingress Service
     
@@ -67,11 +67,11 @@
                 
     b.  `$ kubectl -n ingress-nginx get services`
                 
-        NAME | TYPE | CLUSTER-IP | EXTERNAL-IP | PORT(S) | AGE
-        ---- | ---- | ---------- | ----------- | ------- | ---
-        ingress-nginx | LoadBalancer | 10.7.252.186 | xx.xx.xx.xx | 80:31884/TCP,443:31058/TCP | 55s
+    NAME | TYPE | CLUSTER-IP | EXTERNAL-IP | PORT(S) | AGE
+    ---- | ---- | ---------- | ----------- | ------- | ---
+    ingress-nginx | LoadBalancer | 10.7.252.186 | xx.xx.xx.xx | 80:31884/TCP,443:31058/TCP | 55s
     
-        Wait for the service to start. It may take a few minutes.
+    Wait for the service to start. It may take a few minutes.
     
 4.  Review the controller's logs. This is also useful for troubleshooting ingress resources.
 

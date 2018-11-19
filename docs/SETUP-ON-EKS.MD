@@ -21,11 +21,11 @@
                     
     c.  $ kubectl get nodes
                 
-        NAME | STATUS | ROLES | AGE | VERSION
-        ---- | ------ | ----- | --- | -------
-        ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
-        ip-172-31-2-133.ec2.internal  | Ready | <none> | 3h | v1.10.3
-        ip-172-31-30-11.ec2.internal  | Ready | <none> | 3h | v1.10.3
+    NAME | STATUS | ROLES | AGE | VERSION
+    ---- | ------ | ----- | --- | -------
+    ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
+    ip-172-31-2-133.ec2.internal  | Ready | <none> | 3h | v1.10.3
+    ip-172-31-30-11.ec2.internal  | Ready | <none> | 3h | v1.10.3
 
 ### Install the Ingres Controller
 
@@ -37,11 +37,11 @@
                 
     c.  `$ kubectl -n ingress-nginx get pods`
                     
-        NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
-        --------- | ---- | ----- | ------ | -------- | ---
-        ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+    --------- | ---- | ----- | ------ | -------- | ---
+    ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
     
-        Wait for the controller start. It may take a few minutes
+    Wait for the controller start. It may take a few minutes
                     
 3.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
                 

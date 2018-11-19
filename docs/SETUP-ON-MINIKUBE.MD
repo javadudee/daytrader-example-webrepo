@@ -29,9 +29,9 @@
             
     c.  `$ kubectl get nodes`
             
-        NAME | STATUS | ROLES | AGE | VERSION
-        ---- | ------ | ----- | --- | -------
-        minikube | Ready | master | 24d | v1.10.0
+    NAME | STATUS | ROLES | AGE | VERSION
+    ---- | ------ | ----- | --- | -------
+    minikube | Ready | master | 24d | v1.10.0
         
 
 ### Install the NGINX Ingress Controller
@@ -52,11 +52,11 @@
             
     b.  `$ kubectl -n kube-system get pods`
             
-        NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
-        --------- | ---- | ----- | ------ | -------- | ---
-        kube-system | nginx-ingress-controller-xxxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
-        
-        Wait for the controller to start. It may take a few minutes.
+    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+    --------- | ---- | ----- | ------ | -------- | ---
+    kube-system | nginx-ingress-controller-xxxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+    
+    Wait for the controller to start. It may take a few minutes.
             
 4.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
         
