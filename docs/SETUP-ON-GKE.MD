@@ -56,10 +56,11 @@
             
     b.  `$ kubectl -n ingress-nginx get pods`
                 
-    NAMESPACE       NAME                                       READY   STATUS    RESTARTS   AGE
-    ingress-nginx   nginx-ingress-controller-*********-*****   1/1     Running   0          39s
+        NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+        --------- | ---- | ----- | ------ | -------- | --- 
+        ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
 
-    **Notes:** Wait for the controller start. It may take a few minutes
+        **Notes:** Wait for the controller start. It may take a few minutes
 
 3.  Create the NGINX Ingress Service
     
@@ -67,10 +68,11 @@
                 
     b.  `$ kubectl -n ingress-nginx get services`
                 
-    NAME            TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE 
-    ingress-nginx   LoadBalancer   10.7.252.186   xx.xx.xx.xx   80:31884/TCP,443:31058/TCP   55s
+        NAME | TYPE | CLUSTER-IP | EXTERNAL-IP | PORT(S) | AGE
+        ---- | ---- | ---------- | ----------- | ------- | ---
+        ingress-nginx | LoadBalancer | 10.7.252.186 | xx.xx.xx.xx | 80:31884/TCP,443:31058/TCP | 55s
     
-    **Notes:** Wait for the service to start. It may take a few minutes.
+        **Notes:** Wait for the service to start. It may take a few minutes.
     
 4.  Review the controller's logs. This is also useful for troubleshooting ingress resources.
 

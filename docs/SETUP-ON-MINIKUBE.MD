@@ -9,7 +9,7 @@
 
 ### Install the Cluster
     
-1.  Install the latest release of Minikube (https://github.com/kubernetes/minikube/releases)
+1.  [Install the latest release of Minikube](https://github.com/kubernetes/minikube/releases)
 
 2.  Start the Minikube cluster
         
@@ -21,17 +21,17 @@
         
     a.  `$ kubectl config use-context minikube`
             
-    You should see `Switched to context "minikube"`
+        You should see `Switched to context "minikube"`
 
     b.  `$ kubectl cluster-info`
             
-    You should see `Kubernetes master is running at https://192.168.99.100:8443`
+        You should see `Kubernetes master is running at https://192.168.99.100:8443`
             
     c.  `$ kubectl get nodes`
             
-    NAME | STATUS | ROLES | AGE | VERSION
-    ---- | ------ | ----- | --- | -------
-    minikube | Ready | master | 24d | v1.10.0
+        NAME | STATUS | ROLES | AGE | VERSION
+        ---- | ------ | ----- | --- | -------
+        minikube | Ready | master | 24d | v1.10.0
         
 
 ### Install the NGINX Ingress Controller
@@ -70,14 +70,14 @@ The Kubernetes Dashboard can be useful for managing and troubleshooting your clu
        
     `$ minikube dashboard`
 
-**Note** This command opens the dashboard in a browser
+**Note** This command opens the Kubernetes Dashboard in a browser
         
 
 ## Resources 
 
 1.  [Running Minikube Locally via Minikube] (https://kubernetes.io/docs/setup/minikube/)
 
-2.  [Ingress ConfigMap](https://github.com/kubernetes/minikube/blob/master/deploy/addons/ingress/ingress-configmap.yaml) 
+2.  [Ingress ConfigMap](https://github.com/kubernetes/minikube/blob/master/deploy/addons/ingress/ingress-configmap.yaml/)
 
 3.  [NGINX Ingress Controller Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/)
 

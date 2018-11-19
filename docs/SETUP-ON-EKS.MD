@@ -7,7 +7,7 @@
 
 ### Install the Cluster
 
-1.  Follow the [EKS getting started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) from `Amazon EKS Prerequisites` to `Step 4: Launch a Guest Book Application` exclusive
+1.  Follow [EKS getting started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) from `Amazon EKS Prerequisites` up to but not including `Step 4: Launch a Guest Book`
 
 2.  Verify the EKS Cluster
      
@@ -21,11 +21,11 @@
                     
     c.  $ kubectl get nodes
                 
-    NAME | STATUS | ROLES | AGE | VERSION
-    ---- | ------ | ----- | --- | -------
-    ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
-    ip-172-31-2-133.ec2.internal  | Ready | <none> | 3h | v1.10.3
-    ip-172-31-30-11.ec2.internal  | Ready | <none> | 3h | v1.10.3
+        NAME | STATUS | ROLES | AGE | VERSION
+        ---- | ------ | ----- | --- | -------
+        ip-172-31-19-232.ec2.internal | Ready | <none> | 3h | v1.10.3
+        ip-172-31-2-133.ec2.internal  | Ready | <none> | 3h | v1.10.3
+        ip-172-31-30-11.ec2.internal  | Ready | <none> | 3h | v1.10.3
 
 ### Install the Ingres Controller
 
@@ -34,14 +34,14 @@
     a.  `$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml`
     
     b.  `$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/cloud-generic.yaml`
-                    
-2.  Make sure the controller is running and in the ready state. **Note** that it may take a few minutes to start
                 
-    `$ kubectl -n ingress-nginx get pods`
+    c.  `$ kubectl -n ingress-nginx get pods`
                     
-    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
-    --------- | ---- | ----- | ------ | -------- | ---
-    ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+        NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+        --------- | ---- | ----- | ------ | -------- | ---
+        ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+    
+        **Notes:** Wait for the controller start. It may take a few minutes
                     
 3.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
                 
@@ -61,17 +61,17 @@ The Kubernetes is a great resource for managing and troubleshooting the cluster.
 
     a.  `$ kubectl -n kube-system get secrets | grep admin`
        
-    Record the NAME of the `admin-user-token`
+        Record the NAME of the `admin-user-token`
         
     b.  $ kubectl -n kube-system describe secrets `ADMIN_USER_TOKEN`
         
-    Copy the value of the `authentication token`
+        Copy the value of the `authentication token`
                             
 3.  Open the following link to access the dashboard through the API Server
         
     `http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
             
-4.  You will see a login screen; choose `Token` and then enter the value of the `authentication token` from step 2. 
+4.  You will see a login screen; choose `Token` and then enter the value of the `authentication token` from Step 2. 
 
 ## Resources 
 
