@@ -4,12 +4,16 @@
 
 The Web UI to the DayTrader business operations
 
+
+
 ## Monolithic Architecture
 DayTrader is multi-tier application is built around the paradigm of an online stock trading system. Example business operations include
 login, register, view portfolio, lookup stock quotes, and buy or sell stock. DayTrader was originally developed by IBM and donated 
 to the Apache Geronimo community in the 2005 timeframe. The DayTrader architecture is representitive of monolithic applications that 
 many businesses are still using. For that reason, we selected it to clarify the techniques for refactoring a monolith to microservices. 
 For the monolithic architecture, see [daytrader - a more complex application](http://geronimo.apache.org/GMOxDOC30/daytrader-a-more-complex-application.html). 
+
+
 
 ## Microservices Architecture
 
@@ -21,7 +25,9 @@ Gateway Microservice in turn redirects the request to the ([Accounts Microservic
 
 ![Target-State-Architecture](images/Target-State-Architecture.JPG)
 
-This README shows how to put the Web App into a Docker Image and how to deploy that Docker Image to Kubernetes. 
+This README shows how to put the Web UI in a Docker Image and how to deploy that Docker Image to Kubernetes. 
+
+
 
 ## Prerequisites
 
@@ -32,6 +38,8 @@ This README shows how to put the Web App into a Docker Image and how to deploy t
 3.  [Install Docker](https://www.docker.com/get-docker)
     
 4.  [Create DockerHub Account](https://hub.docker.com/)
+
+
 
 ## Configuration
 
@@ -70,103 +78,23 @@ Maven must be able to authenticate to your DockerHub account so it can push Dock
 ## Setup
 You will need a cluster to run the application. If you already have a cluster with the NGINX Ingress Controller installed then feel free to use it. If not, we have provided instructions to help you setup a cluster on Minikube, Amazon EKS, Google Kubernetes Engine, and Azure Kubernetes Service. We have also tested the application on those platforms. For additional information see [Picking the right Solution](https://kubernetes.io/docs/setup/pick-right-solution/).  
 
-1.  [Setup on Minikube](docs/MINIKUBE.MD)
+1.  [Setup on Minikube](docs/SETUP-ON-MINIKUBE.MD)
 
-2.  [Setup on Amazon EKS](docs/EKS.MD)
+2.  [Setup on Amazon EKS](docs/SETUP-ON-EKS.MD)
 
-3.  [Setup on Google GKE](docs/GKE.MD)
+3.  [Setup on Google GKE](docs/SETUP-ON-GKE.MD)
 
-3.  [Setup on Azure AKS](docs/AKS.MD)
-
-
-### Run on Local Development Server
-
-1.  Build the Web UI
-
-    a.  `$ cd daytrader-webapp`
-    
-    b.  `$ mvn -Plocal clean install`
-
-2.  Start the Web UI
-
-    a.  `$ cd daytrader-web`
-    
-    b.  `$ ./env/ext/bin/start_server.sh`
-    
-3.  Test the Web UI
-
-    **Pre-Condition:** Start the microservices
-                                   
-    a.  Open your browser and navigate to: `https://localhost:5443`
-
-    b.  Under The Configuration Tab
-
-        * Press(Re)-create DayTrader Database Tables and Indexes
-        * Press (Re)-populate DayTrader Database
-        * Press Test Daytrader Scenario
-
-    c.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
-
-        Note: each time you refresh the browser, it runs another functional test scenario. 
-   
-    d.  That's it! You have now tested the daytrader
-    
-    Post-Condition: Stop the microservices
-    
-4.  Access the Swagger UI
-
-    **Pre-Condition:** Start the microservices
-    
-    a.  Open your browser and navigate to: `https://localhost:5443/swagger-ui.html`
-    
-    **Post-Condition:** Stop the microservices
-    
-4.  Stop the Web UI
-
-    `$ ./env/ext/bin/stop_server.sh`
-                             
+3.  [Setup on Azure AKS](docs/SETUP-ON-AKS.MD)
 
 
-### Run on Kubernetes Cluster
 
-1.  Start the Web UI
+## Build, Release, and Run
 
-    a.  `$ cd daytrader-webapp`
-    
-    b.  `$ mvn -Pcd clean install`
-  
-2.  Test the Web UI
 
-    Pre-Condition: Start the microservices
-                                   
-    a.  Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org`
 
-    b.  Under The Configuration Tab
+## [Run on Spring Boot](docs/RUN-ON-SPRING-BOOT.MD)
 
-        * Press(Re)-create DayTrader Database Tables and Indexes
-        * Press (Re)-populate DayTrader Database
-        * Press Test Daytrader Scenario
 
-    c.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
-
-        Note: each time you refresh the browser, it runs another functional test scenario. 
-   
-    d.  That's it! You have now tested the daytrader
-    
-    Post-Condition: Stop the microservices
-    
-4.  Access the Swagger UI
-
-    **Pre-Condition:** Start the microservices
-    
-    a.  Open your browser and navigate to: `https://web.daytrader.geronimo.apache.org/swagger-ui.html`
-    
-    **Post-Condition:** Stop the microservices
-    
-4.  Stop the Web UI
-
-    `$ mvn -Pcd clean`
-                             
     
 ## Steps to Generate the Docker Image
 
@@ -268,9 +196,20 @@ This command creates an image with the version <tag> you specified in the config
     
 ## Steps to Deploy the Docker Image to a Kubernetes Cluster
 
-Deployment to Kubernetes required a number of manual steps. Some of these steps were to specify the configuration of the resources; others were to create the resources; and still others were used to verify the deployment. You only have to specify the configuration once; after that you can use it to create the resources. The creation of resources has be done whenever you do a deployment. As such they should be automated via Maven. The other other steps to verify the deployment should only used by developers troubleshooting a problem. Before automating though it is important to first identify the manual steps which is what we do in this section. It is important to note that these steps were completely portable across the Kubernetes platforms that we tested. This means that you write once and run anywhere. This is great news for DevOps!
+Deployment to Kubernetes required a number of manual steps. Some of these steps were to specify the configuration of the resources; others were to create the resources; and still others were used to verify the deployment. You only have to specify the configuration once; after that you can use it to create the resources. The creation of resources has be done whenever you do a deployment. As such they should be automated via Maven. The other other steps to verify the deployment should only used by developers troubleshooting a problem. Before automating though it is important to first identify the manual steps which is what we do in this section. 
 
-Important note: all of the configuration files are in this folder: `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
+**Notes** 
+
+1.  All configuration files are located in this folder: `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
+
+2.  All configuration files were completely portable across the Kubernetes platforms that we tested.
+
+3.  All `kubectl` commands were also completely portable across the Kubernetes platforms that we tested. 
+
+This means you write configuration files once and run them on any platform. This is great news for DevOps!
+
+
+
 
 ### Create the Deployment for our Docker Image
 
@@ -578,7 +517,7 @@ This is a good solution for local development servers
     
     `<ADDRESS>   <web.daytrader.geronimo.apache.org>`
         
-2.  Note that `<ADDRESS>` must be an External IP Address. 
+2.  **Note** The `<ADDRESS>` must be an External IP Address. 
         
     a.  If it is a DNS name, then `ping <ADDRESS>` to get the External IP Address.
          

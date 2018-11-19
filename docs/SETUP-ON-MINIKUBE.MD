@@ -1,4 +1,4 @@
-## Run on Minikube
+## Setup on Minikube
 
 
 
