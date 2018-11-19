@@ -81,10 +81,10 @@
                             
 ### Install the Kubernetes Dashboard (N/A)
         
-The Kubernetes Dashboard is disabled and deprecated in GKE. instead, use the built-in [GKE Dashboard](https://cloud.google.com/kubernetes-engine/docs/concepts/dashboards) through the Console.
+The Kubernetes Dashboard is disabled and deprecated in GKE. instead, use the [GKE Dashboard](https://cloud.google.com/kubernetes-engine/docs/concepts/dashboards) through the Console.
 
 ## Resources
 
-1.  [Google Kubernetes Engine] (https://cloud.google.com/kubernetes-engine/)
+1.  [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)
 
 

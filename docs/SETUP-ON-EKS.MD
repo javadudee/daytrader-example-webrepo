@@ -7,7 +7,7 @@
 
 ### Install the Cluster
 
-1.  Follow [EKS getting started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) from `Amazon EKS Prerequisites` up to but not including `Step 4: Launch a Guest Book`
+1.  Follow [EKS getting started guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) from `Amazon EKS Prerequisites` to `Step 4: Launch a Guest Book` exclusive.
 
 2.  Verify the EKS Cluster
      
@@ -61,11 +61,11 @@ The Kubernetes is a great resource for managing and troubleshooting the cluster.
 
     a.  `$ kubectl -n kube-system get secrets | grep admin`
        
-        Record the NAME of the `admin-user-token`
+    Record the NAME of the `admin-user-token`
         
     b.  $ kubectl -n kube-system describe secrets `ADMIN_USER_TOKEN`
         
-        Copy the value of the `authentication token`
+    Copy the value of the `authentication token`
                             
 3.  Open the following link to access the dashboard through the API Server
         
@@ -75,7 +75,7 @@ The Kubernetes is a great resource for managing and troubleshooting the cluster.
 
 ## Resources 
 
-1.  [Amazon Elastic Container Service for Kubernetes] (https://aws.amazon.com/eks/)
+1.  [Amazon Elastic Container Service for Kubernetes](https://aws.amazon.com/eks/)
 
 2.  [NGINX Ingress Controller Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/)
 

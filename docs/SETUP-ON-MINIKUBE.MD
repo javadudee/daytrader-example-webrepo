@@ -68,14 +68,14 @@
 
 The Kubernetes Dashboard can be useful for managing and troubleshooting your cluster
        
-    `$ minikube dashboard`
+`$ minikube dashboard`
 
-    This command opens the Kubernetes Dashboard in a browser
+This command opens the Kubernetes Dashboard in a browser
         
 
 ## Resources 
 
-1.  [Running Minikube Locally via Minikube] (https://kubernetes.io/docs/setup/minikube/)
+1.  [Running Kubernetes Locally via Minikube](https://kubernetes.io/docs/setup/minikube/)
 
 2.  [Ingress ConfigMap](https://github.com/kubernetes/minikube/blob/master/deploy/addons/ingress/ingress-configmap.yaml/)
 
