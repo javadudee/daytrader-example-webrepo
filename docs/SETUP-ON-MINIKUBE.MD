@@ -46,17 +46,17 @@
         
 2.  Enable the ingress add-on
        
-    `$ minikube addons enable ingress`
+    a.  `$ minikube addons enable ingress`
             
-    You should see `ingress was successfully enabled`
+        You should see `ingress was successfully enabled`
             
-3.  Make sure the controller is running and in the ready state. It may take a few minutes to start
+    b.  `$ kubectl -n kube-system get pods`
+            
+        NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+        --------- | ---- | ----- | ------ | -------- | ---
+        kube-system | nginx-ingress-controller-xxxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
         
-    `$ kubectl -n kube-system get pods`
-            
-    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
-    --------- | ---- | ----- | ------ | -------- | ---
-    kube-system | nginx-ingress-controller-xxxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+        Wait for the controller to start. It may take a few minutes.
             
 4.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
         
@@ -70,7 +70,7 @@ The Kubernetes Dashboard can be useful for managing and troubleshooting your clu
        
     `$ minikube dashboard`
 
-**Note** This command opens the Kubernetes Dashboard in a browser
+    This command opens the Kubernetes Dashboard in a browser
         
 
 ## Resources 

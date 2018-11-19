@@ -41,7 +41,7 @@
         --------- | ---- | ----- | ------ | -------- | ---
         ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
     
-        **Notes:** Wait for the controller start. It may take a few minutes
+        Wait for the controller start. It may take a few minutes
                     
 3.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
                 

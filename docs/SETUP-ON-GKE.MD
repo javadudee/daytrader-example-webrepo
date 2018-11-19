@@ -17,14 +17,13 @@
             
     NAME | LOCATION | MASTER_VERSION | MASTER_IP | MACHINE_TYPE | NODE_VERSION | NUM_NODES | STATUS
     ---- | -------- | -------------- | --------- | ------------ | ------------ | --------- | ------
-    
     gke-daytrader-cluster | us-central1-a | 1.9.7-gke.11 | xx.xx.xx.xx | n1-standard-1 | 1.9.7-gke.11 | 3 | RUNNING
         
 3.  Get authentication credentials for the cluster
     
     `$ gcloud container clusters get-credentials daytrader-gke-cluster`
             
-    Notes: This command updates your kubeconfig so that the kubectl command can connect to your new cluster.
+    This command updates your kubeconfig so that the kubectl command can connect to your new cluster.
             
 4.  Verify that the cluster is running
 
@@ -59,8 +58,8 @@
         NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
         --------- | ---- | ----- | ------ | -------- | --- 
         ingress-nginx | nginx-ingress-controller-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
-
-        **Notes:** Wait for the controller start. It may take a few minutes
+        
+        Wait for the controller start. It may take a few minutes
 
 3.  Create the NGINX Ingress Service
     
@@ -72,7 +71,7 @@
         ---- | ---- | ---------- | ----------- | ------- | ---
         ingress-nginx | LoadBalancer | 10.7.252.186 | xx.xx.xx.xx | 80:31884/TCP,443:31058/TCP | 55s
     
-        **Notes:** Wait for the service to start. It may take a few minutes.
+        Wait for the service to start. It may take a few minutes.
     
 4.  Review the controller's logs. This is also useful for troubleshooting ingress resources.
 
