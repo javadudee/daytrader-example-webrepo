@@ -90,9 +90,13 @@ You will need a cluster to run the application. If you already have a cluster wi
 
 ## Build, Release, and Run
 
+You can run the application on Spring Boot or on the Kubernetes Cluser.
 
+1.  [Run on Spring Boot](docs/RUN-ON-SPRING-BOOT.MD)
 
-## [Run on Spring Boot](docs/RUN-ON-SPRING-BOOT.MD)
+2.  [Run on Kubernetes Cluster](docs/RUN-ON-SPRING-BOOT.MD)
+
+    **Note** The application is 100% portable across the Kubernetes Platforms we tested.
 
 
     
