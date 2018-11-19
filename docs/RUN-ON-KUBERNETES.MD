@@ -40,5 +40,5 @@
     
 ### Stop the Web UI
 
-    `$ ./env/ext/bin/stop_server.sh`
+1.  `$ ./env/ext/bin/stop_server.sh`
     

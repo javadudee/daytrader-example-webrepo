@@ -25,7 +25,7 @@
 
     b.  `$ kubectl cluster-info`
             
-        You should see `Kubernetes master is running at https://192.168.99.100:8443`
+    You should see `Kubernetes master is running at https://192.168.99.100:8443`
             
     c.  `$ kubectl get nodes`
             
@@ -48,7 +48,7 @@
        
     a.  `$ minikube addons enable ingress`
             
-        You should see `ingress was successfully enabled`
+    You should see `ingress was successfully enabled`
             
     b.  `$ kubectl -n kube-system get pods`
             

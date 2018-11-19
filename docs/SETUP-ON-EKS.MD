@@ -13,11 +13,11 @@
      
     a.  $ kubectl config use-context user116-eks-cluster
                     
-        Switched to context daytrader-eks-cluster.
+    You should see `Switched to context daytrader-eks-cluster`
                 
     b.  $ kubectl kubectl cluster-info
                     
-        Kubernetes master is running at https://8D36DB7CBD2E3394FF0843CEA0C0A266.sk1.us-east-1.eks.amazonaws.com
+    You should see `Kubernetes master is running at https://8D36DB7CBD2E3394FF0843CEA0C0A266.sk1.us-east-1.eks.amazonaws.com`
                     
     c.  $ kubectl get nodes
                 
