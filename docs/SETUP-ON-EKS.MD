@@ -11,9 +11,9 @@
 
 2.  Configure kubeconfig
 
-At this point you should have a cluster and `~/.kube/config` file created. That file has information the clusters you created. The `kubectl` command line interface uses that information to locate and authenticate to a cluster. If you have multiple clusters, then you can use `kubectl config use-context CONTEXT_NAME` command to point kubectl to a specific cluster. To make it easier to work with multiple clusters, edit the context name in the config file. To do that, 
+At this point you should have a cluster and `~/.kube/config` file created. That file has information about the cluster(s) you created. The `kubectl` command line interface uses that information to locate and authenticate to a cluster. If you have multiple clusters, then you can use `kubectl config use-context CONTEXT_NAME` command to point kubectl to a specific cluster. To make it easier for you to work with multiple clusters, edit the context name in the config file. For example,
 
-**Origonal ~/.kube/config**
+**Original ~/.kube/config**
 
 ```yaml
 - context:
