@@ -12,13 +12,11 @@
 
 ### Start the Web UI
 
-1.  `$ cd daytrader-web\env\external\k8s`
-
-2.  `$ kubectl apply -f deployment.yaml`
+1.  `$ kubectl apply -f daytrader-web/env/external/k8s/deployment.yaml`
 
     This command pulls the image from DockerHub and deploys it to the Kubernetes Cluster
 
-3.  `$ kubectl get pods -watch`
+2.  `$ kubectl get pods -watch`
     
     NAME | READY | STATUS | RESTARTS | AGE
     ---- | ----- | ------ | -------- | ---
@@ -26,9 +24,9 @@
     
     Watch until you see READY `1/1` and STATUS `Running` then Ctrl-c to stop watching.
     
-4.  `$ kubectl apply -f service.yaml`
-
-Currently, these commands are run manually, but they can easliy be added to Maven
+3.  `$ kubectl apply -f daytrader-web/env/external/k8s/service.yaml`
+    
+**TODO** Add these commands to a `deploy_server` shell script (See Run on Spring Boot)
     
 ### Test the Web UI
 
@@ -62,15 +60,13 @@ To run the functional test,
     
 ### Stop the Web UI
 
-1.  `$ cd daytrader-web\env\external\k8s`
-
 1.  `$ kubectl delete deployments daytrader-web`
     
 2.  `$ kubectl delete services daytrader-web`
 
-Currently, these commands are run manually, but they can easily be added to Maven
+**TODO** Add these commands to an `undeploy_server` shell script (See Run on Spring Boot)
 
-### Access the Swagger UI
+### Review the Swagger Documentation
 
 1.  Start the Gateway
 
@@ -82,5 +78,5 @@ Currently, these commands are run manually, but they can easily be added to Mave
 
 3.  Point you browser to https://localhost:5443/swagger-ui.html
 
-4.  Stop the Gateway after reviewing (or testing) the APIs
+4.  Stop the Gateway after reviewing the APIs
 

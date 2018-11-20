@@ -50,11 +50,11 @@ To run the functional test,
 
 This command stops the Spring Boot executable
 
-### Access the Swagger UI
+### Review the Swagger Documentation
 
 1.  Start the Web UI
 
 2.  Point you browser to https://localhost:5443/swagger-ui.html
 
-3.  Stop the Web UI after reviewing (or testing) the APIs
+3.  Stop the Web UI after reviewing the APIs
 

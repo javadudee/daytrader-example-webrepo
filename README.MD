@@ -204,13 +204,11 @@ Deployment to Kubernetes required a number of manual steps. Some of these steps 
 
 **Notes** 
 
-1.  All configuration files are located in this folder: `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
+1.  All configuration files are located in this folder: `daytrader-webapp/daytrader-web/env/external/k8s`
 
-2.  All configuration files were completely portable across the Kubernetes platforms that we tested.
+2.  All configuration files and `kubectl` commands were 100% portable across the Kubernetes platforms we tested.
 
-3.  All `kubectl` commands were also completely portable across the Kubernetes platforms that we tested. 
-
-This means you write configuration files once and run them on any platform. This is great news for DevOps!
+    This means you can write configuration files once and run them on any platform. This is great news for DevOps!
 
 
 
