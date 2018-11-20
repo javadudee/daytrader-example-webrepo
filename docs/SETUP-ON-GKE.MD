@@ -31,17 +31,21 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
 
 **Origonal ~/.kube/config**
 
+```yaml
 - context:
     cluster: arn:aws:eks:us-east-1:xxxxxxxxxxxx:cluster/daytrader-eks-cluster
     user: arn:aws:eks:us-east-1:xxxxxxxxxxxx:cluster/daytrader-eks-cluster
   name: `arn:aws:eks:us-east-1:xxxxxxxxxxxx:cluster/daytrader-eks-cluster`
+```
 
 **Modified ~/.kube/config**
 
+```yaml
 - context:
     cluster: arn:aws:eks:us-east-1:xxxxxxxxxxxx:cluster/daytrader-eks-cluster
     user: arn:aws:eks:us-east-1:xxxxxxxxxxxx:cluster/daytrader-eks-cluster
   name: `daytrader-eks-cluster`
+```
         
 5.  Verify that the cluster is running
 

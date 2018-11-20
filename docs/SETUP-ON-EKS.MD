@@ -15,17 +15,21 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
 
 **Origonal ~/.kube/config**
 
+```yaml
 - context:
     cluster: gke_daytrader-xxxxxx_us-central1-a_daytrader-gke-cluster
     user: gke_daytrader-xxxxxx_us-central1-a_daytrader-gke-cluster
   name: gke_daytrader-xxxxxx_us-central1-a_daytrader-gke-cluster
+```
 
 **Modified ~/.kube/config**
 
+```yaml
 - context:
     cluster: gke_daytrader-xxxxxx_us-central1-a_daytrader-gke-cluster
     user: gke_daytrader-xxxxxx_us-central1-a_daytrader-gke-cluster
   name: `daytrader-gke-cluster`
+```
 
 3.  Verify the EKS Cluster
      
