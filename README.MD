@@ -195,7 +195,7 @@ With the `Dockerfile` and the `Dockerfile Maven Plugin` in place, we can use Mav
 
 2.  `$ mvn -Pcd clean install`
 
-This command creates an image with the version <tag> you specified in the configuration. For rolling update, we can update this <tag>. 
+This command creates an image with the version <tag> you specified in the configuration. You can update this <tag> for a rolling update.
     
     
 ## Steps to Deploy the Docker Image to a Kubernetes Cluster
@@ -346,7 +346,7 @@ spec:
         
     NAME | TYPE | CLUSTER-IP | EXTERNAL-IP | PORT(S) | AGE
     ---- | ---- | ---------- | ----------- | ------- | ---
-    daytrader-web | NodePort | 10.7.254.225| <none> | 443:30650/TCP | 23s
+    daytrader-web | ClusterIP | 10.7.254.225| <none> | 443/TCP | 23s
        
     The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
     to one or more pods. You can see the enpoints buy doing `kubectl get endpoints`. When the service receives an HTTPS request,

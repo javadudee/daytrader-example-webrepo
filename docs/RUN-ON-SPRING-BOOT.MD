@@ -6,23 +6,27 @@
 
 1.  `$ cd daytrader-webapp`
 
-2.  `$ mvn -Plocal clean install`
+2.  `$ mvn clean install`
+
+    This command build the Spring Boot executable WAR
 
 ### Start the Web UI
 
 1.  `$ cd daytrader-web`
 
 2.  `$ ./env/ext/bin/start_server.sh`
+
+    This command runs the Spring Boot executable WAR
     
 ### Test the Web UI
 
-**Pre-Condition:** Start Accounts, Gateway, Portfolios, and Quotes
-                                   
-1.  Open your browser and navigate to: `https://localhost:5443`
+To run the functional test,
 
-    **Note:** To access the Swagger UI, `https://localhost:5443/swagger-ui.html`
+1.  Start the Accounts, Gateway, Portfolios, and Quotes
 
-2.  Under The Configuration Tab
+2.  Open your browser and navigate to: `https://localhost:5443`
+
+3.  Under the Configuration Tab
 
     a.  Press(Re)-create DayTrader Database Tables and Indexes
     
@@ -30,14 +34,27 @@
 
     c.  Press Test Daytrader Scenario
 
-3.  Keep refreshing the browser until you are satisfied DayTrader is working correctly. 
+4.  Keep refreshing the browser until you are satisfied that DayTrader is working. 
 
-    **Note:** Each time you refresh the browser, it runs another functional test. 
+    Note that each time you refresh the browser, it runs a random functional test. 
    
-4.  That's it! You have now tested the DayTader
+    That's it! You have now tested the DayTader
     
-**Post-Condition:** Stop Accounts, Gateway, Portfolios, and Quotes
+5.  Stop the Accounts, Gateway, Portfolios, and Quotes
     
 ### Stop the Web UI
 
-1.  `$ ./env/ext/bin/stop_server.sh`
+1.  `$ cd daytrader-web`
+
+2.  `$ ./env/ext/bin/stop_server.sh`
+
+This command stops the Spring Boot executable
+
+### Access the Swagger UI
+
+1.  Start the Web UI
+
+2.  Point you browser to https://localhost:5443/swagger-ui.html
+
+3.  Stop the Web UI after reviewing (or testing) the APIs
+
