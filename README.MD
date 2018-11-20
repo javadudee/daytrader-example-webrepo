@@ -346,7 +346,7 @@ spec:
         
     NAME | TYPE | CLUSTER-IP | EXTERNAL-IP | PORT(S) | AGE
     ---- | ---- | ---------- | ----------- | ------- | ---
-    daytrader-web | ClusterIP | 10.7.254.225| <none> | 443/TCP | 23s
+    daytrader-web | ClusterIP | 10.7.254.225| `<none>` | 443/TCP | 23s
        
     The above command creates a service resource. This resource listens on the CLUSTER IP and PORT. It is backed by endpoints 
     to one or more pods. You can see the enpoints buy doing `kubectl get endpoints`. When the service receives an HTTPS request,

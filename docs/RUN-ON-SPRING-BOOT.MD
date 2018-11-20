@@ -20,8 +20,6 @@
     
 ### Test the Web UI
 
-To run the functional test,
-
 1.  Start the Accounts, Gateway, Portfolios, and Quotes
 
 2.  Open your browser and navigate to: `https://localhost:5443`
@@ -48,7 +46,7 @@ To run the functional test,
 
 2.  `$ ./env/ext/bin/stop_server.sh`
 
-This command stops the Spring Boot executable
+    This command stops the Spring Boot executable
 
 ### Review the Swagger Documentation
 

@@ -26,11 +26,9 @@
     
 3.  `$ kubectl apply -f daytrader-web/env/external/k8s/service.yaml`
     
-**TODO** Add these commands to a `deploy_server` shell script (See Run on Spring Boot)
+**TODO** Add a `deploy_server` shell script to run these commands (See Run on Spring Boot)
     
 ### Test the Web UI
-
-To run the functional test,
 
 1.  Start the Accounts, Gateway, Portfolios, and Quotes
                                    
@@ -64,7 +62,7 @@ To run the functional test,
     
 2.  `$ kubectl delete services daytrader-web`
 
-**TODO** Add these commands to an `undeploy_server` shell script (See Run on Spring Boot)
+**TODO** Add an `undeploy_server` shell script to run these commands (See Run on Spring Boot)
 
 ### Review the Swagger Documentation
 
