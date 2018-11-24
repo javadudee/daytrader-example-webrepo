@@ -16,7 +16,7 @@
 
     This command pulls the image from DockerHub and deploys it to the Kubernetes Cluster
 
-2.  `$ kubectl get pods -watch`
+2.  `$ kubectl get pods --watch`
     
     NAME | READY | STATUS | RESTARTS | AGE
     ---- | ----- | ------ | -------- | ---
@@ -32,13 +32,13 @@
 
 1.  Start the Accounts, Gateway, Portfolios, and Quotes
                                    
-2.  `kubectl port-forward daytrader-web-xxxxxxxxx-xxxxx`
+2.  `kubectl port-forward daytrader-web-xxxxxxxxx-xxxxx 8888:5443`
 
     You should see `Forwarding from 127.0.0.1:8888 -> 5443`
     
     This command forwards local port 8888 to port 5443 of your Pod
     
-3.  Open your browser and navigate to: `https://localhost:5443`
+3.  Open your browser and navigate to: `https://localhost:8888`
     
 4.  Under The Configuration Tab
 
@@ -68,13 +68,13 @@
 
 1.  Start the Gateway
 
-2.  `kubectl port-forward daytrader-web-xxxxxxxxx-xxxxx`
+2.  `kubectl port-forward daytrader-web-xxxxxxxxx-xxxxx` 8888:5443
 
     You should see `Forwarding from 127.0.0.1:8888 -> 5443`
     
     This command forwards local port 8888 to port 5443 of your Pod
 
-3.  Point you browser to https://localhost:5443/swagger-ui.html
+3.  Point you browser to https://localhost:5888/swagger-ui.html
 
 4.  Stop the Gateway after reviewing the APIs
 
