@@ -47,7 +47,7 @@ spec:
 
 ### Test the Service Connection
                         
-1.  Start the proxy to locates and authenticate to the API Server.
+1.  Start the proxy to locate and authenticate to the API Server.
     
     `$ kubectl proxy`
         

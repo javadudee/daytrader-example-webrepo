@@ -6,39 +6,37 @@
 
 1.  `$ cd daytrader-webapp`
 
-2.  `$ mvn -Pcd clean install`
+2.  `$ mvn -Pkubernetes package`
 
     This command builds the Docker Image and pushes it to the DockerHub registry
 
 ### Start the Web UI
 
-1.  `$ kubectl apply -f daytrader-web/env/external/k8s/deployment.yaml`
+1.  `$ kubectl config use-context YOUR_CLUSTER_NAME`
 
-    This command pulls the image from DockerHub and deploys it to the Kubernetes Cluster
+    This command chooses the cluster; *run it if you haven't already done so*
 
-2.  `$ kubectl get pods --watch`
-    
-    NAME | READY | STATUS | RESTARTS | AGE
-    ---- | ----- | ------ | -------- | ---
-    daytrader-web-xxxxxxxxx-xxxxx | 1/1 | Running | 0 | 6m
-    
-    Watch until you see READY `1/1` and STATUS `Running` then Ctrl-c to stop watching.
-    
-3.  `$ kubectl apply -f daytrader-web/env/external/k8s/service.yaml`
-    
-**TODO** Add a `deploy_server` shell script to run these commands (See Run on Spring Boot)
+2.  `$ env/external/kubernetes/bin/create_service.sh`
+
+    This command creates the deployment; waits for it to start, creates the service, and starts kubectl proxy
+        
+    Note if the deployment (or service) exist and its specification has not changed then it is not re-created
     
 ### Test the Web UI
 
-1.  Start the Accounts, Gateway, Portfolios, and Quotes
+1.  Start the Accounts, Gateway, Portfolios, and Quotes; *if you haven't already done so*
                                    
-2.  `kubectl port-forward daytrader-web-xxxxxxxxx-xxxxx 8888:5443`
+2.  Start the proxy to locate and authenticate to the API Server.
+    
+    `$ kubectl proxy`
+        
+    You should see `Starting to serve on 127.0.0.1:8001`
+            
+    If you see a port binding error, start the proxy on a different port, e.g.
 
-    You should see `Forwarding from 127.0.0.1:8888 -> 5443`
+    `$ kubectl proxy --port=8002`
     
-    This command forwards local port 8888 to port 5443 of your Pod
-    
-3.  Open your browser and navigate to: `https://localhost:8888`
+3.  Open your browser and navigate to: `http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy`
     
 4.  Under The Configuration Tab
 
@@ -58,23 +56,22 @@
     
 ### Stop the Web UI
 
-1.  `$ kubectl delete deployments daytrader-web`
-    
-2.  `$ kubectl delete services daytrader-web`
+1.  `$ kubectl config use-context YOUR_CLUSTER_NAME`
 
-**TODO** Add an `undeploy_server` shell script to run these commands (See Run on Spring Boot)
+    This command chooses the cluster; *run it if you haven't already done so*
+
+2.  `$ env/external/kubernetes/bin/delete_service.sh`
+
+    This command creates the deployment; deletes the service; and stops the kubectl proxy
 
 ### Review the Swagger Documentation
 
-1.  Start the Gateway
+1.  Start the Web UI; *if you haven't already done so*
 
-2.  `kubectl port-forward daytrader-web-xxxxxxxxx-xxxxx` 8888:5443
+2.  Point you browser to `http://localhost:8001/api/v1/namespaces/default/services/https:daytrader-web:/proxy/swagger-ui.html`
 
-    You should see `Forwarding from 127.0.0.1:8888 -> 5443`
-    
-    This command forwards local port 8888 to port 5443 of your Pod
+3.  Stop the Web UI after reviewing the APIs
 
-3.  Point you browser to https://localhost:5888/swagger-ui.html
 
-4.  Stop the Gateway after reviewing the APIs
+
 
