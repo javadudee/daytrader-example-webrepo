@@ -6,7 +6,7 @@
 
 1.  `$ cd daytrader-webapp`
 
-2.  `$ mvn clean install`
+2.  `$ mvn package`
 
     This command build the Spring Boot executable WAR
 
@@ -14,7 +14,7 @@
 
 1.  `$ cd daytrader-web`
 
-2.  `$ ./env/ext/bin/start_server.sh`
+2.  `$ ./env/external/springboot/bin/start_server.sh`
 
     This command runs the Spring Boot executable WAR
     
@@ -44,7 +44,7 @@
 
 1.  `$ cd daytrader-web`
 
-2.  `$ ./env/ext/bin/stop_server.sh`
+2.  `$ ./env/external/springboot/bin/stop_server.sh`
 
     This command stops the Spring Boot executable
 
