@@ -79,4 +79,3 @@ ADD ${WAR_FILE} app.war
 ENV JAVA_OPTS="-Djavax.net.ssl.trustStore=/var/ssl/daytrader/truststore.jks -Djavax.net.ssl.trustStorePassword=password"
 
 ENTRYPOINT exec java $JAVA_OPTS -jar app.war
-
