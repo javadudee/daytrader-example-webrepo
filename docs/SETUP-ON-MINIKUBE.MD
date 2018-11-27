@@ -5,6 +5,10 @@
 ### Prerequisites
 
 1.  [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+2.  [Install Minikube according to the instructions for the latest release](https://github.com/kubernetes/minikube/releases)
+
+What's next
    
 
 ### Install the Cluster

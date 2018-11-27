@@ -66,7 +66,7 @@
 
 1.  Create the namespace and configmaps; otherwise cloud-generic.yaml and ingress controller will have errors
         
-    a.  `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
+    a.  `$ cd daytrader-webapp/daytrader-web/env/external/kubernetes/conf`
             
     b.  `$ kubectl apply -f ingress-nginx-namespace.yaml`
     
@@ -112,11 +112,18 @@ The Kubernetes Dashboard can be useful for managing and troubleshooting your clu
 
     This command grants those in the cluster admin role the permissions necessary to access the dashboard.
 
-2.  Start the Kubernetes Dashboard
+2.  Login to the Azure CLI
+
+    `$ az login`
+    
+    This command opens a browser so that you can login to your account.
+
+3.  Start the Kubernetes Dashboard
        
     `$ az aks browse --resource-group daytrader-aks-cluster --name daytrader-aks-cluster`
 
     This command opens the Kubernetes Dashboard in a browser
+    
 
 ## Resources
 

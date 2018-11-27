@@ -54,7 +54,6 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
     You should see `Kubernetes master is running at https://35.184.21.226`
 
 6.  Verify that the worker nodes are running
-
      
     a.  `$ kubectl config use-context daytrader-gke-cluster`
                     
@@ -78,11 +77,13 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
     
     **Note:** other Kubernetes platforms automatically add the user that created the cluster to the cluster-admin role.
 
-2.  Create tha namespace; otherwise cloud-generic.yaml will have errors
+2.  Create the namespace and configmaps; otherwise cloud-generic.yaml and ingress controller will have errors
         
-    a.  `$ cd daytrader-webapp/daytrader-web/env/external/k8s`
+    a.  `$ cd daytrader-webapp/daytrader-web/env/external/kubernetes/conf`
             
     b.  `$ kubectl apply -f ingress-nginx-namespace.yaml`
+    
+    c.  `$ kubectl apply -f ingress-nginx-configmap.yaml`
     
 3.  Deploy the NGINX Load Balancer
 
