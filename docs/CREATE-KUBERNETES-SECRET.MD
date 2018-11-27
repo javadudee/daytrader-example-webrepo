@@ -3,33 +3,6 @@
 ## Create the Kubernetes Secret for our Certificates and Private Keys
 
 We are going to use an Ingress for routing incoming requests to our Service but first we need to create a Secret which holds certificates and private keys for securing that connection with HTTPS.
- 
-### Create the Certificate and Private Key
-          
-1.  To encrypt the SSL/TLS connection between the browser and the Ingress resource, you need to attach a certificate and a private key 
-    to the Ingress resource. To do that, the certificate and private key must be stored in a Kubernetes resource called a secret so it 
-    can be referenced by the Ingress resource. 
-
-    a.  `$ openssl genrsa -out tls.key 2048`
-    
-    b.  `$ openssl req -new -x509 -key tls.key -out tls.crt -days 360 -subj /CN=web.daytrader.geronimo.apache.org`
-    
-2.  Check and verify your certificate and key. This can be useful before applying them to your server. 
-
-    a.  `$ openssl x509 -in tls.crt -text`
-    
-        This command check the certificate and its information (signing authority, expiration date, etc.)
-    
-    b.  `$ openssl rsa -in tls.key -check`
-    
-        This command checks the SSL key and verifies its consistency
-
-3.  Verify the certificate and key match by comparing their checksums for equality
-
-    a.  `$ openssl x509 -noout -modulus -in tls.crt | openssl md5`
-    
-    b.  `$ openssl rsa -noout -modulus -in tls.key | openssl md5`
-            
 
 ### Generate the Secret Specification
 
