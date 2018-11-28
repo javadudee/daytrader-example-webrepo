@@ -37,7 +37,7 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
                     
     You should see `Switched to context daytrader-eks-cluster`
                 
-    b.  `$ kubectl kubectl cluster-info`
+    b.  `$ kubectls cluster-info`
                     
     You should see `Kubernetes master is running at https://8D36DB7CBD2E3394FF0843CEA0C0A266.sk1.us-east-1.eks.amazonaws.com`
                     
