@@ -22,7 +22,14 @@ This is a good solution for local development servers
 
 This is a good solution for controlled environments; like UAT and PROD
     
-**TODO** Create a CNAME record to your DNS custom domain
+A CNAME record maps one domain name to another domain name. In this instance, it maps from your custom domain name `<HOSTS>` to the domain name  of the Ingress load balancer `<ADDRESS>`. The CNAME should match the CN provided in the Secret's TLS certificate. The steps to create the CNAME record varies depending on the DNS provider. For additional information, see
+
+1.  [How do I create a simple resource record set in Amazon Riyte 53 using the AWS CLI?](https://aws.amazon.com/premiumsupport/knowledge-center/simple-resourcehttps://aws.amazon.com/premiumsupport/knowledge-center/simple-resource-record-route53-cli/)
+
+
+2.  [Manage DNS records and recordsets on Azure DNS using the Azure CLI?](https://docs.microsoft.com/en-us/azure/dns/dns-operations-recordsets-cli/)
+
+3.  [Google Cloud SDK (gcloud) dns](https://cloud.google.com/sdk/gcloud/reference/dns/)
 
 
 ### Test the DNS Resolution
