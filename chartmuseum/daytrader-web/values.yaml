@@ -1,0 +1,52 @@
+# Default values for daytrader-web.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+metadata:
+  name: daytrader-web
+  
+replicaCount: 1
+
+image:
+  repository: dhvines/daytrader-web
+  tag: 4.0.18
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  targetPort: 5443
+
+ingress:
+  enabled: true
+  annotations: 
+    kubernetes.io/ingress.allow-http: "false"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+  rules:
+    - host: web.daytrader.geronimo.apache.org
+      paths:
+        - path: /
+          backend:
+            serviceName: daytrader-web
+            servicePort: 443 
+  tls:
+    - hosts:
+      - web.daytrader.geronimo.apache.org
+      secretName: daytrader-web
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
