@@ -60,9 +60,36 @@ What's next
             
 4.  Review the logs to verify the installation. This is also useful for troubleshooting ingress resources.
         
-    `$ kubectl -n kube-system logs <POD_NAME>`
+    `$ kubectl -n kube-system logs POD_NAME`
             
     You should see `successfully acquired lease kube-system/ingress-controller-leader-nginx`
+
+### Install the Helm Server (Tiller)
+
+To install `tiller` into the minikube cluster
+
+1.  `$ kubectl use-context minikube`
+
+2.  `$ helm init`. 
+
+    This command validates the helm client is installed correctly and initializes it up if necessary. 
+    Then, it connects to the minikube cluster and installs `tiller` into the `kube-system` namespace. 
+    
+3.  `$ kubectl -n kube-system get pods` 
+          
+    You should see `tiller` running
+            
+    NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
+    --------- | ---- | ----- | ------ | -------- | ---
+    kube-system | tiller-deploy-xxxxxxxxxx-xxxxx | 1/1 | Running | 0 | 39s
+    
+    Wait for the tiller to start. It may take a few minutes.
+            
+4.  Review the logs to verify the installation.
+        
+    `$ kubectl -n kube-system logs POD_NAME`
+            
+    You should see `Starting Tiller v2.11.0 (tls=false)`
 
 ### Install the Kubernetes Dashboard (Optional)
 
@@ -71,7 +98,7 @@ The Kubernetes Dashboard can be useful for managing and troubleshooting your clu
 `$ minikube dashboard`
 
 This command opens the Kubernetes Dashboard in a browser
-        
+
 ## Resources 
 
 1.  [Running Kubernetes Locally via Minikube](https://kubernetes.io/docs/setup/minikube/)
