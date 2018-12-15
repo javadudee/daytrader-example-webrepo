@@ -17,7 +17,7 @@
     
         1.  Start the local repo
         
-            b.  $ helm serve
+            $ helm serve
             
         2.  Add charts to the repo
         
@@ -25,11 +25,11 @@
                 
         3.  Install the charts
         
-            a.  kubectl config use-context minikube
+            a.  $ kubectl config use-context minikube
         
             b.  $ helm upgrade --install CHART_NAME chartmuseum/CHART_NAME -f chartmuseum/CHART_NAME/values.yaml
             
-            Where CHART_NAME is daytrader-accounts, daytrader-gateway, daytrader-portfolios, daytrader-quotes, and daytrader-web
+            Where CHART_NAME is daytrader-accounts, daytrader-gateway, daytrader-portfolios, daytrader-quotes, or daytrader-web
 
     Troubleshooting
 
@@ -44,5 +44,9 @@
         3.  Get the manifest from an installed chart
         
             $ helm get manifest CHART_NAME
+            
+        4.  List releases of charts
+        
+            $ helm list
             
 

@@ -25,4 +25,18 @@
     b.  $ curl -k https://$DOMAIN_NAME/health
     
     Notes: you must configure DNS (or add an entry to /etc/hosts) to resolve your custom domain name to your ingress IP address
+    
+5.  To functional test the application:
+
+    a.  Point your browser to: https://{{- range .Values.ingress.rules }}{{.host }}{{- range .paths }}{{ .path }}{{- end }}{{- end }}
+
+    b.  Under The Configuration Tab
+
+        -  Press(Re)-create DayTrader Database Tables and Indexes
+
+        -  Press (Re)-populate DayTrader Database
+
+        -  Press Test Daytrader Scenario
+
+    c.  Keep refreshing the browser until you are satisfied that DayTrader is working.
 
