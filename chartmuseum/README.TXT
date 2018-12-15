@@ -27,7 +27,7 @@
         
             a.  $ kubectl config use-context minikube
         
-            b.  $ helm upgrade --install CHART_NAME chartmuseum/CHART_NAME -f chartmuseum/CHART_NAME/values.yaml
+            b.  $ helm upgrade --values chartmuseum/CHART_NAME/values.yaml --install --force CHART_NAME chartmuseum/CHART_NAME
             
             Where CHART_NAME is daytrader-accounts, daytrader-gateway, daytrader-portfolios, daytrader-quotes, or daytrader-web
 
