@@ -1,5 +1,5 @@
 
-1.  To test the deployment connection, run these commands:
+1.  To test the deployment connection:
 
     a.  $ export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ .Values.metadata.name }}" -o jsonpath="{.items[0].metadata.name}")
     b.  $ kubectl port-forward $POD_NAME {{.Values.service.targetPort}}:{{.Values.service.targetPort}}
@@ -7,7 +7,7 @@
     
     You should see {"status":"UP"}
 
-2.  To test the service connection, run these commands:
+2.  To test the service connection:
 
     a.  $ kubectl proxy --port={{.Values.service.targetPort}}
     b.  $ curl -k http://localhost:{{.Values.service.targetPort}}/api/v1/namespaces/default/services/https:{{ .Values.metadata.name }}:/proxy/health
@@ -26,7 +26,7 @@
     
     Notes: you must configure DNS (or add an entry to /etc/hosts) to resolve your custom domain name to your ingress IP address
     
-5.  To functional test the application:
+5.  To test the application:
 
     a.  Point your browser to: https://{{- range .Values.ingress.rules }}{{.host }}{{- range .paths }}{{ .path }}{{- end }}{{- end }}
 
@@ -39,4 +39,6 @@
         -  Press Test Daytrader Scenario
 
     c.  Keep refreshing the browser until you are satisfied that DayTrader is working.
+    
+    Notes: you must configure DNS (or add an entry to /etc/hosts) to resolve your custom domain name to your ingress IP address
 
