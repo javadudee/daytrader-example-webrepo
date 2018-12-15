@@ -40,13 +40,15 @@
         2.  Render your chart to see the manifest
         
             $ helm install CHART_NAME --dry-run --debug 
-    
-        3.  Get the manifest from an installed chart
-        
-            $ helm get manifest CHART_NAME
             
-        4.  List releases of charts
+        3.  List the installed charts
         
             $ helm list
             
-
+        4.  Delete failed deployments, if any
+            
+            $ helm delete --purge CHART_NAME
+            
+        5.  Get the manifest from an installed chart
+        
+            $ helm get manifest CHART_NAME
