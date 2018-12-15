@@ -26,7 +26,7 @@
     
     Notes: you must configure DNS (or add an entry to /etc/hosts) to resolve your custom domain name to your ingress IP address
     
-5.  To test the application:
+5.  To test the DayTrader application:
 
     a.  Point your browser to: https://{{- range .Values.ingress.rules }}{{.host }}{{- range .paths }}{{ .path }}{{- end }}{{- end }}
 
