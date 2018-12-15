@@ -25,7 +25,7 @@
                 
         3.  Install the charts
         
-            a.  $ kubectl config use-context minikube
+            a.  $ kubectl config use-context CLUSTER_NAME
         
             b.  $ helm upgrade --values chartmuseum/CHART_NAME/values.yaml --install --force CHART_NAME chartmuseum/CHART_NAME
             
