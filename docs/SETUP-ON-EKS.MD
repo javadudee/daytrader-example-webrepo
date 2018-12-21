@@ -89,7 +89,7 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
                     
 ### Install the Kubernetes Dashboard
 
-he Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it, follow the instructions here:
+The Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it, follow the instructions here:
 
 [Tutorial: Deploy the Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
 ​                   
