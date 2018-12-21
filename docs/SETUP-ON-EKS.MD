@@ -89,37 +89,12 @@ At this point you should have a cluster and `~/.kube/config` file created. That 
                     
 ### Install the Kubernetes Dashboard
 
-The Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it,
-                   
-1.  Deploy the Kubernetes Dashboard to the cluster
+he Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it, follow the instructions here:
 
-    `$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml`
-
-2.  Get the token so you can authenticate with the Kubernetes Dashboard
-
-    a.  `$ kubectl -n kube-system get secrets | grep admin`
-       
-    Record the NAME of the `admin-user-token`
-        
-    b.  `$ kubectl -n kube-system describe secrets ADMIN_USER_TOKEN`
-        
-    Copy the value of the `authentication token`
-                            
-3.  Start the proxy so you can authenticate with the Kubernetes API Server
-
-    `$ kubectl proxy`
-    
-    You should see `Starting to serve on 127.0.0.1:8001`
-            
-    If you see a port binding error, start the proxy on a different port, e.g.
-
-    `$ kubectl proxy --port=8002`
-
-4.  Open the following link to access the Kubernetes Dashboard through the API Server
-        
-    `http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
-            
-5.  You will see a login screen; choose `Token` and then enter the value of the `authentication token` from Step 2. 
+[Tutorial: Deploy the Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
+​                   
+Note: If you get a port conflict when starting the proxy during the above instructions, you can specify a different port e.g.
+​	`kubectl proxy --port=8002`
 
 ## Resources 
 
@@ -128,7 +103,7 @@ The Kubernetes Dashboard can be useful for managing and troubleshooting the clus
 2.  [NGINX Ingress Controller Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/)
 
 3.  [Troubleshooting Authentication to the Kubernetes Dashboard](https://github.com/AcalephStorage/kubernetes-dashboard/blob/master/docs/user-guide/troubleshooting.md)
-    
-4.  [Tutorial: Deploy the Kubernetes Web UI (Dashboard)](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
+   
+
 
 
