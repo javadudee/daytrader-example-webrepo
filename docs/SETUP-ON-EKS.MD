@@ -125,9 +125,11 @@ a private network. To apply security configurations for multi-tenant clusters in
                     
 ### Install the Kubernetes Dashboard
     
-The Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it, follow these instructions: [Tutorial: Deploy the Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
-​       
-**Notes:** If you get a port conflict when starting the proxy during the above instructions, use this command to specify a different port, e.g. `kubectl proxy --port=8002`
+The Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install the dashboard, follow these instructions: 
+    
+    [Tutorial: Deploy the Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html). 
+    
+**Note:** If you get a port conflict when starting the proxy, specify a different port using this command: `kubectl proxy --port=8002`
     
 ## Resources 
 
