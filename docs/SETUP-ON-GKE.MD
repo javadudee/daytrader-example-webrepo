@@ -156,4 +156,3 @@ The Kubernetes Dashboard is disabled and deprecated in GKE. instead, use the [GK
 
 1.  [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)
 
-s
