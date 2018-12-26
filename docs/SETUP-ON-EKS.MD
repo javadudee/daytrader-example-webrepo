@@ -124,22 +124,11 @@ To install `tiller` into the eks cluster
 a private network. To apply security configurations for multi-tenant clusters in uncontrolled environments, or for clusters with access to high valued data, see [Securing your Helm Installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation)
                     
 ### Install the Kubernetes Dashboard
-
+    
 The Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it, follow these instructions: [Tutorial: Deploy the Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
-​                   
+​       
 **Notes:** If you get a port conflict when starting the proxy during the above instructions, use this command to specify a different port, e.g. `kubectl proxy --port=8002`
-=======
-                    
-### Install the Kubernetes Dashboard
-
-The Kubernetes Dashboard can be useful for managing and troubleshooting the cluster. To install it, follow the instructions here:
-
-[Tutorial: Deploy the Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
-​                   
-Note: If you get a port conflict when starting the proxy during the above instructions, you can specify a different port e.g.
-​	`kubectl proxy --port=8002`
->>>>>>> 44d7b01b56b9f369bbd9cf443b1f2db50c130060
-
+    
 ## Resources 
 
 1.  [Amazon Elastic Container Service for Kubernetes](https://aws.amazon.com/eks/)
@@ -147,10 +136,6 @@ Note: If you get a port conflict when starting the proxy during the above instru
 2.  [NGINX Ingress Controller Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/)
 
 3.  [Troubleshooting Authentication to the Kubernetes Dashboard](https://github.com/AcalephStorage/kubernetes-dashboard/blob/master/docs/user-guide/troubleshooting.md)
-<<<<<<< HEAD
-=======
-   
->>>>>>> 44d7b01b56b9f369bbd9cf443b1f2db50c130060
 
 
 
