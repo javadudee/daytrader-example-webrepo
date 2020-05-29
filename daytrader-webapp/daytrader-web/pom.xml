@@ -129,10 +129,21 @@
 		<dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-        </dependency>       
-		
-		
-		<!-- REST Client Dependencies -->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- REST Client Dependencies -->
 
        <dependency>
             <groupId>javax</groupId>
@@ -159,8 +170,8 @@
 		<dependency>
     	    <groupId>org.glassfish.jersey.core</groupId>
         	<artifactId>jersey-client</artifactId>
-		</dependency>  
-		
+		</dependency>
+
 	</dependencies>
 
     <build>
@@ -193,7 +204,7 @@
   			 <properties>
                 <daytraderKeystoreFolder>${project.basedir}/src/main/resources/external/ssl</daytraderKeystoreFolder>
                 <daytraderLogLevel>TRACE</daytraderLogLevel>
-                <daytraderLogFilename>/var/log/daytrader/${daytraderAppArtifactId}-${daytraderAppVersion}.log</daytraderLogFilename>
+                <daytraderLogFilename>~/log/daytrader/${daytraderAppArtifactId}-${daytraderAppVersion}.log</daytraderLogFilename>
                 <daytraderLogAppender>ConsoleAppender</daytraderLogAppender>
                 <accountsServiceRoute>https://localhost:1443</accountsServiceRoute>
                 <gatewayServiceRoute>https://localhost:2443</gatewayServiceRoute>
@@ -348,7 +359,7 @@
   			<id>kubernetes</id>
   			<properties>
   				<daytraderKeystoreFolder>${project.basedir}/src/main/resources/external/ssl</daytraderKeystoreFolder>
-				<docker.image.prefix>${user.name}</docker.image.prefix>
+				<docker.image.prefix>shalabhraj</docker.image.prefix>
 				<dockerfile-maven-version>1.4.0</dockerfile-maven-version>	
 
                 <daytraderKeystoreFolder>${project.basedir}/src/main/resources/external/ssl</daytraderKeystoreFolder>
