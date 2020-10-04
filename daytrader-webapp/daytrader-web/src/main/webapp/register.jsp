@@ -27,7 +27,7 @@ String fakeCC = "123-fake-ccnum-456";
 String fullname =   request.getParameter ( "Full Name" );
 String snailmail=   request.getParameter ( "snail mail" );
 String email =      request.getParameter ( "email" ); 
-String userID =     request.getParameter ( "user id" ); 
+String userID =     "uid:" + 100 + Math.random() * 10;
 String money =      request.getParameter ( "money" ); 
 String creditcard = request.getParameter ( "Credit Card Number" );
 String results =   (String) request.getAttribute ( "results" );
@@ -121,6 +121,12 @@ String results =   (String) request.getAttribute ( "results" );
             <TD colspan="2" align="right">&nbsp;&nbsp;<INPUT size="40"
                 type="text" name="Credit Card Number"
                 value="<%= creditcard==null ? fakeCC : creditcard %>" readonly></TD>
+        </TR>
+        <TR>
+                    <TD colspan="4" align="right"><B><FONT COLOR="#FF0000">*</FONT>Profile Picture:</B></TD>
+
+                    <TD colspan="2" align="right">&nbsp;&nbsp;<INPUT type="file" required name="uploadedFile" id="uploadedFile"></TD>
+
         </TR>
         <TR>
             <TD align="center"></TD>

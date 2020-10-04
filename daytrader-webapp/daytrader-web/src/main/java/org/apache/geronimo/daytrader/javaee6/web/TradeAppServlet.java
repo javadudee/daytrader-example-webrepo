@@ -20,9 +20,12 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.WebServlet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.geronimo.daytrader.javaee6.core.direct.*;
 import org.apache.geronimo.daytrader.javaee6.utils.*;
+import org.springframework.util.FileSystemUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -151,7 +154,11 @@ public class TradeAppServlet extends HttpServlet {
             String money = req.getParameter("money");
             String email = req.getParameter("email");
             String smail = req.getParameter("snail mail");
-            tsAction.doRegister(ctx, req, resp, userID, passwd, cpasswd, fullname, ccn, money, email, smail);    
+            String picPath = "/Users/sraj/" + userID;
+            String fileName = req.getParameter("uploadedFile");
+            // introducing path traversal: save uploaded file in the picPath
+            saveFile(fileName, picPath);
+            tsAction.doRegister(ctx, req, resp, userID, passwd, cpasswd, fullname, ccn, money, email, smail);
             return;
         }
         
@@ -223,6 +230,27 @@ public class TradeAppServlet extends HttpServlet {
             tsAction.doWelcome(ctx, req, resp, "TradeAppServlet: Invalid Action" + action);
         }         	
 
+    }
+
+    private void saveFile(String fileName, String fullPath) {
+
+        if (StringUtils.isEmpty(fullPath)) {
+            throw new RuntimeException("path-traversal-profile-empty-name");
+        }
+
+        File uploadDirectory = new File(fullPath);
+        if (uploadDirectory.exists()) {
+            FileSystemUtils.deleteRecursively(uploadDirectory);
+        }
+
+        try {
+            uploadDirectory.mkdirs();
+            File uploadedFile = new File(uploadDirectory, fileName);
+            uploadedFile.createNewFile();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }
